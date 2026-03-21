@@ -2,6 +2,8 @@ node_modules/
 db/onix.db
 db/onix.db-wal
 db/onix.db-shm
+db/api-keys.json
+db/audit.log
 uploads/
 *.log
 .DS_Store

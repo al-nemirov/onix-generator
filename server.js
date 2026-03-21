@@ -8,12 +8,45 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const Database = require('better-sqlite3');
 const multer = require('multer');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DB_PATH = path.join(__dirname, 'db', 'onix.db');
+
+// ---------------------------------------------------------------------------
+// Security: API key management
+// ---------------------------------------------------------------------------
+const API_KEYS_PATH = path.join(__dirname, 'db', 'api-keys.json');
+
+function loadApiKeys() {
+    try {
+        if (fs.existsSync(API_KEYS_PATH)) {
+            return JSON.parse(fs.readFileSync(API_KEYS_PATH, 'utf8'));
+        }
+    } catch (e) {
+        console.error('Failed to load API keys, generating new defaults:', e.message);
+    }
+    // First run: generate default admin key
+    const defaultKey = `ogen_${crypto.randomBytes(24).toString('hex')}`;
+    const keys = [
+        { key: defaultKey, role: 'admin', label: 'Default Admin Key', created: new Date().toISOString() }
+    ];
+    fs.writeFileSync(API_KEYS_PATH, JSON.stringify(keys, null, 2), 'utf8');
+    console.log('='.repeat(70));
+    console.log('FIRST RUN — Default admin API key generated:');
+    console.log(`  ${defaultKey}`);
+    console.log('Store this key securely. Set ONIX_API_KEY env var or pass');
+    console.log('it in the X-API-Key header for all API requests.');
+    console.log('='.repeat(70));
+    return keys;
+}
+
+const apiKeys = loadApiKeys();
 
 // ---------------------------------------------------------------------------
 // Database setup
@@ -28,16 +61,100 @@ db.exec(schema);
 const stmts = {};
 
 // ---------------------------------------------------------------------------
-// Middleware
+// Middleware — Security
 // ---------------------------------------------------------------------------
-app.use(express.json({ limit: '50mb' }));
+
+// Helmet: sets various HTTP headers for security
+app.use(helmet({ contentSecurityPolicy: false }));
+
+// Body size limits (1 MB for JSON, override per-route if needed)
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: false, limit: '1mb' }));
+
+// Global rate limiter: 200 requests per minute per IP
+const globalLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' },
+});
+app.use('/api/', globalLimiter);
+
+// Stricter rate limiter for sensitive endpoints (backup, import)
+const strictLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Rate limit exceeded for this endpoint.' },
+});
+
+// ---------------------------------------------------------------------------
+// Authentication middleware
+// ---------------------------------------------------------------------------
+function authenticate(req, res, next) {
+    const apiKey = req.headers['x-api-key'] || req.query.api_key;
+    if (!apiKey) {
+        return res.status(401).json({ error: 'Authentication required. Provide X-API-Key header.' });
+    }
+    const keyEntry = apiKeys.find(k => k.key === apiKey);
+    if (!keyEntry) {
+        return res.status(403).json({ error: 'Invalid API key.' });
+    }
+    req.apiUser = keyEntry;
+    next();
+}
+
+// Admin-only middleware (requires role === 'admin')
+function requireAdmin(req, res, next) {
+    if (!req.apiUser || req.apiUser.role !== 'admin') {
+        return res.status(403).json({ error: 'Admin access required.' });
+    }
+    next();
+}
+
+// CSRF / Origin check for mutating requests (POST, PUT, DELETE)
+// Since the app uses API key auth (not cookies), CSRF is mitigated by design.
+// This adds defense-in-depth: reject cross-origin mutating requests that
+// lack the API key or come from an unexpected origin.
+function originCheck(req, res, next) {
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+        const origin = req.headers['origin'];
+        const referer = req.headers['referer'];
+        // If an Origin header is present, verify it matches our host
+        if (origin) {
+            const host = req.headers['host'];
+            const allowed = [
+                `http://${host}`,
+                `https://${host}`,
+                `http://localhost:${PORT}`,
+                `https://localhost:${PORT}`,
+            ];
+            if (!allowed.some(a => origin.startsWith(a))) {
+                // Allow if authenticated via API key (programmatic access)
+                if (!req.apiUser) {
+                    return res.status(403).json({ error: 'Cross-origin request blocked.' });
+                }
+            }
+        }
+    }
+    next();
+}
+
+// Apply auth and origin check to all /api/ routes
+app.use('/api/', authenticate, originCheck);
+
+// ---------------------------------------------------------------------------
+// Static files (served without auth — public frontend)
+// ---------------------------------------------------------------------------
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve codelists as static JSON
+// Serve codelists as static JSON (public, no auth needed)
 app.use('/codelists', express.static(path.join(__dirname, 'codelists')));
 
-// File upload for XLSX/CSV import
-const upload = multer({ dest: path.join(__dirname, 'uploads/'), limits: { fileSize: 50 * 1024 * 1024 } });
+// File upload for XLSX/CSV import (5 MB limit for spreadsheets)
+const upload = multer({ dest: path.join(__dirname, 'uploads/'), limits: { fileSize: 5 * 1024 * 1024 } });
 
 // ---------------------------------------------------------------------------
 // Helper: wrap DB operations in transaction
@@ -45,6 +162,138 @@ const upload = multer({ dest: path.join(__dirname, 'uploads/'), limits: { fileSi
 function withTransaction(fn) {
     const transaction = db.transaction(fn);
     return transaction();
+}
+
+// ---------------------------------------------------------------------------
+// Input validation helpers
+// ---------------------------------------------------------------------------
+function validateString(val, maxLen = 1000) {
+    return typeof val === 'string' && val.length <= maxLen;
+}
+
+function validateOptionalString(val, maxLen = 1000) {
+    return val === undefined || val === null || validateString(val, maxLen);
+}
+
+function validateInt(val) {
+    return Number.isInteger(val) || (typeof val === 'string' && /^-?\d+$/.test(val));
+}
+
+function validateOptionalInt(val) {
+    return val === undefined || val === null || validateInt(val);
+}
+
+function validateIdArray(ids) {
+    return Array.isArray(ids) && ids.length > 0 && ids.length <= 1000 && ids.every(id => validateInt(id));
+}
+
+function validateIsbn(val) {
+    if (!val || val === '') return true; // optional field
+    return typeof val === 'string' && /^[0-9X-]{10,17}$/.test(val.replace(/[-\s]/g, ''));
+}
+
+function validateOnixCode(val, maxLen = 10) {
+    if (!val || val === '') return true;
+    return typeof val === 'string' && val.length <= maxLen && /^[A-Za-z0-9+]+$/.test(val);
+}
+
+function validateDate(val) {
+    if (!val || val === '') return true;
+    return typeof val === 'string' && /^\d{4}\d{2}\d{2}$/.test(val);
+}
+
+// Validate book fields from request body, returns error string or null
+function validateBookBody(data) {
+    if (typeof data !== 'object' || data === null) return 'Request body must be an object';
+
+    if (!validateOptionalString(data.isbn, 20)) return 'isbn must be a string (max 20 chars)';
+    if (data.isbn && !validateIsbn(data.isbn)) return 'isbn format is invalid';
+    if (!validateOptionalString(data.title, 500)) return 'title must be a string (max 500 chars)';
+    if (!validateOptionalString(data.subtitle, 500)) return 'subtitle must be a string (max 500 chars)';
+    if (!validateOptionalString(data.internal_ref, 100)) return 'internal_ref must be a string (max 100 chars)';
+    if (!validateOptionalString(data.order_number, 100)) return 'order_number must be a string (max 100 chars)';
+    if (!validateOptionalString(data.description, 50000)) return 'description must be a string (max 50000 chars)';
+    if (!validateOptionalString(data.biography, 10000)) return 'biography must be a string (max 10000 chars)';
+    if (!validateOptionalString(data.toc, 10000)) return 'toc must be a string (max 10000 chars)';
+    if (!validateOptionalInt(data.page_count)) return 'page_count must be an integer';
+    if (!validateOptionalInt(data.audience_age_from)) return 'audience_age_from must be an integer';
+    if (!validateOptionalInt(data.audience_age_to)) return 'audience_age_to must be an integer';
+
+    // Validate ONIX code fields
+    const codeFields = ['notification_type', 'product_form', 'product_form_detail', 'primary_content_type',
+        'drm', 'epub_usage_type', 'epub_usage_status', 'publishing_status',
+        'audience_range_qualifier', 'series_collection_type'];
+    for (const f of codeFields) {
+        if (data[f] !== undefined && data[f] !== '' && !validateOnixCode(data[f], 20)) {
+            return `${f} must be a valid ONIX code`;
+        }
+    }
+
+    // Validate date fields
+    for (const f of ['publishing_date', 'print_pub_date', 'announcement_date']) {
+        if (!validateDate(data[f])) return `${f} must be YYYYMMDD format`;
+    }
+
+    // Validate language codes (ISO 639-2/B: 3 lowercase letters)
+    for (const f of ['language_code', 'original_language']) {
+        if (data[f] !== undefined && data[f] !== '' && !/^[a-z]{3}$/.test(data[f])) {
+            return `${f} must be a 3-letter ISO 639-2/B code`;
+        }
+    }
+
+    // Validate contributor sub-objects
+    if (data.contributors !== undefined) {
+        if (!Array.isArray(data.contributors)) return 'contributors must be an array';
+        if (data.contributors.length > 100) return 'Too many contributors (max 100)';
+        for (const c of data.contributors) {
+            if (typeof c !== 'object') return 'Each contributor must be an object';
+            if (!validateOptionalString(c.person_name, 300)) return 'contributor person_name too long';
+            if (!validateOptionalString(c.corporate_name, 300)) return 'contributor corporate_name too long';
+        }
+    }
+
+    // Validate subjects
+    if (data.subjects !== undefined) {
+        if (!Array.isArray(data.subjects)) return 'subjects must be an array';
+        if (data.subjects.length > 200) return 'Too many subjects (max 200)';
+        for (const s of data.subjects) {
+            if (typeof s !== 'object') return 'Each subject must be an object';
+            if (!validateOptionalString(s.subject_code, 50)) return 'subject_code too long';
+            if (!validateOptionalString(s.subject_text, 500)) return 'subject_text too long';
+        }
+    }
+
+    // Validate prices
+    if (data.prices !== undefined) {
+        if (!Array.isArray(data.prices)) return 'prices must be an array';
+        if (data.prices.length > 50) return 'Too many prices (max 50)';
+        for (const p of data.prices) {
+            if (typeof p !== 'object') return 'Each price must be an object';
+            if (p.amount !== undefined && (typeof p.amount !== 'number' || p.amount < 0 || p.amount > 999999)) {
+                return 'price amount must be a number between 0 and 999999';
+            }
+        }
+    }
+
+    // Validate sales_rights
+    if (data.sales_rights !== undefined) {
+        if (!Array.isArray(data.sales_rights)) return 'sales_rights must be an array';
+        if (data.sales_rights.length > 50) return 'Too many sales_rights (max 50)';
+    }
+
+    // Validate related_products
+    if (data.related_products !== undefined) {
+        if (!Array.isArray(data.related_products)) return 'related_products must be an array';
+        if (data.related_products.length > 50) return 'Too many related_products (max 50)';
+    }
+
+    // Validate reviews
+    if (data.reviews !== undefined) {
+        if (!Array.isArray(data.reviews)) return 'reviews must be an array';
+        if (data.reviews.length > 50) return 'Too many reviews (max 50)';
+    }
+
+    return null; // no errors
 }
 
 // ---------------------------------------------------------------------------
@@ -62,6 +311,26 @@ app.put('/api/settings', (req, res) => {
         'default_currency', 'default_drm', 'default_territory',
         'default_price_type', 'onix_format', 'theme'
     ];
+
+    // Validate settings input
+    if (typeof req.body !== 'object' || req.body === null) {
+        return res.status(400).json({ error: 'Request body must be an object' });
+    }
+    for (const f of fields) {
+        if (req.body[f] !== undefined && !validateString(req.body[f], 500)) {
+            return res.status(400).json({ error: `${f} must be a string (max 500 chars)` });
+        }
+    }
+    if (req.body.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.body.email) && req.body.email !== '') {
+        return res.status(400).json({ error: 'Invalid email format' });
+    }
+    if (req.body.onix_format && !['short', 'reference'].includes(req.body.onix_format)) {
+        return res.status(400).json({ error: 'onix_format must be "short" or "reference"' });
+    }
+    if (req.body.theme && !['light', 'dark'].includes(req.body.theme)) {
+        return res.status(400).json({ error: 'theme must be "light" or "dark"' });
+    }
+
     const sets = [];
     const values = {};
     for (const f of fields) {
@@ -156,6 +425,9 @@ app.get('/api/books/:id', (req, res) => {
 
 // Create book
 app.post('/api/books', (req, res) => {
+    const validationError = validateBookBody(req.body);
+    if (validationError) return res.status(400).json({ error: validationError });
+
     const result = withTransaction(() => {
         // Apply defaults from settings
         const settings = db.prepare('SELECT * FROM settings WHERE id = 1').get();
@@ -213,6 +485,11 @@ app.post('/api/books', (req, res) => {
 // Update book
 app.put('/api/books/:id', (req, res) => {
     const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid book ID' });
+
+    const validationError = validateBookBody(req.body);
+    if (validationError) return res.status(400).json({ error: validationError });
+
     const existing = db.prepare('SELECT id FROM books WHERE id = ?').get(id);
     if (!existing) return res.status(404).json({ error: 'Book not found' });
 
@@ -277,8 +554,8 @@ app.put('/api/books/:id', (req, res) => {
 // Delete books (supports single or batch)
 app.delete('/api/books', (req, res) => {
     const ids = req.body.ids;
-    if (!Array.isArray(ids) || ids.length === 0) {
-        return res.status(400).json({ error: 'ids array required' });
+    if (!validateIdArray(ids)) {
+        return res.status(400).json({ error: 'ids must be an array of integers (max 1000)' });
     }
     withTransaction(() => {
         const stmt = db.prepare('DELETE FROM books WHERE id = ?');
@@ -292,8 +569,8 @@ app.delete('/api/books', (req, res) => {
 // Clone books
 app.post('/api/books/clone', (req, res) => {
     const ids = req.body.ids;
-    if (!Array.isArray(ids) || ids.length === 0) {
-        return res.status(400).json({ error: 'ids array required' });
+    if (!validateIdArray(ids)) {
+        return res.status(400).json({ error: 'ids must be an array of integers (max 1000)' });
     }
 
     const newIds = withTransaction(() => {
@@ -343,8 +620,21 @@ app.post('/api/books/clone', (req, res) => {
 // Bulk update (apply field to multiple books)
 app.put('/api/books/bulk', (req, res) => {
     const { ids, fields } = req.body;
-    if (!Array.isArray(ids) || !fields) {
-        return res.status(400).json({ error: 'ids array and fields object required' });
+    if (!validateIdArray(ids)) {
+        return res.status(400).json({ error: 'ids must be an array of integers (max 1000)' });
+    }
+    if (!fields || typeof fields !== 'object') {
+        return res.status(400).json({ error: 'fields object required' });
+    }
+    // Validate price amount if present
+    if (fields.set_price) {
+        if (typeof fields.set_price !== 'object') {
+            return res.status(400).json({ error: 'set_price must be an object' });
+        }
+        if (fields.set_price.amount !== undefined &&
+            (typeof fields.set_price.amount !== 'number' || fields.set_price.amount < 0 || fields.set_price.amount > 999999)) {
+            return res.status(400).json({ error: 'set_price.amount must be a number between 0 and 999999' });
+        }
     }
 
     withTransaction(() => {
@@ -409,7 +699,11 @@ app.put('/api/books/bulk', (req, res) => {
 // ONIX XML generation
 // ---------------------------------------------------------------------------
 app.post('/api/generate', (req, res) => {
-    const { bookIds } = req.body; // optional: generate only selected books
+    const { bookIds } = req.body;
+    if (bookIds !== undefined && (!Array.isArray(bookIds) || !bookIds.every(id => validateInt(id)))) {
+        return res.status(400).json({ error: 'bookIds must be an array of integers' });
+    }
+    // optional: generate only selected books
     const settings = db.prepare('SELECT * FROM settings WHERE id = 1').get();
 
     let books;
@@ -430,6 +724,9 @@ app.post('/api/generate', (req, res) => {
 // Preview XML (returns string, not download)
 app.post('/api/preview', (req, res) => {
     const { bookIds } = req.body;
+    if (bookIds !== undefined && (!Array.isArray(bookIds) || !bookIds.every(id => validateInt(id)))) {
+        return res.status(400).json({ error: 'bookIds must be an array of integers' });
+    }
     const settings = db.prepare('SELECT * FROM settings WHERE id = 1').get();
 
     let books;
@@ -447,7 +744,7 @@ app.post('/api/preview', (req, res) => {
 // ---------------------------------------------------------------------------
 // Import XLSX/CSV
 // ---------------------------------------------------------------------------
-app.post('/api/import', upload.single('file'), (req, res) => {
+app.post('/api/import', strictLimiter, upload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
     try {
@@ -470,10 +767,13 @@ app.post('/api/import', upload.single('file'), (req, res) => {
 });
 
 // Import mapped data (after user confirms column mapping)
-app.post('/api/import/apply', (req, res) => {
+app.post('/api/import/apply', strictLimiter, (req, res) => {
     const { rows, mapping } = req.body;
-    if (!Array.isArray(rows) || !mapping) {
+    if (!Array.isArray(rows) || !mapping || typeof mapping !== 'object') {
         return res.status(400).json({ error: 'rows array and mapping object required' });
+    }
+    if (rows.length > 10000) {
+        return res.status(400).json({ error: 'Too many rows (max 10000 per import)' });
     }
 
     const settings = db.prepare('SELECT * FROM settings WHERE id = 1').get();
@@ -555,6 +855,9 @@ app.post('/api/import/apply', (req, res) => {
 // ---------------------------------------------------------------------------
 app.get('/api/export/:format', (req, res) => {
     const format = req.params.format;
+    if (!['json', 'csv', 'xlsx'].includes(format)) {
+        return res.status(400).json({ error: 'Supported formats: json, csv, xlsx' });
+    }
     const books = db.prepare('SELECT * FROM books ORDER BY id').all();
 
     // Enrich with related data
@@ -622,9 +925,25 @@ app.get('/api/export/:format', (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
-// Database backup / restore
+// Database backup / restore (admin only, audit-logged)
 // ---------------------------------------------------------------------------
-app.get('/api/db/backup', (req, res) => {
+const AUDIT_LOG_PATH = path.join(__dirname, 'db', 'audit.log');
+
+function auditLog(action, req) {
+    const entry = {
+        timestamp: new Date().toISOString(),
+        action,
+        user: req.apiUser ? req.apiUser.label : 'unknown',
+        role: req.apiUser ? req.apiUser.role : 'unknown',
+        ip: req.ip || req.connection.remoteAddress,
+        userAgent: req.headers['user-agent'] || '',
+    };
+    const line = JSON.stringify(entry) + '\n';
+    fs.appendFileSync(AUDIT_LOG_PATH, line, 'utf8');
+}
+
+app.get('/api/db/backup', strictLimiter, requireAdmin, (req, res) => {
+    auditLog('db_backup', req);
     const backup = db.serialize();
     res.set('Content-Type', 'application/octet-stream');
     res.set('Content-Disposition', 'attachment; filename="onix_backup.db"');
