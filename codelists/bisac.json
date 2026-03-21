@@ -1,68 +1,5670 @@
 [
-  {"code": "ANT000000", "text": "ANTIQUES & COLLECTIBLES / General"},
-  {"code": "ANT001000", "text": "ANTIQUES & COLLECTIBLES / Americana"},
-  {"code": "ANT002000", "text": "ANTIQUES & COLLECTIBLES / Art"},
-  {"code": "ANT003000", "text": "ANTIQUES & COLLECTIBLES / Autographs"},
-  {"code": "ANT005000", "text": "ANTIQUES & COLLECTIBLES / Books"},
-  {"code": "ANT006000", "text": "ANTIQUES & COLLECTIBLES / Bottles"},
-  {"code": "ANT007000", "text": "ANTIQUES & COLLECTIBLES / Buttons & Pins"},
-  {"code": "ANT008000", "text": "ANTIQUES & COLLECTIBLES / Care & Restoration"},
-  {"code": "ANT009000", "text": "ANTIQUES & COLLECTIBLES / Transportation"},
-  {"code": "ANT010000", "text": "ANTIQUES & COLLECTIBLES / Clocks & Watches"},
-  {"code": "ANT011000", "text": "ANTIQUES & COLLECTIBLES / Coins, Currency & Medals"},
-  {"code": "ANT012000", "text": "ANTIQUES & COLLECTIBLES / Comics"},
-  {"code": "ANT015000", "text": "ANTIQUES & COLLECTIBLES / Dolls"},
-  {"code": "ANT016000", "text": "ANTIQUES & COLLECTIBLES / Firearms & Weapons"},
-  {"code": "ANT017000", "text": "ANTIQUES & COLLECTIBLES / Furniture"},
-  {"code": "ANT018000", "text": "ANTIQUES & COLLECTIBLES / Glass & Glassware"},
-  {"code": "ANT021000", "text": "ANTIQUES & COLLECTIBLES / Jewelry"},
-  {"code": "ANT022000", "text": "ANTIQUES & COLLECTIBLES / Kitchenware"},
-  {"code": "ANT023000", "text": "ANTIQUES & COLLECTIBLES / Magazines & Newspapers"},
-  {"code": "ANT024000", "text": "ANTIQUES & COLLECTIBLES / Military"},
-  {"code": "ANT025000", "text": "ANTIQUES & COLLECTIBLES / Performing Arts"},
-  {"code": "ANT028000", "text": "ANTIQUES & COLLECTIBLES / Non-Sports Cards"},
-  {"code": "ANT029000", "text": "ANTIQUES & COLLECTIBLES / Paper Ephemera"},
-  {"code": "ANT031000", "text": "ANTIQUES & COLLECTIBLES / Political"},
-  {"code": "ANT032000", "text": "ANTIQUES & COLLECTIBLES / Porcelain & China"},
-  {"code": "ANT033000", "text": "ANTIQUES & COLLECTIBLES / Postcards"},
-  {"code": "ANT034000", "text": "ANTIQUES & COLLECTIBLES / Posters"},
-  {"code": "ANT035000", "text": "ANTIQUES & COLLECTIBLES / Pottery & Ceramics"},
-  {"code": "ANT036000", "text": "ANTIQUES & COLLECTIBLES / Radios & Televisions"},
-  {"code": "ANT037000", "text": "ANTIQUES & COLLECTIBLES / Records"},
-  {"code": "ANT038000", "text": "ANTIQUES & COLLECTIBLES / Reference"},
-  {"code": "ANT040000", "text": "ANTIQUES & COLLECTIBLES / Rugs"},
-  {"code": "ANT041000", "text": "ANTIQUES & COLLECTIBLES / Silver, Gold & Other Metals"},
-  {"code": "ANT042000", "text": "ANTIQUES & COLLECTIBLES / Sports Cards / General"},
-  {"code": "ANT042010", "text": "ANTIQUES & COLLECTIBLES / Sports Cards / Baseball"},
-  {"code": "ANT042020", "text": "ANTIQUES & COLLECTIBLES / Sports Cards / Basketball"},
-  {"code": "ANT042030", "text": "ANTIQUES & COLLECTIBLES / Sports Cards / Football"},
-  {"code": "ANT042040", "text": "ANTIQUES & COLLECTIBLES / Sports Cards / Hockey"},
-  {"code": "ANT043000", "text": "ANTIQUES & COLLECTIBLES / Stamps"},
-  {"code": "ANT044000", "text": "ANTIQUES & COLLECTIBLES / Teddy Bears & Stuffed Animals"},
-  {"code": "ANT045000", "text": "ANTIQUES & COLLECTIBLES / Textiles & Costume"},
-  {"code": "ANT046000", "text": "ANTIQUES & COLLECTIBLES / Tobacco-Related"},
-  {"code": "ANT047000", "text": "ANTIQUES & COLLECTIBLES / Toys"},
-  {"code": "ANT048000", "text": "ANTIQUES & COLLECTIBLES / Vinyl & Turntables"},
-  {"code": "ARC000000", "text": "ARCHITECTURE / General"},
-  {"code": "ARC001000", "text": "ARCHITECTURE / Adaptive Reuse & Renovation"},
-  {"code": "ARC002000", "text": "ARCHITECTURE / Buildings / General"},
-  {"code": "ARC003000", "text": "ARCHITECTURE / Buildings / Public, Commercial & Industrial"},
-  {"code": "ARC004000", "text": "ARCHITECTURE / Buildings / Religious"},
-  {"code": "ARC005000", "text": "ARCHITECTURE / Buildings / Residential"},
-  {"code": "ARC006000", "text": "ARCHITECTURE / History / General"},
-  {"code": "ARC007000", "text": "ARCHITECTURE / History / Prehistoric"},
-  {"code": "ARC008000", "text": "ARCHITECTURE / History / Ancient & Classical"},
-  {"code": "ARC009000", "text": "ARCHITECTURE / History / Medieval"},
-  {"code": "ARC010000", "text": "ARCHITECTURE / History / Renaissance"},
-  {"code": "ARC011000", "text": "ARCHITECTURE / History / Baroque & Rococo"},
-  {"code": "ARC012000", "text": "ARCHITECTURE / History / Modern"},
-  {"code": "ARC013000", "text": "ARCHITECTURE / History / Contemporary"},
-  {"code": "ARC014000", "text": "ARCHITECTURE / Interior Design / General"},
-  {"code": "ARC015000", "text": "ARCHITECTURE / Interior Design / Lighting"},
-  {"code": "ARC016000", "text": "ARCHITECTURE / Landscape"},
-  {"code": "ARC017000", "text": "ARCHITECTURE / Professional Practice"},
-  {"code": "ARC018000", "text": "ARCHITECTURE / Reference"},
-  {"code": "ARC019000", "text": "ARCHITECTURE / Study & Teaching"},
-  {"code": "ARC020000", "text": "ARCHITECTURE / Sustainability & Green Design"},
-  {"code": "ARC021000", "text": "ARCHITECTURE / Urban & Land Use Planning"},
-  {"code": "ARC022000", "text": "ARCHITECTURE / Regional"},
+  {
+    "code": "ANT000000",
+    "text": "ANTIQUES & COLLECTIBLES / General"
+  },
+  {
+    "code": "ANT001000",
+    "text": "ANTIQUES & COLLECTIBLES / Americana"
+  },
+  {
+    "code": "ANT002000",
+    "text": "ANTIQUES & COLLECTIBLES / Art"
+  },
+  {
+    "code": "ANT003000",
+    "text": "ANTIQUES & COLLECTIBLES / Autographs"
+  },
+  {
+    "code": "ANT005000",
+    "text": "ANTIQUES & COLLECTIBLES / Books"
+  },
+  {
+    "code": "ANT006000",
+    "text": "ANTIQUES & COLLECTIBLES / Bottles"
+  },
+  {
+    "code": "ANT007000",
+    "text": "ANTIQUES & COLLECTIBLES / Buttons & Pins"
+  },
+  {
+    "code": "ANT008000",
+    "text": "ANTIQUES & COLLECTIBLES / Care & Restoration"
+  },
+  {
+    "code": "ANT009000",
+    "text": "ANTIQUES & COLLECTIBLES / Transportation"
+  },
+  {
+    "code": "ANT010000",
+    "text": "ANTIQUES & COLLECTIBLES / Clocks & Watches"
+  },
+  {
+    "code": "ANT011000",
+    "text": "ANTIQUES & COLLECTIBLES / Coins, Currency & Medals"
+  },
+  {
+    "code": "ANT012000",
+    "text": "ANTIQUES & COLLECTIBLES / Comics"
+  },
+  {
+    "code": "ANT015000",
+    "text": "ANTIQUES & COLLECTIBLES / Dolls"
+  },
+  {
+    "code": "ANT016000",
+    "text": "ANTIQUES & COLLECTIBLES / Firearms & Weapons"
+  },
+  {
+    "code": "ANT017000",
+    "text": "ANTIQUES & COLLECTIBLES / Furniture"
+  },
+  {
+    "code": "ANT018000",
+    "text": "ANTIQUES & COLLECTIBLES / Glass & Glassware"
+  },
+  {
+    "code": "ANT021000",
+    "text": "ANTIQUES & COLLECTIBLES / Jewelry"
+  },
+  {
+    "code": "ANT022000",
+    "text": "ANTIQUES & COLLECTIBLES / Kitchenware"
+  },
+  {
+    "code": "ANT023000",
+    "text": "ANTIQUES & COLLECTIBLES / Magazines & Newspapers"
+  },
+  {
+    "code": "ANT024000",
+    "text": "ANTIQUES & COLLECTIBLES / Military"
+  },
+  {
+    "code": "ANT025000",
+    "text": "ANTIQUES & COLLECTIBLES / Performing Arts"
+  },
+  {
+    "code": "ANT028000",
+    "text": "ANTIQUES & COLLECTIBLES / Non-Sports Cards"
+  },
+  {
+    "code": "ANT029000",
+    "text": "ANTIQUES & COLLECTIBLES / Paper Ephemera"
+  },
+  {
+    "code": "ANT031000",
+    "text": "ANTIQUES & COLLECTIBLES / Political"
+  },
+  {
+    "code": "ANT032000",
+    "text": "ANTIQUES & COLLECTIBLES / Porcelain & China"
+  },
+  {
+    "code": "ANT033000",
+    "text": "ANTIQUES & COLLECTIBLES / Postcards"
+  },
+  {
+    "code": "ANT034000",
+    "text": "ANTIQUES & COLLECTIBLES / Posters"
+  },
+  {
+    "code": "ANT035000",
+    "text": "ANTIQUES & COLLECTIBLES / Pottery & Ceramics"
+  },
+  {
+    "code": "ANT036000",
+    "text": "ANTIQUES & COLLECTIBLES / Radios & Televisions"
+  },
+  {
+    "code": "ANT037000",
+    "text": "ANTIQUES & COLLECTIBLES / Records"
+  },
+  {
+    "code": "ANT038000",
+    "text": "ANTIQUES & COLLECTIBLES / Reference"
+  },
+  {
+    "code": "ANT040000",
+    "text": "ANTIQUES & COLLECTIBLES / Rugs"
+  },
+  {
+    "code": "ANT041000",
+    "text": "ANTIQUES & COLLECTIBLES / Silver, Gold & Other Metals"
+  },
+  {
+    "code": "ANT042000",
+    "text": "ANTIQUES & COLLECTIBLES / Sports Cards / General"
+  },
+  {
+    "code": "ANT042010",
+    "text": "ANTIQUES & COLLECTIBLES / Sports Cards / Baseball"
+  },
+  {
+    "code": "ANT042020",
+    "text": "ANTIQUES & COLLECTIBLES / Sports Cards / Basketball"
+  },
+  {
+    "code": "ANT042030",
+    "text": "ANTIQUES & COLLECTIBLES / Sports Cards / Football"
+  },
+  {
+    "code": "ANT042040",
+    "text": "ANTIQUES & COLLECTIBLES / Sports Cards / Hockey"
+  },
+  {
+    "code": "ANT043000",
+    "text": "ANTIQUES & COLLECTIBLES / Stamps"
+  },
+  {
+    "code": "ANT044000",
+    "text": "ANTIQUES & COLLECTIBLES / Teddy Bears & Stuffed Animals"
+  },
+  {
+    "code": "ANT045000",
+    "text": "ANTIQUES & COLLECTIBLES / Textiles & Costume"
+  },
+  {
+    "code": "ANT046000",
+    "text": "ANTIQUES & COLLECTIBLES / Tobacco-Related"
+  },
+  {
+    "code": "ANT047000",
+    "text": "ANTIQUES & COLLECTIBLES / Toys"
+  },
+  {
+    "code": "ANT048000",
+    "text": "ANTIQUES & COLLECTIBLES / Vinyl & Turntables"
+  },
+  {
+    "code": "ARC000000",
+    "text": "ARCHITECTURE / General"
+  },
+  {
+    "code": "ARC001000",
+    "text": "ARCHITECTURE / Adaptive Reuse & Renovation"
+  },
+  {
+    "code": "ARC003000",
+    "text": "ARCHITECTURE / Buildings / Public, Commercial & Industrial"
+  },
+  {
+    "code": "ARC004000",
+    "text": "ARCHITECTURE / Buildings / Religious"
+  },
+  {
+    "code": "ARC005000",
+    "text": "ARCHITECTURE / Buildings / Residential"
+  },
+  {
+    "code": "ARC006000",
+    "text": "ARCHITECTURE / History / General"
+  },
+  {
+    "code": "ARC012000",
+    "text": "ARCHITECTURE / History / Modern"
+  },
+  {
+    "code": "ARC014000",
+    "text": "ARCHITECTURE / Interior Design / General"
+  },
+  {
+    "code": "ARC016000",
+    "text": "ARCHITECTURE / Landscape"
+  },
+  {
+    "code": "ARC017000",
+    "text": "ARCHITECTURE / Professional Practice"
+  },
+  {
+    "code": "ARC018000",
+    "text": "ARCHITECTURE / Reference"
+  },
+  {
+    "code": "ARC020000",
+    "text": "ARCHITECTURE / Sustainability & Green Design"
+  },
+  {
+    "code": "ARC021000",
+    "text": "ARCHITECTURE / Urban & Land Use Planning"
+  },
+  {
+    "code": "ART000000",
+    "text": "ART / General"
+  },
+  {
+    "code": "ART006000",
+    "text": "ART / Collections, Catalogs, Exhibitions / General"
+  },
+  {
+    "code": "ART007000",
+    "text": "ART / Color Theory"
+  },
+  {
+    "code": "ART008000",
+    "text": "ART / Conceptual"
+  },
+  {
+    "code": "ART009000",
+    "text": "ART / Criticism & Theory"
+  },
+  {
+    "code": "ART010000",
+    "text": "ART / Techniques / Drawing / General"
+  },
+  {
+    "code": "ART013000",
+    "text": "ART / Folk & Outsider Art"
+  },
+  {
+    "code": "ART015000",
+    "text": "ART / History / General"
+  },
+  {
+    "code": "ART015010",
+    "text": "ART / African"
+  },
+  {
+    "code": "ART015020",
+    "text": "ART / American"
+  },
+  {
+    "code": "ART015030",
+    "text": "ART / European / General"
+  },
+  {
+    "code": "ART015060",
+    "text": "ART / History / Ancient & Classical"
+  },
+  {
+    "code": "ART015080",
+    "text": "ART / Movements / Renaissance"
+  },
+  {
+    "code": "ART015100",
+    "text": "ART / Movements / Modernism"
+  },
+  {
+    "code": "ART015110",
+    "text": "ART / History / 20th & 21st Century"
+  },
+  {
+    "code": "ART015290",
+    "text": "ART / Movements / Impressionism & Post-Impressionism"
+  },
+  {
+    "code": "ART015330",
+    "text": "ART / Movements / Surrealism"
+  },
+  {
+    "code": "ART015350",
+    "text": "ART / Movements / Pop Art"
+  },
+  {
+    "code": "ART016000",
+    "text": "ART / Individual Artists / General"
+  },
+  {
+    "code": "ART016030",
+    "text": "ART / Individual Artists / Monographs"
+  },
+  {
+    "code": "ART017000",
+    "text": "ART / Mixed Media"
+  },
+  {
+    "code": "ART019000",
+    "text": "ART / Asian / General"
+  },
+  {
+    "code": "ART019010",
+    "text": "ART / Asian / Chinese"
+  },
+  {
+    "code": "ART019020",
+    "text": "ART / Asian / Indian & South Asian"
+  },
+  {
+    "code": "ART019030",
+    "text": "ART / Asian / Japanese"
+  },
+  {
+    "code": "ART020000",
+    "text": "ART / Techniques / Painting / General"
+  },
+  {
+    "code": "ART023000",
+    "text": "ART / Popular Culture"
+  },
+  {
+    "code": "ART024000",
+    "text": "ART / Techniques / Printmaking"
+  },
+  {
+    "code": "ART025000",
+    "text": "ART / Reference"
+  },
+  {
+    "code": "ART026000",
+    "text": "ART / Sculpture & Installation"
+  },
+  {
+    "code": "ART027000",
+    "text": "ART / Study & Teaching"
+  },
+  {
+    "code": "ART028000",
+    "text": "ART / Techniques / General"
+  },
+  {
+    "code": "ART029000",
+    "text": "ART / Techniques / Painting / Watercolor"
+  },
+  {
+    "code": "ART035000",
+    "text": "ART / Subjects & Themes / Religious"
+  },
+  {
+    "code": "ART037000",
+    "text": "ART / Art & Politics"
+  },
+  {
+    "code": "ART038000",
+    "text": "ART / African American & Black"
+  },
+  {
+    "code": "ART039000",
+    "text": "ART / Asian American & Pacific Islander"
+  },
+  {
+    "code": "ART040000",
+    "text": "ART / Hispanic & Latino"
+  },
+  {
+    "code": "ART041000",
+    "text": "ART / Indigenous"
+  },
+  {
+    "code": "ART042000",
+    "text": "ART / Australian & Oceanian"
+  },
+  {
+    "code": "ART043000",
+    "text": "ART / Business Aspects"
+  },
+  {
+    "code": "ART044000",
+    "text": "ART / Caribbean & Latin American"
+  },
+  {
+    "code": "ART045000",
+    "text": "ART / Ceramics"
+  },
+  {
+    "code": "ART046000",
+    "text": "ART / Digital"
+  },
+  {
+    "code": "ART048000",
+    "text": "ART / Prints"
+  },
+  {
+    "code": "ART050010",
+    "text": "ART / Subjects & Themes / Human Figure"
+  },
+  {
+    "code": "ART050020",
+    "text": "ART / Subjects & Themes / Landscapes & Seascapes"
+  },
+  {
+    "code": "ART050040",
+    "text": "ART / Subjects & Themes / Portraits"
+  },
+  {
+    "code": "ART055000",
+    "text": "ART / Body Art & Tattooing"
+  },
+  {
+    "code": "ART056000",
+    "text": "ART / Conservation & Preservation"
+  },
+  {
+    "code": "ART057000",
+    "text": "ART / Film & Video"
+  },
+  {
+    "code": "ART058000",
+    "text": "ART / Graffiti & Street Art"
+  },
+  {
+    "code": "ART059000",
+    "text": "ART / Museum Studies"
+  },
+  {
+    "code": "ART060000",
+    "text": "ART / Performance"
+  },
+  {
+    "code": "ART064000",
+    "text": "ART / Video Game Art"
+  },
+  {
+    "code": "ART065000",
+    "text": "ART / Women Artists"
+  },
+  {
+    "code": "ART066000",
+    "text": "ART / LGBTQ+"
+  },
+  {
+    "code": "BIB000000",
+    "text": "BIBLES / General"
+  },
+  {
+    "code": "BIB001000",
+    "text": "BIBLES / Christian Standard Bible / General"
+  },
+  {
+    "code": "BIB006000",
+    "text": "BIBLES / King James Version / General"
+  },
+  {
+    "code": "BIB010000",
+    "text": "BIBLES / New American Standard Bible / General"
+  },
+  {
+    "code": "BIB012000",
+    "text": "BIBLES / New International Version / General"
+  },
+  {
+    "code": "BIB017000",
+    "text": "BIBLES / New Living Translation / General"
+  },
+  {
+    "code": "BIB018000",
+    "text": "BIBLES / New Revised Standard Version / General"
+  },
+  {
+    "code": "BIB022000",
+    "text": "BIBLES / Other Translations / General"
+  },
+  {
+    "code": "BIO000000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / General"
+  },
+  {
+    "code": "BIO001000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Artists, Architects, Photographers"
+  },
+  {
+    "code": "BIO002000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Cultural & Regional"
+  },
+  {
+    "code": "BIO002010",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / African American & Black"
+  },
+  {
+    "code": "BIO002020",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Asian & Asian American"
+  },
+  {
+    "code": "BIO002030",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Hispanic & Latino"
+  },
+  {
+    "code": "BIO003000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Business"
+  },
+  {
+    "code": "BIO004000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Music"
+  },
+  {
+    "code": "BIO005000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Entertainment & Performing Arts"
+  },
+  {
+    "code": "BIO006000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Historical"
+  },
+  {
+    "code": "BIO007000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Literary Figures"
+  },
+  {
+    "code": "BIO008000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Military"
+  },
+  {
+    "code": "BIO009000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Philosophers"
+  },
+  {
+    "code": "BIO010000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Political"
+  },
+  {
+    "code": "BIO011000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Presidents & Heads of State"
+  },
+  {
+    "code": "BIO012000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Reference"
+  },
+  {
+    "code": "BIO013000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Rich & Famous"
+  },
+  {
+    "code": "BIO014000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Royalty"
+  },
+  {
+    "code": "BIO015000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Science & Technology"
+  },
+  {
+    "code": "BIO016000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Sports"
+  },
+  {
+    "code": "BIO017000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Medical (incl. Patients)"
+  },
+  {
+    "code": "BIO018000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Religious"
+  },
+  {
+    "code": "BIO019000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Educators"
+  },
+  {
+    "code": "BIO020000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Lawyers & Judges"
+  },
+  {
+    "code": "BIO022000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Women"
+  },
+  {
+    "code": "BIO023000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Adventurers & Explorers"
+  },
+  {
+    "code": "BIO024000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Criminals & Outlaws"
+  },
+  {
+    "code": "BIO025000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Editors, Journalists, Publishers"
+  },
+  {
+    "code": "BIO026000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Memoirs"
+  },
+  {
+    "code": "BIO027000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Law Enforcement"
+  },
+  {
+    "code": "BIO028000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Indigenous"
+  },
+  {
+    "code": "BIO029000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Culinary"
+  },
+  {
+    "code": "BIO030000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Environmentalists & Naturalists"
+  },
+  {
+    "code": "BIO031000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / LGBTQ+"
+  },
+  {
+    "code": "BIO032000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Social Activists"
+  },
+  {
+    "code": "BIO034000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Aviation & Nautical"
+  },
+  {
+    "code": "BIO035000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Fashion"
+  },
+  {
+    "code": "BIO037000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Jewish"
+  },
+  {
+    "code": "BIO038000",
+    "text": "BIOGRAPHY & AUTOBIOGRAPHY / Survival"
+  },
+  {
+    "code": "BUS000000",
+    "text": "BUSINESS & ECONOMICS / General"
+  },
+  {
+    "code": "BUS001000",
+    "text": "BUSINESS & ECONOMICS / Accounting / General"
+  },
+  {
+    "code": "BUS002000",
+    "text": "BUSINESS & ECONOMICS / Advertising & Promotion"
+  },
+  {
+    "code": "BUS003000",
+    "text": "BUSINESS & ECONOMICS / Auditing"
+  },
+  {
+    "code": "BUS004000",
+    "text": "BUSINESS & ECONOMICS / Banks & Banking"
+  },
+  {
+    "code": "BUS007000",
+    "text": "BUSINESS & ECONOMICS / Business Communication / General"
+  },
+  {
+    "code": "BUS008000",
+    "text": "BUSINESS & ECONOMICS / Business Ethics"
+  },
+  {
+    "code": "BUS010000",
+    "text": "BUSINESS & ECONOMICS / Business Law"
+  },
+  {
+    "code": "BUS011000",
+    "text": "BUSINESS & ECONOMICS / Business Writing"
+  },
+  {
+    "code": "BUS012000",
+    "text": "BUSINESS & ECONOMICS / Careers / General"
+  },
+  {
+    "code": "BUS016000",
+    "text": "BUSINESS & ECONOMICS / Consumer Behavior"
+  },
+  {
+    "code": "BUS017000",
+    "text": "BUSINESS & ECONOMICS / Corporate Finance / General"
+  },
+  {
+    "code": "BUS018000",
+    "text": "BUSINESS & ECONOMICS / Customer Relations"
+  },
+  {
+    "code": "BUS019000",
+    "text": "BUSINESS & ECONOMICS / Decision-Making & Problem Solving"
+  },
+  {
+    "code": "BUS020000",
+    "text": "BUSINESS & ECONOMICS / Development / Business Development"
+  },
+  {
+    "code": "BUS021000",
+    "text": "BUSINESS & ECONOMICS / Econometrics"
+  },
+  {
+    "code": "BUS022000",
+    "text": "BUSINESS & ECONOMICS / Economic Conditions"
+  },
+  {
+    "code": "BUS023000",
+    "text": "BUSINESS & ECONOMICS / Economic History"
+  },
+  {
+    "code": "BUS024000",
+    "text": "BUSINESS & ECONOMICS / Education"
+  },
+  {
+    "code": "BUS025000",
+    "text": "BUSINESS & ECONOMICS / Entrepreneurship"
+  },
+  {
+    "code": "BUS027000",
+    "text": "BUSINESS & ECONOMICS / Finance / General"
+  },
+  {
+    "code": "BUS029000",
+    "text": "BUSINESS & ECONOMICS / Free Enterprise & Capitalism"
+  },
+  {
+    "code": "BUS030000",
+    "text": "BUSINESS & ECONOMICS / Human Resources & Personnel Management"
+  },
+  {
+    "code": "BUS033000",
+    "text": "BUSINESS & ECONOMICS / Insurance / General"
+  },
+  {
+    "code": "BUS035000",
+    "text": "BUSINESS & ECONOMICS / International / General"
+  },
+  {
+    "code": "BUS036000",
+    "text": "BUSINESS & ECONOMICS / Investments & Securities / General"
+  },
+  {
+    "code": "BUS036050",
+    "text": "BUSINESS & ECONOMICS / Investments & Securities / Real Estate"
+  },
+  {
+    "code": "BUS036060",
+    "text": "BUSINESS & ECONOMICS / Investments & Securities / Stocks"
+  },
+  {
+    "code": "BUS038000",
+    "text": "BUSINESS & ECONOMICS / Labor / General"
+  },
+  {
+    "code": "BUS039000",
+    "text": "BUSINESS & ECONOMICS / Economics / Macroeconomics"
+  },
+  {
+    "code": "BUS041000",
+    "text": "BUSINESS & ECONOMICS / Management"
+  },
+  {
+    "code": "BUS043000",
+    "text": "BUSINESS & ECONOMICS / Marketing / General"
+  },
+  {
+    "code": "BUS044000",
+    "text": "BUSINESS & ECONOMICS / Economics / Microeconomics"
+  },
+  {
+    "code": "BUS045000",
+    "text": "BUSINESS & ECONOMICS / Money & Monetary Policy"
+  },
+  {
+    "code": "BUS046000",
+    "text": "BUSINESS & ECONOMICS / Motivational"
+  },
+  {
+    "code": "BUS047000",
+    "text": "BUSINESS & ECONOMICS / Negotiating"
+  },
+  {
+    "code": "BUS048000",
+    "text": "BUSINESS & ECONOMICS / New Business Enterprises"
+  },
+  {
+    "code": "BUS049000",
+    "text": "BUSINESS & ECONOMICS / Operations Research"
+  },
+  {
+    "code": "BUS050000",
+    "text": "BUSINESS & ECONOMICS / Personal Finance / General"
+  },
+  {
+    "code": "BUS050020",
+    "text": "BUSINESS & ECONOMICS / Personal Finance / Investing"
+  },
+  {
+    "code": "BUS050040",
+    "text": "BUSINESS & ECONOMICS / Personal Finance / Retirement Planning"
+  },
+  {
+    "code": "BUS051000",
+    "text": "BUSINESS & ECONOMICS / Public Finance"
+  },
+  {
+    "code": "BUS052000",
+    "text": "BUSINESS & ECONOMICS / Public Relations"
+  },
+  {
+    "code": "BUS054000",
+    "text": "BUSINESS & ECONOMICS / Real Estate / General"
+  },
+  {
+    "code": "BUS055000",
+    "text": "BUSINESS & ECONOMICS / Reference"
+  },
+  {
+    "code": "BUS058000",
+    "text": "BUSINESS & ECONOMICS / Sales & Selling / General"
+  },
+  {
+    "code": "BUS060000",
+    "text": "BUSINESS & ECONOMICS / Small Business"
+  },
+  {
+    "code": "BUS061000",
+    "text": "BUSINESS & ECONOMICS / Statistics"
+  },
+  {
+    "code": "BUS063000",
+    "text": "BUSINESS & ECONOMICS / Strategic Planning"
+  },
+  {
+    "code": "BUS064000",
+    "text": "BUSINESS & ECONOMICS / Taxation / General"
+  },
+  {
+    "code": "BUS069000",
+    "text": "BUSINESS & ECONOMICS / Economics / General"
+  },
+  {
+    "code": "BUS071000",
+    "text": "BUSINESS & ECONOMICS / Leadership"
+  },
+  {
+    "code": "BUS077000",
+    "text": "BUSINESS & ECONOMICS / Corporate & Business History"
+  },
+  {
+    "code": "BUS085000",
+    "text": "BUSINESS & ECONOMICS / Organizational Behavior"
+  },
+  {
+    "code": "BUS090000",
+    "text": "BUSINESS & ECONOMICS / E-Commerce / General"
+  },
+  {
+    "code": "BUS101000",
+    "text": "BUSINESS & ECONOMICS / Project Management"
+  },
+  {
+    "code": "BUS107000",
+    "text": "BUSINESS & ECONOMICS / Personal Success"
+  },
+  {
+    "code": "BUS113000",
+    "text": "BUSINESS & ECONOMICS / Globalization"
+  },
+  {
+    "code": "BUS114000",
+    "text": "BUSINESS & ECONOMICS / Bitcoin & Cryptocurrencies"
+  },
+  {
+    "code": "BUS115000",
+    "text": "BUSINESS & ECONOMICS / Freelance & Self-Employment"
+  },
+  {
+    "code": "BUS116000",
+    "text": "BUSINESS & ECONOMICS / Logistics & Supply Chain"
+  },
+  {
+    "code": "BUS118000",
+    "text": "BUSINESS & ECONOMICS / Diversity & Inclusion"
+  },
+  {
+    "code": "CGN000000",
+    "text": "COMICS & GRAPHIC NOVELS / General"
+  },
+  {
+    "code": "CGN001000",
+    "text": "COMICS & GRAPHIC NOVELS / Anthologies"
+  },
+  {
+    "code": "CGN004010",
+    "text": "COMICS & GRAPHIC NOVELS / Crime & Mystery"
+  },
+  {
+    "code": "CGN004030",
+    "text": "COMICS & GRAPHIC NOVELS / Fantasy / General"
+  },
+  {
+    "code": "CGN004040",
+    "text": "COMICS & GRAPHIC NOVELS / Horror"
+  },
+  {
+    "code": "CGN004050",
+    "text": "COMICS & GRAPHIC NOVELS / East Asian Style / Manga / General"
+  },
+  {
+    "code": "CGN004070",
+    "text": "COMICS & GRAPHIC NOVELS / Science Fiction / General"
+  },
+  {
+    "code": "CGN004080",
+    "text": "COMICS & GRAPHIC NOVELS / Superheroes"
+  },
+  {
+    "code": "CGN004090",
+    "text": "COMICS & GRAPHIC NOVELS / Romance"
+  },
+  {
+    "code": "CGN006000",
+    "text": "COMICS & GRAPHIC NOVELS / Literary"
+  },
+  {
+    "code": "CGN007000",
+    "text": "COMICS & GRAPHIC NOVELS / Nonfiction / General"
+  },
+  {
+    "code": "CGN007010",
+    "text": "COMICS & GRAPHIC NOVELS / Nonfiction / Biography & Memoir"
+  },
+  {
+    "code": "CGN007020",
+    "text": "COMICS & GRAPHIC NOVELS / Nonfiction / History"
+  },
+  {
+    "code": "CGN008000",
+    "text": "COMICS & GRAPHIC NOVELS / Contemporary Women"
+  },
+  {
+    "code": "CGN009000",
+    "text": "COMICS & GRAPHIC NOVELS / LGBTQ+ / General"
+  },
+  {
+    "code": "CGN010000",
+    "text": "COMICS & GRAPHIC NOVELS / Historical Fiction / General"
+  },
+  {
+    "code": "CGN012000",
+    "text": "COMICS & GRAPHIC NOVELS / Adaptations"
+  },
+  {
+    "code": "CGN013000",
+    "text": "COMICS & GRAPHIC NOVELS / Dystopian"
+  },
+  {
+    "code": "CGN014000",
+    "text": "COMICS & GRAPHIC NOVELS / Humorous"
+  },
+  {
+    "code": "CGN016000",
+    "text": "COMICS & GRAPHIC NOVELS / Occult & Supernatural"
+  },
+  {
+    "code": "CGN017000",
+    "text": "COMICS & GRAPHIC NOVELS / Supervillains"
+  },
+  {
+    "code": "CGN018000",
+    "text": "COMICS & GRAPHIC NOVELS / Action & Adventure"
+  },
+  {
+    "code": "CGN019000",
+    "text": "COMICS & GRAPHIC NOVELS / Fairy Tales, Folk Tales, Legends & Mythology"
+  },
+  {
+    "code": "CGN020000",
+    "text": "COMICS & GRAPHIC NOVELS / European Style (incl. Bandes Dessinees)"
+  },
+  {
+    "code": "CGN024000",
+    "text": "COMICS & GRAPHIC NOVELS / Coming of Age"
+  },
+  {
+    "code": "CGN034000",
+    "text": "COMICS & GRAPHIC NOVELS / Slice of Life"
+  },
+  {
+    "code": "CKB000000",
+    "text": "COOKING / General"
+  },
+  {
+    "code": "CKB001000",
+    "text": "COOKING / Regional & Cultural / African"
+  },
+  {
+    "code": "CKB002000",
+    "text": "COOKING / Regional & Cultural / American / General"
+  },
+  {
+    "code": "CKB002060",
+    "text": "COOKING / Regional & Cultural / American / Southern States"
+  },
+  {
+    "code": "CKB003000",
+    "text": "COOKING / Courses & Dishes / Appetizers"
+  },
+  {
+    "code": "CKB004000",
+    "text": "COOKING / Methods / Baking"
+  },
+  {
+    "code": "CKB005000",
+    "text": "COOKING / Methods / Barbecue & Grilling"
+  },
+  {
+    "code": "CKB006000",
+    "text": "COOKING / Beverages / Alcoholic / Bartending & Cocktails"
+  },
+  {
+    "code": "CKB007000",
+    "text": "COOKING / Beverages / Alcoholic / Beer"
+  },
+  {
+    "code": "CKB009000",
+    "text": "COOKING / Courses & Dishes / Bread"
+  },
+  {
+    "code": "CKB013000",
+    "text": "COOKING / Regional & Cultural / Cajun & Creole"
+  },
+  {
+    "code": "CKB014000",
+    "text": "COOKING / Courses & Dishes / Cakes"
+  },
+  {
+    "code": "CKB015000",
+    "text": "COOKING / Methods / Canning & Preserving"
+  },
+  {
+    "code": "CKB016000",
+    "text": "COOKING / Regional & Cultural / Caribbean & West Indian"
+  },
+  {
+    "code": "CKB017000",
+    "text": "COOKING / Regional & Cultural / Chinese"
+  },
+  {
+    "code": "CKB018000",
+    "text": "COOKING / Specific Ingredients / Chocolate"
+  },
+  {
+    "code": "CKB019000",
+    "text": "COOKING / Beverages / Coffee & Tea"
+  },
+  {
+    "code": "CKB024000",
+    "text": "COOKING / Courses & Dishes / Desserts"
+  },
+  {
+    "code": "CKB026000",
+    "text": "COOKING / Health & Healing / Weight Control"
+  },
+  {
+    "code": "CKB029000",
+    "text": "COOKING / Entertaining"
+  },
+  {
+    "code": "CKB030000",
+    "text": "COOKING / Essays & Narratives"
+  },
+  {
+    "code": "CKB031000",
+    "text": "COOKING / Regional & Cultural / General"
+  },
+  {
+    "code": "CKB034000",
+    "text": "COOKING / Regional & Cultural / French"
+  },
+  {
+    "code": "CKB037000",
+    "text": "COOKING / Methods / Gourmet"
+  },
+  {
+    "code": "CKB038000",
+    "text": "COOKING / Regional & Cultural / Greek"
+  },
+  {
+    "code": "CKB039000",
+    "text": "COOKING / Health & Healing / General"
+  },
+  {
+    "code": "CKB041000",
+    "text": "COOKING / History"
+  },
+  {
+    "code": "CKB042000",
+    "text": "COOKING / Holiday"
+  },
+  {
+    "code": "CKB044000",
+    "text": "COOKING / Regional & Cultural / Indian & South Asian"
+  },
+  {
+    "code": "CKB045000",
+    "text": "COOKING / Regional & Cultural / International"
+  },
+  {
+    "code": "CKB047000",
+    "text": "COOKING / Regional & Cultural / Italian"
+  },
+  {
+    "code": "CKB048000",
+    "text": "COOKING / Regional & Cultural / Japanese"
+  },
+  {
+    "code": "CKB049000",
+    "text": "COOKING / Regional & Cultural / Jewish & Kosher"
+  },
+  {
+    "code": "CKB054000",
+    "text": "COOKING / Specific Ingredients / Meat"
+  },
+  {
+    "code": "CKB055000",
+    "text": "COOKING / Regional & Cultural / Mediterranean"
+  },
+  {
+    "code": "CKB056000",
+    "text": "COOKING / Regional & Cultural / Mexican"
+  },
+  {
+    "code": "CKB062000",
+    "text": "COOKING / Courses & Dishes / Pastry"
+  },
+  {
+    "code": "CKB070000",
+    "text": "COOKING / Methods / Quick & Easy"
+  },
+  {
+    "code": "CKB073000",
+    "text": "COOKING / Courses & Dishes / Salads"
+  },
+  {
+    "code": "CKB076000",
+    "text": "COOKING / Specific Ingredients / Fish & Seafood"
+  },
+  {
+    "code": "CKB077000",
+    "text": "COOKING / Seasonal"
+  },
+  {
+    "code": "CKB079000",
+    "text": "COOKING / Courses & Dishes / Soups & Stews"
+  },
+  {
+    "code": "CKB080000",
+    "text": "COOKING / Regional & Cultural / Spanish"
+  },
+  {
+    "code": "CKB083000",
+    "text": "COOKING / Regional & Cultural / Thai"
+  },
+  {
+    "code": "CKB085000",
+    "text": "COOKING / Specific Ingredients / Vegetables"
+  },
+  {
+    "code": "CKB086000",
+    "text": "COOKING / Vegetarian"
+  },
+  {
+    "code": "CKB090000",
+    "text": "COOKING / Regional & Cultural / Asian"
+  },
+  {
+    "code": "CKB093000",
+    "text": "COOKING / Regional & Cultural / Middle Eastern"
+  },
+  {
+    "code": "CKB107000",
+    "text": "COOKING / Baby Food"
+  },
+  {
+    "code": "CKB109000",
+    "text": "COOKING / Methods / Slow Cooking"
+  },
+  {
+    "code": "CKB111000",
+    "text": "COOKING / Health & Healing / Gluten-Free"
+  },
+  {
+    "code": "CKB123000",
+    "text": "COOKING / Regional & Cultural / Korean"
+  },
+  {
+    "code": "CKB125000",
+    "text": "COOKING / Vegan"
+  },
+  {
+    "code": "CKB126000",
+    "text": "COOKING / Beverages / Alcoholic / Wine"
+  },
+  {
+    "code": "CKB127000",
+    "text": "COOKING / Comfort Food"
+  },
+  {
+    "code": "CKB132000",
+    "text": "COOKING / Farm to Table"
+  },
+  {
+    "code": "COM000000",
+    "text": "COMPUTERS / General"
+  },
+  {
+    "code": "COM004000",
+    "text": "COMPUTERS / Artificial Intelligence / General"
+  },
+  {
+    "code": "COM014000",
+    "text": "COMPUTERS / Computer Science"
+  },
+  {
+    "code": "COM018000",
+    "text": "COMPUTERS / Data Science / General"
+  },
+  {
+    "code": "COM042000",
+    "text": "COMPUTERS / Artificial Intelligence / Natural Language Processing"
+  },
+  {
+    "code": "COM043000",
+    "text": "COMPUTERS / Networking / General"
+  },
+  {
+    "code": "COM046000",
+    "text": "COMPUTERS / Operating Systems / General"
+  },
+  {
+    "code": "COM046070",
+    "text": "COMPUTERS / Operating Systems / Linux"
+  },
+  {
+    "code": "COM051000",
+    "text": "COMPUTERS / Programming / General"
+  },
+  {
+    "code": "COM051230",
+    "text": "COMPUTERS / Software Development & Engineering / General"
+  },
+  {
+    "code": "COM051260",
+    "text": "COMPUTERS / Languages / JavaScript"
+  },
+  {
+    "code": "COM051300",
+    "text": "COMPUTERS / Programming / Algorithms"
+  },
+  {
+    "code": "COM051360",
+    "text": "COMPUTERS / Languages / Python"
+  },
+  {
+    "code": "COM053000",
+    "text": "COMPUTERS / Security / General"
+  },
+  {
+    "code": "COM057000",
+    "text": "COMPUTERS / Virtual & Augmented Reality"
+  },
+  {
+    "code": "COM060000",
+    "text": "COMPUTERS / Internet / General"
+  },
+  {
+    "code": "COM060130",
+    "text": "COMPUTERS / Internet / Web Design"
+  },
+  {
+    "code": "COM060140",
+    "text": "COMPUTERS / Internet / Social Media"
+  },
+  {
+    "code": "COM060160",
+    "text": "COMPUTERS / Internet / Web Programming"
+  },
+  {
+    "code": "COM083000",
+    "text": "COMPUTERS / Security / Cryptography & Encryption"
+  },
+  {
+    "code": "COM091000",
+    "text": "COMPUTERS / Distributed Systems / Cloud Computing"
+  },
+  {
+    "code": "COM093000",
+    "text": "COMPUTERS / Blockchain"
+  },
+  {
+    "code": "COM094000",
+    "text": "COMPUTERS / Data Science / Machine Learning"
+  },
+  {
+    "code": "COM095000",
+    "text": "COMPUTERS / Internet of Things (IoT)"
+  },
+  {
+    "code": "COM097000",
+    "text": "COMPUTERS / Quantum Computing"
+  },
+  {
+    "code": "COM100000",
+    "text": "COMPUTERS / Artificial Intelligence / Generative AI"
+  },
+  {
+    "code": "CRA000000",
+    "text": "CRAFTS & HOBBIES / General"
+  },
+  {
+    "code": "CRA003000",
+    "text": "CRAFTS & HOBBIES / Book Printing & Binding"
+  },
+  {
+    "code": "CRA004000",
+    "text": "CRAFTS & HOBBIES / Candle Making"
+  },
+  {
+    "code": "CRA007000",
+    "text": "CRAFTS & HOBBIES / Dye"
+  },
+  {
+    "code": "CRA010000",
+    "text": "CRAFTS & HOBBIES / Flower Arranging"
+  },
+  {
+    "code": "CRA012000",
+    "text": "CRAFTS & HOBBIES / Jewelry"
+  },
+  {
+    "code": "CRA014000",
+    "text": "CRAFTS & HOBBIES / Knitting"
+  },
+  {
+    "code": "CRA015000",
+    "text": "CRAFTS & HOBBIES / Metal Work"
+  },
+  {
+    "code": "CRA020000",
+    "text": "CRAFTS & HOBBIES / Needlework / General"
+  },
+  {
+    "code": "CRA022000",
+    "text": "CRAFTS & HOBBIES / Needlework / Crocheting"
+  },
+  {
+    "code": "CRA024000",
+    "text": "CRAFTS & HOBBIES / Needlework / Embroidery"
+  },
+  {
+    "code": "CRA028000",
+    "text": "CRAFTS & HOBBIES / Quilts & Quilting"
+  },
+  {
+    "code": "CRA032000",
+    "text": "CRAFTS & HOBBIES / Papercrafts"
+  },
+  {
+    "code": "CRA035000",
+    "text": "CRAFTS & HOBBIES / Scrapbooking"
+  },
+  {
+    "code": "CRA038000",
+    "text": "CRAFTS & HOBBIES / Sewing"
+  },
+  {
+    "code": "CRA041000",
+    "text": "CRAFTS & HOBBIES / Weaving & Spinning"
+  },
+  {
+    "code": "CRA042000",
+    "text": "CRAFTS & HOBBIES / Woodwork"
+  },
+  {
+    "code": "DES000000",
+    "text": "DESIGN / General"
+  },
+  {
+    "code": "DES001000",
+    "text": "DESIGN / Book"
+  },
+  {
+    "code": "DES005000",
+    "text": "DESIGN / Graphic Arts / General"
+  },
+  {
+    "code": "DES007000",
+    "text": "DESIGN / Industrial"
+  },
+  {
+    "code": "DES007050",
+    "text": "DESIGN / Typography"
+  },
+  {
+    "code": "DES011000",
+    "text": "DESIGN / Product"
+  },
+  {
+    "code": "DRA000000",
+    "text": "DRAMA / General"
+  },
+  {
+    "code": "DRA001000",
+    "text": "DRAMA / American"
+  },
+  {
+    "code": "DRA001010",
+    "text": "DRAMA / African American & Black"
+  },
+  {
+    "code": "DRA002000",
+    "text": "DRAMA / Anthologies (multiple authors)"
+  },
+  {
+    "code": "DRA003000",
+    "text": "DRAMA / European / English, Irish, Scottish, Welsh"
+  },
+  {
+    "code": "DRA004000",
+    "text": "DRAMA / European / General"
+  },
+  {
+    "code": "DRA006000",
+    "text": "DRAMA / Ancient & Classical"
+  },
+  {
+    "code": "DRA008000",
+    "text": "DRAMA / Type / Religious & Liturgical"
+  },
+  {
+    "code": "DRA010000",
+    "text": "DRAMA / Shakespeare"
+  },
+  {
+    "code": "DRA013000",
+    "text": "DRAMA / Canadian"
+  },
+  {
+    "code": "DRA017000",
+    "text": "DRAMA / LGBTQ+"
+  },
+  {
+    "code": "DRA018000",
+    "text": "DRAMA / Medieval"
+  },
+  {
+    "code": "DRA019000",
+    "text": "DRAMA / Women Authors"
+  },
+  {
+    "code": "DRA021000",
+    "text": "DRAMA / Contemporary"
+  },
+  {
+    "code": "DRA024000",
+    "text": "DRAMA / Type / Comedy"
+  },
+  {
+    "code": "DRA025000",
+    "text": "DRAMA / Type / Historical"
+  },
+  {
+    "code": "DRA026000",
+    "text": "DRAMA / Type / Tragedy"
+  },
+  {
+    "code": "DRA034000",
+    "text": "DRAMA / Monologues & Scenes"
+  },
+  {
+    "code": "DRA035000",
+    "text": "DRAMA / One Act"
+  },
+  {
+    "code": "DRA040000",
+    "text": "DRAMA / Type / Musicals"
+  },
+  {
+    "code": "EDU000000",
+    "text": "EDUCATION / General"
+  },
+  {
+    "code": "EDU001000",
+    "text": "EDUCATION / Administration / General"
+  },
+  {
+    "code": "EDU002000",
+    "text": "EDUCATION / Adult & Continuing Education"
+  },
+  {
+    "code": "EDU003000",
+    "text": "EDUCATION / Aims & Objectives"
+  },
+  {
+    "code": "EDU005000",
+    "text": "EDUCATION / Bilingual Education"
+  },
+  {
+    "code": "EDU006000",
+    "text": "EDUCATION / Counseling / General"
+  },
+  {
+    "code": "EDU007000",
+    "text": "EDUCATION / Curricula"
+  },
+  {
+    "code": "EDU009000",
+    "text": "EDUCATION / Educational Psychology"
+  },
+  {
+    "code": "EDU010000",
+    "text": "EDUCATION / Schools / Levels / Elementary"
+  },
+  {
+    "code": "EDU011000",
+    "text": "EDUCATION / Evaluation & Assessment"
+  },
+  {
+    "code": "EDU013000",
+    "text": "EDUCATION / Finance"
+  },
+  {
+    "code": "EDU015000",
+    "text": "EDUCATION / Schools / Levels / Higher"
+  },
+  {
+    "code": "EDU016000",
+    "text": "EDUCATION / History"
+  },
+  {
+    "code": "EDU017000",
+    "text": "EDUCATION / Home Schooling"
+  },
+  {
+    "code": "EDU020000",
+    "text": "EDUCATION / Multicultural Education"
+  },
+  {
+    "code": "EDU023000",
+    "text": "EDUCATION / Schools / Levels / Early Childhood"
+  },
+  {
+    "code": "EDU025000",
+    "text": "EDUCATION / Schools / Levels / Secondary"
+  },
+  {
+    "code": "EDU026000",
+    "text": "EDUCATION / Special Education / General"
+  },
+  {
+    "code": "EDU026020",
+    "text": "EDUCATION / Special Education / Learning Disabilities"
+  },
+  {
+    "code": "EDU029000",
+    "text": "EDUCATION / Teaching / General"
+  },
+  {
+    "code": "EDU029010",
+    "text": "EDUCATION / Teaching / Subjects / Mathematics"
+  },
+  {
+    "code": "EDU029020",
+    "text": "EDUCATION / Teaching / Subjects / Reading & Phonics"
+  },
+  {
+    "code": "EDU029030",
+    "text": "EDUCATION / Teaching / Subjects / Science & Technology"
+  },
+  {
+    "code": "EDU030000",
+    "text": "EDUCATION / Testing & Measurement"
+  },
+  {
+    "code": "EDU032000",
+    "text": "EDUCATION / Leadership"
+  },
+  {
+    "code": "EDU034000",
+    "text": "EDUCATION / Educational Policy & Reform / General"
+  },
+  {
+    "code": "EDU037000",
+    "text": "EDUCATION / Research"
+  },
+  {
+    "code": "EDU039000",
+    "text": "EDUCATION / Computers & Technology"
+  },
+  {
+    "code": "EDU040000",
+    "text": "EDUCATION / Philosophy, Theory & Social Aspects"
+  },
+  {
+    "code": "EDU041000",
+    "text": "EDUCATION / Distance, Open & Online Education"
+  },
+  {
+    "code": "EDU046000",
+    "text": "EDUCATION / Professional Development"
+  },
+  {
+    "code": "EDU048000",
+    "text": "EDUCATION / Inclusive Education"
+  },
+  {
+    "code": "EDU053000",
+    "text": "EDUCATION / Teacher Training & Certification"
+  },
+  {
+    "code": "FAM000000",
+    "text": "FAMILY & RELATIONSHIPS / General"
+  },
+  {
+    "code": "FAM002000",
+    "text": "FAMILY & RELATIONSHIPS / Adoption & Fostering"
+  },
+  {
+    "code": "FAM004000",
+    "text": "FAMILY & RELATIONSHIPS / Anger"
+  },
+  {
+    "code": "FAM006000",
+    "text": "FAMILY & RELATIONSHIPS / Babysitting, Day Care & Child Care"
+  },
+  {
+    "code": "FAM012000",
+    "text": "FAMILY & RELATIONSHIPS / Children with Special Needs"
+  },
+  {
+    "code": "FAM013000",
+    "text": "FAMILY & RELATIONSHIPS / Conflict Resolution"
+  },
+  {
+    "code": "FAM015000",
+    "text": "FAMILY & RELATIONSHIPS / Dating"
+  },
+  {
+    "code": "FAM016000",
+    "text": "FAMILY & RELATIONSHIPS / Death, Grief, Bereavement"
+  },
+  {
+    "code": "FAM017000",
+    "text": "FAMILY & RELATIONSHIPS / Divorce & Separation"
+  },
+  {
+    "code": "FAM019000",
+    "text": "FAMILY & RELATIONSHIPS / Eldercare"
+  },
+  {
+    "code": "FAM020000",
+    "text": "FAMILY & RELATIONSHIPS / Friendship"
+  },
+  {
+    "code": "FAM025000",
+    "text": "FAMILY & RELATIONSHIPS / Love & Romance"
+  },
+  {
+    "code": "FAM030000",
+    "text": "FAMILY & RELATIONSHIPS / Marriage & Long-Term Relationships"
+  },
+  {
+    "code": "FAM032000",
+    "text": "FAMILY & RELATIONSHIPS / Parenting / General"
+  },
+  {
+    "code": "FAM034000",
+    "text": "FAMILY & RELATIONSHIPS / Pregnancy & Childbirth"
+  },
+  {
+    "code": "FAM043000",
+    "text": "FAMILY & RELATIONSHIPS / Parenting / Motherhood"
+  },
+  {
+    "code": "FAM044000",
+    "text": "FAMILY & RELATIONSHIPS / Parenting / Fatherhood"
+  },
+  {
+    "code": "FIC000000",
+    "text": "FICTION / General"
+  },
+  {
+    "code": "FIC002000",
+    "text": "FICTION / Action & Adventure"
+  },
+  {
+    "code": "FIC003000",
+    "text": "FICTION / Anthologies (multiple authors)"
+  },
+  {
+    "code": "FIC004000",
+    "text": "FICTION / Classics"
+  },
+  {
+    "code": "FIC005000",
+    "text": "FICTION / Erotica / General"
+  },
+  {
+    "code": "FIC006000",
+    "text": "FICTION / Thrillers / Espionage"
+  },
+  {
+    "code": "FIC008000",
+    "text": "FICTION / Sagas"
+  },
+  {
+    "code": "FIC009000",
+    "text": "FICTION / Fantasy / General"
+  },
+  {
+    "code": "FIC009010",
+    "text": "FICTION / Fantasy / Contemporary"
+  },
+  {
+    "code": "FIC009020",
+    "text": "FICTION / Fantasy / Epic"
+  },
+  {
+    "code": "FIC009030",
+    "text": "FICTION / Fantasy / Historical"
+  },
+  {
+    "code": "FIC009050",
+    "text": "FICTION / Fantasy / Paranormal"
+  },
+  {
+    "code": "FIC009060",
+    "text": "FICTION / Fantasy / Urban"
+  },
+  {
+    "code": "FIC009070",
+    "text": "FICTION / Fantasy / Dark Fantasy"
+  },
+  {
+    "code": "FIC009080",
+    "text": "FICTION / Fantasy / Humorous"
+  },
+  {
+    "code": "FIC009090",
+    "text": "FICTION / Fantasy / Romance"
+  },
+  {
+    "code": "FIC009100",
+    "text": "FICTION / Fantasy / Action & Adventure"
+  },
+  {
+    "code": "FIC009120",
+    "text": "FICTION / Fantasy / Dragons & Mythical Creatures"
+  },
+  {
+    "code": "FIC010000",
+    "text": "FICTION / Fairy Tales, Folk Tales, Legends & Mythology"
+  },
+  {
+    "code": "FIC011000",
+    "text": "FICTION / LGBTQ+ / Gay"
+  },
+  {
+    "code": "FIC012000",
+    "text": "FICTION / Ghost"
+  },
+  {
+    "code": "FIC014000",
+    "text": "FICTION / Historical / General"
+  },
+  {
+    "code": "FIC014010",
+    "text": "FICTION / Historical / Ancient"
+  },
+  {
+    "code": "FIC014020",
+    "text": "FICTION / Historical / Medieval"
+  },
+  {
+    "code": "FIC014030",
+    "text": "FICTION / Historical / Renaissance"
+  },
+  {
+    "code": "FIC014040",
+    "text": "FICTION / Historical / 20th Century / World War I"
+  },
+  {
+    "code": "FIC014050",
+    "text": "FICTION / Historical / 20th Century / World War II & Holocaust"
+  },
+  {
+    "code": "FIC014060",
+    "text": "FICTION / Historical / 19th Century / American Civil War Era"
+  },
+  {
+    "code": "FIC015000",
+    "text": "FICTION / Horror / General"
+  },
+  {
+    "code": "FIC015020",
+    "text": "FICTION / Horror / Cosmic & Eldritch"
+  },
+  {
+    "code": "FIC015040",
+    "text": "FICTION / Horror / Occult & Supernatural"
+  },
+  {
+    "code": "FIC015050",
+    "text": "FICTION / Horror / Psychological"
+  },
+  {
+    "code": "FIC016000",
+    "text": "FICTION / Humorous / General"
+  },
+  {
+    "code": "FIC018000",
+    "text": "FICTION / LGBTQ+ / Lesbian"
+  },
+  {
+    "code": "FIC019000",
+    "text": "FICTION / Literary"
+  },
+  {
+    "code": "FIC021000",
+    "text": "FICTION / Media Tie-In"
+  },
+  {
+    "code": "FIC022000",
+    "text": "FICTION / Mystery & Detective / General"
+  },
+  {
+    "code": "FIC022010",
+    "text": "FICTION / Mystery & Detective / Hard-Boiled"
+  },
+  {
+    "code": "FIC022020",
+    "text": "FICTION / Mystery & Detective / Police Procedural"
+  },
+  {
+    "code": "FIC022030",
+    "text": "FICTION / Mystery & Detective / Traditional"
+  },
+  {
+    "code": "FIC022040",
+    "text": "FICTION / Mystery & Detective / Women Sleuths"
+  },
+  {
+    "code": "FIC022060",
+    "text": "FICTION / Mystery & Detective / Historical"
+  },
+  {
+    "code": "FIC022070",
+    "text": "FICTION / Mystery & Detective / Cozy / General"
+  },
+  {
+    "code": "FIC022080",
+    "text": "FICTION / Mystery & Detective / International Crime & Mystery"
+  },
+  {
+    "code": "FIC022090",
+    "text": "FICTION / Mystery & Detective / Private Investigators"
+  },
+  {
+    "code": "FIC022100",
+    "text": "FICTION / Mystery & Detective / Amateur Sleuth"
+  },
+  {
+    "code": "FIC024000",
+    "text": "FICTION / Occult & Supernatural"
+  },
+  {
+    "code": "FIC025000",
+    "text": "FICTION / Psychological"
+  },
+  {
+    "code": "FIC026000",
+    "text": "FICTION / Religious"
+  },
+  {
+    "code": "FIC027000",
+    "text": "FICTION / Romance / General"
+  },
+  {
+    "code": "FIC027010",
+    "text": "FICTION / Romance / Erotic"
+  },
+  {
+    "code": "FIC027020",
+    "text": "FICTION / Romance / Contemporary"
+  },
+  {
+    "code": "FIC027030",
+    "text": "FICTION / Romance / Fantasy"
+  },
+  {
+    "code": "FIC027040",
+    "text": "FICTION / Gothic"
+  },
+  {
+    "code": "FIC027050",
+    "text": "FICTION / Romance / Historical / General"
+  },
+  {
+    "code": "FIC027070",
+    "text": "FICTION / Romance / Historical / Regency & Georgian"
+  },
+  {
+    "code": "FIC027090",
+    "text": "FICTION / Romance / Time Travel"
+  },
+  {
+    "code": "FIC027100",
+    "text": "FICTION / Romance / Western"
+  },
+  {
+    "code": "FIC027110",
+    "text": "FICTION / Romance / Suspense"
+  },
+  {
+    "code": "FIC027120",
+    "text": "FICTION / Romance / Paranormal / General"
+  },
+  {
+    "code": "FIC027130",
+    "text": "FICTION / Romance / Science Fiction"
+  },
+  {
+    "code": "FIC027160",
+    "text": "FICTION / Romance / Historical / Scottish"
+  },
+  {
+    "code": "FIC027200",
+    "text": "FICTION / Romance / Historical / 20th Century"
+  },
+  {
+    "code": "FIC027220",
+    "text": "FICTION / Romance / Military"
+  },
+  {
+    "code": "FIC027230",
+    "text": "FICTION / Romance / Multicultural & Interracial"
+  },
+  {
+    "code": "FIC027240",
+    "text": "FICTION / Romance / New Adult"
+  },
+  {
+    "code": "FIC027250",
+    "text": "FICTION / Romance / Romantic Comedy"
+  },
+  {
+    "code": "FIC027270",
+    "text": "FICTION / Romance / Clean & Wholesome"
+  },
+  {
+    "code": "FIC027290",
+    "text": "FICTION / Romance / Holiday"
+  },
+  {
+    "code": "FIC027300",
+    "text": "FICTION / Romance / LGBTQ+ / General"
+  },
+  {
+    "code": "FIC027330",
+    "text": "FICTION / Romance / Sports"
+  },
+  {
+    "code": "FIC027340",
+    "text": "FICTION / Romance / Billionaires"
+  },
+  {
+    "code": "FIC027450",
+    "text": "FICTION / Romance / Royalty"
+  },
+  {
+    "code": "FIC027660",
+    "text": "FICTION / Romance / Small Town & Rural"
+  },
+  {
+    "code": "FIC028000",
+    "text": "FICTION / Science Fiction / General"
+  },
+  {
+    "code": "FIC028010",
+    "text": "FICTION / Science Fiction / Action & Adventure"
+  },
+  {
+    "code": "FIC028020",
+    "text": "FICTION / Science Fiction / Hard Science Fiction"
+  },
+  {
+    "code": "FIC028030",
+    "text": "FICTION / Science Fiction / Space Opera"
+  },
+  {
+    "code": "FIC028050",
+    "text": "FICTION / Science Fiction / Military"
+  },
+  {
+    "code": "FIC028060",
+    "text": "FICTION / Science Fiction / Steampunk"
+  },
+  {
+    "code": "FIC028070",
+    "text": "FICTION / Science Fiction / Apocalyptic & Post-Apocalyptic"
+  },
+  {
+    "code": "FIC028080",
+    "text": "FICTION / Time Travel"
+  },
+  {
+    "code": "FIC028090",
+    "text": "FICTION / Science Fiction / Alien Contact"
+  },
+  {
+    "code": "FIC028100",
+    "text": "FICTION / Science Fiction / Cyberpunk"
+  },
+  {
+    "code": "FIC028130",
+    "text": "FICTION / Science Fiction / Space Exploration"
+  },
+  {
+    "code": "FIC029000",
+    "text": "FICTION / Short Stories (single author)"
+  },
+  {
+    "code": "FIC030000",
+    "text": "FICTION / Thrillers / Suspense"
+  },
+  {
+    "code": "FIC031000",
+    "text": "FICTION / Thrillers / General"
+  },
+  {
+    "code": "FIC031010",
+    "text": "FICTION / Thrillers / Crime"
+  },
+  {
+    "code": "FIC031020",
+    "text": "FICTION / Thrillers / Historical"
+  },
+  {
+    "code": "FIC031030",
+    "text": "FICTION / Thrillers / Legal"
+  },
+  {
+    "code": "FIC031040",
+    "text": "FICTION / Thrillers / Medical"
+  },
+  {
+    "code": "FIC031050",
+    "text": "FICTION / Thrillers / Military"
+  },
+  {
+    "code": "FIC031060",
+    "text": "FICTION / Thrillers / Political"
+  },
+  {
+    "code": "FIC031070",
+    "text": "FICTION / Thrillers / Supernatural"
+  },
+  {
+    "code": "FIC031080",
+    "text": "FICTION / Thrillers / Psychological"
+  },
+  {
+    "code": "FIC031100",
+    "text": "FICTION / Thrillers / Domestic"
+  },
+  {
+    "code": "FIC032000",
+    "text": "FICTION / War & Military"
+  },
+  {
+    "code": "FIC033000",
+    "text": "FICTION / Westerns"
+  },
+  {
+    "code": "FIC034000",
+    "text": "FICTION / Legal"
+  },
+  {
+    "code": "FIC035000",
+    "text": "FICTION / Medical"
+  },
+  {
+    "code": "FIC036000",
+    "text": "FICTION / Thrillers / Technological"
+  },
+  {
+    "code": "FIC037000",
+    "text": "FICTION / Political"
+  },
+  {
+    "code": "FIC038000",
+    "text": "FICTION / Sports"
+  },
+  {
+    "code": "FIC039000",
+    "text": "FICTION / Visionary & Metaphysical"
+  },
+  {
+    "code": "FIC040000",
+    "text": "FICTION / Alternative History"
+  },
+  {
+    "code": "FIC041000",
+    "text": "FICTION / Biographical & Autofiction"
+  },
+  {
+    "code": "FIC042000",
+    "text": "FICTION / Christian / General"
+  },
+  {
+    "code": "FIC042010",
+    "text": "FICTION / Christian / Classic & Allegory"
+  },
+  {
+    "code": "FIC042030",
+    "text": "FICTION / Christian / Historical"
+  },
+  {
+    "code": "FIC042040",
+    "text": "FICTION / Christian / Romance / General"
+  },
+  {
+    "code": "FIC042060",
+    "text": "FICTION / Christian / Suspense"
+  },
+  {
+    "code": "FIC042070",
+    "text": "FICTION / Christian / Western"
+  },
+  {
+    "code": "FIC042080",
+    "text": "FICTION / Christian / Fantasy"
+  },
+  {
+    "code": "FIC042100",
+    "text": "FICTION / Christian / Contemporary"
+  },
+  {
+    "code": "FIC043000",
+    "text": "FICTION / Coming of Age"
+  },
+  {
+    "code": "FIC044000",
+    "text": "FICTION / Women"
+  },
+  {
+    "code": "FIC045000",
+    "text": "FICTION / Family Life / General"
+  },
+  {
+    "code": "FIC045010",
+    "text": "FICTION / Family Life / Marriage & Divorce"
+  },
+  {
+    "code": "FIC045030",
+    "text": "FICTION / Family Life / Multigenerational"
+  },
+  {
+    "code": "FIC046000",
+    "text": "FICTION / Jewish"
+  },
+  {
+    "code": "FIC047000",
+    "text": "FICTION / Sea Stories"
+  },
+  {
+    "code": "FIC048000",
+    "text": "FICTION / Urban & Street Lit"
+  },
+  {
+    "code": "FIC049000",
+    "text": "FICTION / African American & Black / General"
+  },
+  {
+    "code": "FIC049010",
+    "text": "FICTION / African American & Black / Christian"
+  },
+  {
+    "code": "FIC049020",
+    "text": "FICTION / African American & Black / Women"
+  },
+  {
+    "code": "FIC049030",
+    "text": "FICTION / African American & Black / Erotica"
+  },
+  {
+    "code": "FIC049040",
+    "text": "FICTION / African American & Black / Historical"
+  },
+  {
+    "code": "FIC049050",
+    "text": "FICTION / African American & Black / Mystery & Detective"
+  },
+  {
+    "code": "FIC049070",
+    "text": "FICTION / African American & Black / Urban & Street Lit"
+  },
+  {
+    "code": "FIC049100",
+    "text": "FICTION / African American & Black / Fantasy"
+  },
+  {
+    "code": "FIC049110",
+    "text": "FICTION / African American & Black / Horror"
+  },
+  {
+    "code": "FIC050000",
+    "text": "FICTION / Crime"
+  },
+  {
+    "code": "FIC051000",
+    "text": "FICTION / Cultural Heritage"
+  },
+  {
+    "code": "FIC052000",
+    "text": "FICTION / Satire"
+  },
+  {
+    "code": "FIC053000",
+    "text": "FICTION / Amish & Mennonite"
+  },
+  {
+    "code": "FIC054000",
+    "text": "FICTION / Asian American & Pacific Islander"
+  },
+  {
+    "code": "FIC055000",
+    "text": "FICTION / Dystopian"
+  },
+  {
+    "code": "FIC056000",
+    "text": "FICTION / Hispanic & Latino / General"
+  },
+  {
+    "code": "FIC056050",
+    "text": "FICTION / Hispanic & Latino / Historical"
+  },
+  {
+    "code": "FIC058000",
+    "text": "FICTION / Holidays"
+  },
+  {
+    "code": "FIC059000",
+    "text": "FICTION / Indigenous / General"
+  },
+  {
+    "code": "FIC060000",
+    "text": "FICTION / Humorous / Dark Humor"
+  },
+  {
+    "code": "FIC061000",
+    "text": "FICTION / Magical Realism"
+  },
+  {
+    "code": "FIC062000",
+    "text": "FICTION / Noir"
+  },
+  {
+    "code": "FIC063000",
+    "text": "FICTION / Superheroes"
+  },
+  {
+    "code": "FIC064000",
+    "text": "FICTION / Absurdist"
+  },
+  {
+    "code": "FIC066000",
+    "text": "FICTION / Small Town & Rural"
+  },
+  {
+    "code": "FIC067000",
+    "text": "FICTION / Animals"
+  },
+  {
+    "code": "FIC068000",
+    "text": "FICTION / LGBTQ+ / General"
+  },
+  {
+    "code": "FIC069000",
+    "text": "FICTION / City Life"
+  },
+  {
+    "code": "FIC071000",
+    "text": "FICTION / Friendship"
+  },
+  {
+    "code": "FIC073000",
+    "text": "FICTION / LGBTQ+ / Transgender"
+  },
+  {
+    "code": "FIC074000",
+    "text": "FICTION / Southern"
+  },
+  {
+    "code": "FIC075000",
+    "text": "FICTION / Adaptations & Pastiche"
+  },
+  {
+    "code": "FIC076000",
+    "text": "FICTION / Feminist"
+  },
+  {
+    "code": "FIC077000",
+    "text": "FICTION / Nature & the Environment"
+  },
+  {
+    "code": "FIC080000",
+    "text": "FICTION / Multiple Timelines"
+  },
+  {
+    "code": "FIC129000",
+    "text": "FICTION / LitRPG (Literary Role-Playing Game)"
+  },
+  {
+    "code": "FIC130000",
+    "text": "FICTION / Diversity & Multicultural"
+  },
+  {
+    "code": "FIC131000",
+    "text": "FICTION / Middle Eastern & Arab American"
+  },
+  {
+    "code": "FIC134000",
+    "text": "FICTION / Immigration & Emigration"
+  },
+  {
+    "code": "FIC141000",
+    "text": "FICTION / Death, Grief, Bereavement"
+  },
+  {
+    "code": "FIC153000",
+    "text": "FICTION / School & Education"
+  },
+  {
+    "code": "FIC155000",
+    "text": "FICTION / Cozy"
+  },
+  {
+    "code": "FIC157000",
+    "text": "FICTION / Speculative"
+  },
+  {
+    "code": "FOR000000",
+    "text": "FOREIGN LANGUAGE STUDY / General"
+  },
+  {
+    "code": "FOR001000",
+    "text": "FOREIGN LANGUAGE STUDY / Arabic"
+  },
+  {
+    "code": "FOR004000",
+    "text": "FOREIGN LANGUAGE STUDY / Chinese"
+  },
+  {
+    "code": "FOR007000",
+    "text": "FOREIGN LANGUAGE STUDY / French"
+  },
+  {
+    "code": "FOR009000",
+    "text": "FOREIGN LANGUAGE STUDY / German"
+  },
+  {
+    "code": "FOR010000",
+    "text": "FOREIGN LANGUAGE STUDY / Greek"
+  },
+  {
+    "code": "FOR011000",
+    "text": "FOREIGN LANGUAGE STUDY / Hebrew"
+  },
+  {
+    "code": "FOR013000",
+    "text": "FOREIGN LANGUAGE STUDY / Italian"
+  },
+  {
+    "code": "FOR014000",
+    "text": "FOREIGN LANGUAGE STUDY / Japanese"
+  },
+  {
+    "code": "FOR015000",
+    "text": "FOREIGN LANGUAGE STUDY / Korean"
+  },
+  {
+    "code": "FOR016000",
+    "text": "FOREIGN LANGUAGE STUDY / Latin"
+  },
+  {
+    "code": "FOR020000",
+    "text": "FOREIGN LANGUAGE STUDY / Portuguese"
+  },
+  {
+    "code": "FOR021000",
+    "text": "FOREIGN LANGUAGE STUDY / Russian"
+  },
+  {
+    "code": "FOR028000",
+    "text": "FOREIGN LANGUAGE STUDY / Spanish"
+  },
+  {
+    "code": "GAM000000",
+    "text": "GAMES & ACTIVITIES / General"
+  },
+  {
+    "code": "GAM001000",
+    "text": "GAMES & ACTIVITIES / Board Games"
+  },
+  {
+    "code": "GAM002000",
+    "text": "GAMES & ACTIVITIES / Card Games / General"
+  },
+  {
+    "code": "GAM003000",
+    "text": "GAMES & ACTIVITIES / Crosswords / General"
+  },
+  {
+    "code": "GAM006000",
+    "text": "GAMES & ACTIVITIES / Role Playing & Fantasy"
+  },
+  {
+    "code": "GAM007000",
+    "text": "GAMES & ACTIVITIES / Puzzles"
+  },
+  {
+    "code": "GAM012000",
+    "text": "GAMES & ACTIVITIES / Sudoku"
+  },
+  {
+    "code": "GAM013000",
+    "text": "GAMES & ACTIVITIES / Trivia"
+  },
+  {
+    "code": "GAM014000",
+    "text": "GAMES & ACTIVITIES / Video & Electronic"
+  },
+  {
+    "code": "GAR000000",
+    "text": "GARDENING / General"
+  },
+  {
+    "code": "GAR004000",
+    "text": "GARDENING / Flowers / General"
+  },
+  {
+    "code": "GAR008000",
+    "text": "GARDENING / Fruit"
+  },
+  {
+    "code": "GAR012000",
+    "text": "GARDENING / Landscape"
+  },
+  {
+    "code": "GAR013000",
+    "text": "GARDENING / Reference"
+  },
+  {
+    "code": "GAR015000",
+    "text": "GARDENING / Organic"
+  },
+  {
+    "code": "GAR018000",
+    "text": "GARDENING / Regional / General"
+  },
+  {
+    "code": "GAR024000",
+    "text": "GARDENING / Vegetables"
+  },
+  {
+    "code": "GAR025000",
+    "text": "GARDENING / Herbs"
+  },
+  {
+    "code": "GAR027000",
+    "text": "GARDENING / Container"
+  },
+  {
+    "code": "HEA000000",
+    "text": "HEALTH & FITNESS / General"
+  },
+  {
+    "code": "HEA003000",
+    "text": "HEALTH & FITNESS / Beauty & Grooming / General"
+  },
+  {
+    "code": "HEA006000",
+    "text": "HEALTH & FITNESS / Diet & Nutrition / Diets"
+  },
+  {
+    "code": "HEA007000",
+    "text": "HEALTH & FITNESS / Exercise / General"
+  },
+  {
+    "code": "HEA007050",
+    "text": "HEALTH & FITNESS / Exercise / Strength Training"
+  },
+  {
+    "code": "HEA009000",
+    "text": "HEALTH & FITNESS / Healing"
+  },
+  {
+    "code": "HEA010000",
+    "text": "HEALTH & FITNESS / Healthy Living"
+  },
+  {
+    "code": "HEA011000",
+    "text": "HEALTH & FITNESS / Herbal Medicine"
+  },
+  {
+    "code": "HEA015000",
+    "text": "HEALTH & FITNESS / Men's Health"
+  },
+  {
+    "code": "HEA017000",
+    "text": "HEALTH & FITNESS / Diet & Nutrition / Nutrition"
+  },
+  {
+    "code": "HEA019000",
+    "text": "HEALTH & FITNESS / Diet & Nutrition / Weight Loss"
+  },
+  {
+    "code": "HEA020000",
+    "text": "HEALTH & FITNESS / Reference"
+  },
+  {
+    "code": "HEA024000",
+    "text": "HEALTH & FITNESS / Women's Health"
+  },
+  {
+    "code": "HEA025000",
+    "text": "HEALTH & FITNESS / Yoga"
+  },
+  {
+    "code": "HEA032000",
+    "text": "HEALTH & FITNESS / Alternative Therapies"
+  },
+  {
+    "code": "HEA033000",
+    "text": "HEALTH & FITNESS / First Aid"
+  },
+  {
+    "code": "HEA039000",
+    "text": "HEALTH & FITNESS / Diseases & Conditions / General"
+  },
+  {
+    "code": "HEA039030",
+    "text": "HEALTH & FITNESS / Diseases & Conditions / Cancer"
+  },
+  {
+    "code": "HEA039050",
+    "text": "HEALTH & FITNESS / Diseases & Conditions / Diabetes"
+  },
+  {
+    "code": "HEA039080",
+    "text": "HEALTH & FITNESS / Diseases & Conditions / Heart"
+  },
+  {
+    "code": "HEA041000",
+    "text": "HEALTH & FITNESS / Pregnancy & Childbirth"
+  },
+  {
+    "code": "HEA042000",
+    "text": "HEALTH & FITNESS / Sexuality"
+  },
+  {
+    "code": "HEA043000",
+    "text": "HEALTH & FITNESS / Sleep"
+  },
+  {
+    "code": "HEA048000",
+    "text": "HEALTH & FITNESS / Diet & Nutrition / General"
+  },
+  {
+    "code": "HEA049000",
+    "text": "HEALTH & FITNESS / Aging & Longevity"
+  },
+  {
+    "code": "HEA055000",
+    "text": "HEALTH & FITNESS / Mental Health"
+  },
+  {
+    "code": "HIS000000",
+    "text": "HISTORY / General"
+  },
+  {
+    "code": "HIS001000",
+    "text": "HISTORY / Africa / General"
+  },
+  {
+    "code": "HIS002000",
+    "text": "HISTORY / Ancient / General"
+  },
+  {
+    "code": "HIS002010",
+    "text": "HISTORY / Ancient / Greece"
+  },
+  {
+    "code": "HIS002020",
+    "text": "HISTORY / Ancient / Rome"
+  },
+  {
+    "code": "HIS002030",
+    "text": "HISTORY / Ancient / Egypt"
+  },
+  {
+    "code": "HIS003000",
+    "text": "HISTORY / Asia / General"
+  },
+  {
+    "code": "HIS004000",
+    "text": "HISTORY / Australia & New Zealand"
+  },
+  {
+    "code": "HIS006000",
+    "text": "HISTORY / Canada / General"
+  },
+  {
+    "code": "HIS008000",
+    "text": "HISTORY / Asia / China"
+  },
+  {
+    "code": "HIS010000",
+    "text": "HISTORY / Europe / General"
+  },
+  {
+    "code": "HIS013000",
+    "text": "HISTORY / Europe / France"
+  },
+  {
+    "code": "HIS014000",
+    "text": "HISTORY / Europe / Germany"
+  },
+  {
+    "code": "HIS015000",
+    "text": "HISTORY / Europe / Great Britain / General"
+  },
+  {
+    "code": "HIS016000",
+    "text": "HISTORY / Historiography"
+  },
+  {
+    "code": "HIS018000",
+    "text": "HISTORY / Europe / Ireland"
+  },
+  {
+    "code": "HIS019000",
+    "text": "HISTORY / Middle East / Israel & Palestine"
+  },
+  {
+    "code": "HIS020000",
+    "text": "HISTORY / Europe / Italy"
+  },
+  {
+    "code": "HIS021000",
+    "text": "HISTORY / Asia / Japan"
+  },
+  {
+    "code": "HIS022000",
+    "text": "HISTORY / Jewish"
+  },
+  {
+    "code": "HIS024000",
+    "text": "HISTORY / Latin America / General"
+  },
+  {
+    "code": "HIS025000",
+    "text": "HISTORY / Latin America / Mexico"
+  },
+  {
+    "code": "HIS026000",
+    "text": "HISTORY / Middle East / General"
+  },
+  {
+    "code": "HIS027000",
+    "text": "HISTORY / Military / General"
+  },
+  {
+    "code": "HIS027020",
+    "text": "HISTORY / Wars & Conflicts / Korean War"
+  },
+  {
+    "code": "HIS027060",
+    "text": "HISTORY / Military / Strategy"
+  },
+  {
+    "code": "HIS027070",
+    "text": "HISTORY / Wars & Conflicts / Vietnam War"
+  },
+  {
+    "code": "HIS027080",
+    "text": "HISTORY / Military / Weapons"
+  },
+  {
+    "code": "HIS027090",
+    "text": "HISTORY / Wars & Conflicts / World War I"
+  },
+  {
+    "code": "HIS027100",
+    "text": "HISTORY / Wars & Conflicts / World War II / General"
+  },
+  {
+    "code": "HIS027110",
+    "text": "HISTORY / Military / United States"
+  },
+  {
+    "code": "HIS027140",
+    "text": "HISTORY / Military / Aviation & Space"
+  },
+  {
+    "code": "HIS027150",
+    "text": "HISTORY / Military / Naval"
+  },
+  {
+    "code": "HIS029000",
+    "text": "HISTORY / North America"
+  },
+  {
+    "code": "HIS030000",
+    "text": "HISTORY / Reference"
+  },
+  {
+    "code": "HIS031000",
+    "text": "HISTORY / Revolutions, Uprisings & Rebellions"
+  },
+  {
+    "code": "HIS032000",
+    "text": "HISTORY / Russia / General"
+  },
+  {
+    "code": "HIS036000",
+    "text": "HISTORY / United States / General"
+  },
+  {
+    "code": "HIS036020",
+    "text": "HISTORY / United States / Colonial Period (1600-1775)"
+  },
+  {
+    "code": "HIS036030",
+    "text": "HISTORY / United States / Revolutionary Period (1775-1800)"
+  },
+  {
+    "code": "HIS036040",
+    "text": "HISTORY / United States / 19th Century"
+  },
+  {
+    "code": "HIS036050",
+    "text": "HISTORY / United States / Civil War Period (1850-1877)"
+  },
+  {
+    "code": "HIS036060",
+    "text": "HISTORY / United States / 20th Century"
+  },
+  {
+    "code": "HIS036070",
+    "text": "HISTORY / United States / 21st Century"
+  },
+  {
+    "code": "HIS037000",
+    "text": "HISTORY / World"
+  },
+  {
+    "code": "HIS037010",
+    "text": "HISTORY / Europe / Medieval"
+  },
+  {
+    "code": "HIS037020",
+    "text": "HISTORY / Europe / Renaissance"
+  },
+  {
+    "code": "HIS037030",
+    "text": "HISTORY / Modern / General"
+  },
+  {
+    "code": "HIS037060",
+    "text": "HISTORY / Modern / 19th Century"
+  },
+  {
+    "code": "HIS037070",
+    "text": "HISTORY / Modern / 20th Century / General"
+  },
+  {
+    "code": "HIS037080",
+    "text": "HISTORY / Modern / 21st Century"
+  },
+  {
+    "code": "HIS038000",
+    "text": "HISTORY / Americas (North, Central, South, West Indies)"
+  },
+  {
+    "code": "HIS039000",
+    "text": "HISTORY / Civilization"
+  },
+  {
+    "code": "HIS041000",
+    "text": "HISTORY / Caribbean & West Indies / General"
+  },
+  {
+    "code": "HIS043000",
+    "text": "HISTORY / Modern / 20th Century / Holocaust"
+  },
+  {
+    "code": "HIS045000",
+    "text": "HISTORY / Europe / Spain"
+  },
+  {
+    "code": "HIS054000",
+    "text": "HISTORY / Social History"
+  },
+  {
+    "code": "HIS056000",
+    "text": "HISTORY / African American & Black"
+  },
+  {
+    "code": "HIS058000",
+    "text": "HISTORY / Women"
+  },
+  {
+    "code": "HOM000000",
+    "text": "HOUSE & HOME / General"
+  },
+  {
+    "code": "HOM003000",
+    "text": "HOUSE & HOME / Cleaning, Caretaking & Organizing"
+  },
+  {
+    "code": "HOM004000",
+    "text": "HOUSE & HOME / Decorating & Furnishings"
+  },
+  {
+    "code": "HOM005000",
+    "text": "HOUSE & HOME / Design & Construction"
+  },
+  {
+    "code": "HOM008000",
+    "text": "HOUSE & HOME / Gardening / General"
+  },
+  {
+    "code": "HOM011000",
+    "text": "HOUSE & HOME / Hand Tools"
+  },
+  {
+    "code": "HOM014000",
+    "text": "HOUSE & HOME / Remodeling & Renovation"
+  },
+  {
+    "code": "HOM019000",
+    "text": "HOUSE & HOME / Sustainable Living"
+  },
+  {
+    "code": "HUM000000",
+    "text": "HUMOR / General"
+  },
+  {
+    "code": "HUM001000",
+    "text": "HUMOR / Form / Comic Strips & Cartoons"
+  },
+  {
+    "code": "HUM003000",
+    "text": "HUMOR / Form / Essays"
+  },
+  {
+    "code": "HUM004000",
+    "text": "HUMOR / Form / Jokes & Riddles"
+  },
+  {
+    "code": "HUM006000",
+    "text": "HUMOR / Form / Parodies"
+  },
+  {
+    "code": "HUM007000",
+    "text": "HUMOR / Form / Puns & Wordplay"
+  },
+  {
+    "code": "HUM009000",
+    "text": "HUMOR / Topic / Business & Professional"
+  },
+  {
+    "code": "HUM012000",
+    "text": "HUMOR / Topic / Marriage & Family"
+  },
+  {
+    "code": "HUM015000",
+    "text": "HUMOR / Topic / Political"
+  },
+  {
+    "code": "JNF000000",
+    "text": "JUVENILE NONFICTION / General"
+  },
+  {
+    "code": "JNF001000",
+    "text": "JUVENILE NONFICTION / Activity Books / General"
+  },
+  {
+    "code": "JNF003000",
+    "text": "JUVENILE NONFICTION / Animals / General"
+  },
+  {
+    "code": "JNF007000",
+    "text": "JUVENILE NONFICTION / Biography & Autobiography / General"
+  },
+  {
+    "code": "JNF007090",
+    "text": "JUVENILE NONFICTION / Biography & Autobiography / Science & Technology"
+  },
+  {
+    "code": "JNF012000",
+    "text": "JUVENILE NONFICTION / Concepts / General"
+  },
+  {
+    "code": "JNF018000",
+    "text": "JUVENILE NONFICTION / Education"
+  },
+  {
+    "code": "JNF019000",
+    "text": "JUVENILE NONFICTION / Family / General"
+  },
+  {
+    "code": "JNF024000",
+    "text": "JUVENILE NONFICTION / Health & Daily Living / General"
+  },
+  {
+    "code": "JNF025000",
+    "text": "JUVENILE NONFICTION / History / General"
+  },
+  {
+    "code": "JNF025170",
+    "text": "JUVENILE NONFICTION / History / United States / General"
+  },
+  {
+    "code": "JNF028000",
+    "text": "JUVENILE NONFICTION / Humor"
+  },
+  {
+    "code": "JNF035000",
+    "text": "JUVENILE NONFICTION / Mathematics / General"
+  },
+  {
+    "code": "JNF042000",
+    "text": "JUVENILE NONFICTION / People & Places / General"
+  },
+  {
+    "code": "JNF046000",
+    "text": "JUVENILE NONFICTION / Poetry"
+  },
+  {
+    "code": "JNF049000",
+    "text": "JUVENILE NONFICTION / Reference / General"
+  },
+  {
+    "code": "JNF051000",
+    "text": "JUVENILE NONFICTION / Science & Nature / General"
+  },
+  {
+    "code": "JNF051010",
+    "text": "JUVENILE NONFICTION / Science & Nature / Astronomy"
+  },
+  {
+    "code": "JNF051050",
+    "text": "JUVENILE NONFICTION / Science & Nature / Earth Sciences"
+  },
+  {
+    "code": "JNF053000",
+    "text": "JUVENILE NONFICTION / Social Topics / General"
+  },
+  {
+    "code": "JNF054000",
+    "text": "JUVENILE NONFICTION / Sports & Recreation / General"
+  },
+  {
+    "code": "JNF061000",
+    "text": "JUVENILE NONFICTION / Technology / General"
+  },
+  {
+    "code": "JUV000000",
+    "text": "JUVENILE FICTION / General"
+  },
+  {
+    "code": "JUV001000",
+    "text": "JUVENILE FICTION / Action & Adventure / General"
+  },
+  {
+    "code": "JUV002000",
+    "text": "JUVENILE FICTION / Animals / General"
+  },
+  {
+    "code": "JUV002050",
+    "text": "JUVENILE FICTION / Animals / Cats"
+  },
+  {
+    "code": "JUV002060",
+    "text": "JUVENILE FICTION / Animals / Dinosaurs & Prehistoric Creatures"
+  },
+  {
+    "code": "JUV002070",
+    "text": "JUVENILE FICTION / Animals / Dogs"
+  },
+  {
+    "code": "JUV002130",
+    "text": "JUVENILE FICTION / Animals / Horses"
+  },
+  {
+    "code": "JUV002270",
+    "text": "JUVENILE FICTION / Fantasy / Dragons, Unicorns & Mythical Creatures"
+  },
+  {
+    "code": "JUV004000",
+    "text": "JUVENILE FICTION / Biographical / General"
+  },
+  {
+    "code": "JUV007000",
+    "text": "JUVENILE FICTION / Classics"
+  },
+  {
+    "code": "JUV008000",
+    "text": "JUVENILE FICTION / Comics & Graphic Novels / General"
+  },
+  {
+    "code": "JUV009000",
+    "text": "JUVENILE FICTION / Concepts / General"
+  },
+  {
+    "code": "JUV009010",
+    "text": "JUVENILE FICTION / Concepts / Alphabet"
+  },
+  {
+    "code": "JUV009020",
+    "text": "JUVENILE FICTION / Concepts / Colors"
+  },
+  {
+    "code": "JUV009030",
+    "text": "JUVENILE FICTION / Concepts / Counting & Numbers"
+  },
+  {
+    "code": "JUV010000",
+    "text": "JUVENILE FICTION / Bedtime & Dreams"
+  },
+  {
+    "code": "JUV012030",
+    "text": "JUVENILE FICTION / Fairy Tales & Folklore / General"
+  },
+  {
+    "code": "JUV013000",
+    "text": "JUVENILE FICTION / Family / General"
+  },
+  {
+    "code": "JUV013070",
+    "text": "JUVENILE FICTION / Family / Siblings"
+  },
+  {
+    "code": "JUV015000",
+    "text": "JUVENILE FICTION / Health & Daily Living / General"
+  },
+  {
+    "code": "JUV016000",
+    "text": "JUVENILE FICTION / Historical / General"
+  },
+  {
+    "code": "JUV016080",
+    "text": "JUVENILE FICTION / Historical / Military & Wars"
+  },
+  {
+    "code": "JUV017000",
+    "text": "JUVENILE FICTION / Holidays & Celebrations / General"
+  },
+  {
+    "code": "JUV017010",
+    "text": "JUVENILE FICTION / Holidays & Celebrations / Christmas & Advent"
+  },
+  {
+    "code": "JUV017030",
+    "text": "JUVENILE FICTION / Holidays & Celebrations / Halloween"
+  },
+  {
+    "code": "JUV018000",
+    "text": "JUVENILE FICTION / Horror"
+  },
+  {
+    "code": "JUV019000",
+    "text": "JUVENILE FICTION / Humorous Stories"
+  },
+  {
+    "code": "JUV020000",
+    "text": "JUVENILE FICTION / Interactive Adventures"
+  },
+  {
+    "code": "JUV022000",
+    "text": "JUVENILE FICTION / Legends, Myths, Fables / General"
+  },
+  {
+    "code": "JUV026000",
+    "text": "JUVENILE FICTION / Love & Romance"
+  },
+  {
+    "code": "JUV027000",
+    "text": "JUVENILE FICTION / Media Tie-In"
+  },
+  {
+    "code": "JUV028000",
+    "text": "JUVENILE FICTION / Mysteries & Detective Stories"
+  },
+  {
+    "code": "JUV029000",
+    "text": "JUVENILE FICTION / School & Education"
+  },
+  {
+    "code": "JUV031000",
+    "text": "JUVENILE FICTION / Performing Arts / General"
+  },
+  {
+    "code": "JUV032000",
+    "text": "JUVENILE FICTION / Sports & Recreation / General"
+  },
+  {
+    "code": "JUV033000",
+    "text": "JUVENILE FICTION / Religious / General"
+  },
+  {
+    "code": "JUV033010",
+    "text": "JUVENILE FICTION / Religious / Christian / General"
+  },
+  {
+    "code": "JUV037000",
+    "text": "JUVENILE FICTION / Fantasy / General"
+  },
+  {
+    "code": "JUV037040",
+    "text": "JUVENILE FICTION / Fantasy / Magic"
+  },
+  {
+    "code": "JUV037060",
+    "text": "JUVENILE FICTION / Fantasy / Witches & Wizards"
+  },
+  {
+    "code": "JUV039000",
+    "text": "JUVENILE FICTION / Social Themes / General"
+  },
+  {
+    "code": "JUV039020",
+    "text": "JUVENILE FICTION / Social Themes / Emotions & Feelings"
+  },
+  {
+    "code": "JUV039060",
+    "text": "JUVENILE FICTION / Social Themes / Friendship"
+  },
+  {
+    "code": "JUV039090",
+    "text": "JUVENILE FICTION / Social Themes / Self-Esteem & Self-Reliance"
+  },
+  {
+    "code": "JUV043000",
+    "text": "JUVENILE FICTION / Readers / Beginner"
+  },
+  {
+    "code": "JUV044000",
+    "text": "JUVENILE FICTION / Readers / Intermediate"
+  },
+  {
+    "code": "JUV045000",
+    "text": "JUVENILE FICTION / Readers / Chapter Books"
+  },
+  {
+    "code": "JUV051000",
+    "text": "JUVENILE FICTION / Imagination & Play"
+  },
+  {
+    "code": "JUV052000",
+    "text": "JUVENILE FICTION / Monsters"
+  },
+  {
+    "code": "JUV053000",
+    "text": "JUVENILE FICTION / Science Fiction"
+  },
+  {
+    "code": "JUV058000",
+    "text": "JUVENILE FICTION / Paranormal, Occult & Supernatural"
+  },
+  {
+    "code": "JUV059000",
+    "text": "JUVENILE FICTION / Dystopian"
+  },
+  {
+    "code": "JUV060000",
+    "text": "JUVENILE FICTION / LGBTQ+"
+  },
+  {
+    "code": "JUV069000",
+    "text": "JUVENILE FICTION / Ghost Stories"
+  },
+  {
+    "code": "JUV070000",
+    "text": "JUVENILE FICTION / Poetry"
+  },
+  {
+    "code": "JUV072000",
+    "text": "JUVENILE FICTION / Mathematics"
+  },
+  {
+    "code": "JUV074000",
+    "text": "JUVENILE FICTION / Diversity & Multicultural"
+  },
+  {
+    "code": "LAN000000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / General"
+  },
+  {
+    "code": "LAN002000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Alphabets & Writing Systems"
+  },
+  {
+    "code": "LAN005000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Communication Studies"
+  },
+  {
+    "code": "LAN005050",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Translating & Interpreting"
+  },
+  {
+    "code": "LAN008000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Grammar & Punctuation"
+  },
+  {
+    "code": "LAN009000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Journalism"
+  },
+  {
+    "code": "LAN014000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Library & Information Science / General"
+  },
+  {
+    "code": "LAN015000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Linguistics / General"
+  },
+  {
+    "code": "LAN020000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Publishing"
+  },
+  {
+    "code": "LAN024000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Speech"
+  },
+  {
+    "code": "LAN026000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Rhetoric"
+  },
+  {
+    "code": "LAN027000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Style Manuals"
+  },
+  {
+    "code": "LAN028000",
+    "text": "LANGUAGE ARTS & DISCIPLINES / Vocabulary"
+  },
+  {
+    "code": "LAW000000",
+    "text": "LAW / General"
+  },
+  {
+    "code": "LAW009000",
+    "text": "LAW / Business & Financial"
+  },
+  {
+    "code": "LAW011000",
+    "text": "LAW / Civil Law"
+  },
+  {
+    "code": "LAW013000",
+    "text": "LAW / Civil Rights"
+  },
+  {
+    "code": "LAW018000",
+    "text": "LAW / Constitutional"
+  },
+  {
+    "code": "LAW022000",
+    "text": "LAW / Corporate"
+  },
+  {
+    "code": "LAW026000",
+    "text": "LAW / Criminal Law / General"
+  },
+  {
+    "code": "LAW032000",
+    "text": "LAW / Immigration & Emigration"
+  },
+  {
+    "code": "LAW034000",
+    "text": "LAW / Environmental"
+  },
+  {
+    "code": "LAW036000",
+    "text": "LAW / Ethics & Professional Responsibility"
+  },
+  {
+    "code": "LAW038000",
+    "text": "LAW / Family Law / General"
+  },
+  {
+    "code": "LAW050000",
+    "text": "LAW / Intellectual Property / General"
+  },
+  {
+    "code": "LAW050010",
+    "text": "LAW / Intellectual Property / Copyright"
+  },
+  {
+    "code": "LAW050020",
+    "text": "LAW / Intellectual Property / Patent"
+  },
+  {
+    "code": "LAW051000",
+    "text": "LAW / International"
+  },
+  {
+    "code": "LAW054000",
+    "text": "LAW / Labor & Employment"
+  },
+  {
+    "code": "LAW060000",
+    "text": "LAW / Legal History"
+  },
+  {
+    "code": "LAW074000",
+    "text": "LAW / Property"
+  },
+  {
+    "code": "LAW078000",
+    "text": "LAW / Real Estate"
+  },
+  {
+    "code": "LAW086000",
+    "text": "LAW / Taxation"
+  },
+  {
+    "code": "LCO000000",
+    "text": "LITERARY COLLECTIONS / General"
+  },
+  {
+    "code": "LCO001000",
+    "text": "LITERARY COLLECTIONS / African"
+  },
+  {
+    "code": "LCO002000",
+    "text": "LITERARY COLLECTIONS / American / General"
+  },
+  {
+    "code": "LCO004000",
+    "text": "LITERARY COLLECTIONS / Asian / General"
+  },
+  {
+    "code": "LCO008000",
+    "text": "LITERARY COLLECTIONS / Essays"
+  },
+  {
+    "code": "LCO010000",
+    "text": "LITERARY COLLECTIONS / European / English, Irish, Scottish, Welsh"
+  },
+  {
+    "code": "LCO013000",
+    "text": "LITERARY COLLECTIONS / Letters"
+  },
+  {
+    "code": "LCO016000",
+    "text": "LITERARY COLLECTIONS / Short Stories"
+  },
+  {
+    "code": "LCO017000",
+    "text": "LITERARY COLLECTIONS / Women Authors"
+  },
+  {
+    "code": "LIT000000",
+    "text": "LITERARY CRITICISM / General"
+  },
+  {
+    "code": "LIT003000",
+    "text": "LITERARY CRITICISM / Feminist"
+  },
+  {
+    "code": "LIT004020",
+    "text": "LITERARY CRITICISM / American / General"
+  },
+  {
+    "code": "LIT004040",
+    "text": "LITERARY CRITICISM / African American & Black"
+  },
+  {
+    "code": "LIT004120",
+    "text": "LITERARY CRITICISM / European / English, Irish, Scottish, Welsh"
+  },
+  {
+    "code": "LIT004160",
+    "text": "LITERARY CRITICISM / LGBTQ+"
+  },
+  {
+    "code": "LIT004180",
+    "text": "LITERARY CRITICISM / Gothic & Romance"
+  },
+  {
+    "code": "LIT004190",
+    "text": "LITERARY CRITICISM / Ancient & Classical"
+  },
+  {
+    "code": "LIT004210",
+    "text": "LITERARY CRITICISM / Jewish"
+  },
+  {
+    "code": "LIT004230",
+    "text": "LITERARY CRITICISM / Mystery & Detective"
+  },
+  {
+    "code": "LIT004260",
+    "text": "LITERARY CRITICISM / Science Fiction & Fantasy"
+  },
+  {
+    "code": "LIT004290",
+    "text": "LITERARY CRITICISM / Women Authors"
+  },
+  {
+    "code": "LIT006000",
+    "text": "LITERARY CRITICISM / Semiotics & Theory"
+  },
+  {
+    "code": "LIT007000",
+    "text": "LITERARY CRITICISM / Books & Reading"
+  },
+  {
+    "code": "LIT008000",
+    "text": "LITERARY CRITICISM / Asian / General"
+  },
+  {
+    "code": "LIT009000",
+    "text": "LITERARY CRITICISM / Children's & Young Adult Literature"
+  },
+  {
+    "code": "LIT011000",
+    "text": "LITERARY CRITICISM / Medieval"
+  },
+  {
+    "code": "LIT012000",
+    "text": "LITERARY CRITICISM / Reference"
+  },
+  {
+    "code": "LIT013000",
+    "text": "LITERARY CRITICISM / Drama"
+  },
+  {
+    "code": "LIT014000",
+    "text": "LITERARY CRITICISM / Poetry"
+  },
+  {
+    "code": "LIT015000",
+    "text": "LITERARY CRITICISM / Shakespeare"
+  },
+  {
+    "code": "LIT017000",
+    "text": "LITERARY CRITICISM / Comics & Graphic Novels"
+  },
+  {
+    "code": "LIT018000",
+    "text": "LITERARY CRITICISM / Short Stories"
+  },
+  {
+    "code": "LIT019000",
+    "text": "LITERARY CRITICISM / Renaissance"
+  },
+  {
+    "code": "LIT020000",
+    "text": "LITERARY CRITICISM / Comparative Literature"
+  },
+  {
+    "code": "LIT021000",
+    "text": "LITERARY CRITICISM / Horror & Supernatural"
+  },
+  {
+    "code": "LIT024050",
+    "text": "LITERARY CRITICISM / Modern / 20th Century"
+  },
+  {
+    "code": "LIT024060",
+    "text": "LITERARY CRITICISM / Modern / 21st Century"
+  },
+  {
+    "code": "MAT000000",
+    "text": "MATHEMATICS / General"
+  },
+  {
+    "code": "MAT002000",
+    "text": "MATHEMATICS / Algebra / General"
+  },
+  {
+    "code": "MAT003000",
+    "text": "MATHEMATICS / Applied"
+  },
+  {
+    "code": "MAT005000",
+    "text": "MATHEMATICS / Calculus"
+  },
+  {
+    "code": "MAT007000",
+    "text": "MATHEMATICS / Differential Equations"
+  },
+  {
+    "code": "MAT012000",
+    "text": "MATHEMATICS / Geometry / General"
+  },
+  {
+    "code": "MAT014000",
+    "text": "MATHEMATICS / Group Theory"
+  },
+  {
+    "code": "MAT017000",
+    "text": "MATHEMATICS / Linear & Nonlinear Programming"
+  },
+  {
+    "code": "MAT018000",
+    "text": "MATHEMATICS / Logic"
+  },
+  {
+    "code": "MAT021000",
+    "text": "MATHEMATICS / Number Theory"
+  },
+  {
+    "code": "MAT029000",
+    "text": "MATHEMATICS / Probability & Statistics / General"
+  },
+  {
+    "code": "MAT036000",
+    "text": "MATHEMATICS / Topology"
+  },
+  {
+    "code": "MED000000",
+    "text": "MEDICAL / General"
+  },
+  {
+    "code": "MED003000",
+    "text": "MEDICAL / Allied Health Services / General"
+  },
+  {
+    "code": "MED007000",
+    "text": "MEDICAL / Anatomy"
+  },
+  {
+    "code": "MED009000",
+    "text": "MEDICAL / Biotechnology"
+  },
+  {
+    "code": "MED011000",
+    "text": "MEDICAL / Cardiology"
+  },
+  {
+    "code": "MED014000",
+    "text": "MEDICAL / Clinical Medicine"
+  },
+  {
+    "code": "MED015000",
+    "text": "MEDICAL / Critical Care"
+  },
+  {
+    "code": "MED018000",
+    "text": "MEDICAL / Dentistry / General"
+  },
+  {
+    "code": "MED019000",
+    "text": "MEDICAL / Dermatology"
+  },
+  {
+    "code": "MED022000",
+    "text": "MEDICAL / Drug Guides"
+  },
+  {
+    "code": "MED024000",
+    "text": "MEDICAL / Education & Training"
+  },
+  {
+    "code": "MED028000",
+    "text": "MEDICAL / Emergency Medicine"
+  },
+  {
+    "code": "MED030000",
+    "text": "MEDICAL / Endocrinology & Metabolism"
+  },
+  {
+    "code": "MED035000",
+    "text": "MEDICAL / Ethics"
+  },
+  {
+    "code": "MED036000",
+    "text": "MEDICAL / Evidence-Based Medicine"
+  },
+  {
+    "code": "MED038000",
+    "text": "MEDICAL / Family & General Practice"
+  },
+  {
+    "code": "MED039000",
+    "text": "MEDICAL / Gastroenterology"
+  },
+  {
+    "code": "MED040000",
+    "text": "MEDICAL / Genetics"
+  },
+  {
+    "code": "MED041000",
+    "text": "MEDICAL / Geriatrics"
+  },
+  {
+    "code": "MED042000",
+    "text": "MEDICAL / History"
+  },
+  {
+    "code": "MED045000",
+    "text": "MEDICAL / Immunology"
+  },
+  {
+    "code": "MED048000",
+    "text": "MEDICAL / Infectious Diseases"
+  },
+  {
+    "code": "MED050000",
+    "text": "MEDICAL / Internal Medicine"
+  },
+  {
+    "code": "MED058000",
+    "text": "MEDICAL / Neurology"
+  },
+  {
+    "code": "MED060000",
+    "text": "MEDICAL / Nursing / General"
+  },
+  {
+    "code": "MED065000",
+    "text": "MEDICAL / Oncology"
+  },
+  {
+    "code": "MED067000",
+    "text": "MEDICAL / Ophthalmology"
+  },
+  {
+    "code": "MED069000",
+    "text": "MEDICAL / Orthopedics"
+  },
+  {
+    "code": "MED072000",
+    "text": "MEDICAL / Pathology"
+  },
+  {
+    "code": "MED073000",
+    "text": "MEDICAL / Pediatrics"
+  },
+  {
+    "code": "MED074000",
+    "text": "MEDICAL / Pharmacology"
+  },
+  {
+    "code": "MED076000",
+    "text": "MEDICAL / Physician & Patient"
+  },
+  {
+    "code": "MED078000",
+    "text": "MEDICAL / Psychiatry / General"
+  },
+  {
+    "code": "MED080000",
+    "text": "MEDICAL / Public Health"
+  },
+  {
+    "code": "MED082000",
+    "text": "MEDICAL / Pulmonary & Thoracic Medicine"
+  },
+  {
+    "code": "MED084000",
+    "text": "MEDICAL / Radiology & Nuclear Medicine"
+  },
+  {
+    "code": "MED085000",
+    "text": "MEDICAL / Reference"
+  },
+  {
+    "code": "MED088000",
+    "text": "MEDICAL / Research"
+  },
+  {
+    "code": "MED090000",
+    "text": "MEDICAL / Sports Medicine"
+  },
+  {
+    "code": "MED092000",
+    "text": "MEDICAL / Urology"
+  },
+  {
+    "code": "MUS000000",
+    "text": "MUSIC / General"
+  },
+  {
+    "code": "MUS003000",
+    "text": "MUSIC / Genres & Styles / Blues"
+  },
+  {
+    "code": "MUS004000",
+    "text": "MUSIC / Business Aspects"
+  },
+  {
+    "code": "MUS006000",
+    "text": "MUSIC / Genres & Styles / Classical"
+  },
+  {
+    "code": "MUS007000",
+    "text": "MUSIC / Instruction & Study / Composition"
+  },
+  {
+    "code": "MUS010000",
+    "text": "MUSIC / Genres & Styles / Country & Bluegrass"
+  },
+  {
+    "code": "MUS013000",
+    "text": "MUSIC / Genres & Styles / Electronic"
+  },
+  {
+    "code": "MUS015000",
+    "text": "MUSIC / Ethnomusicology"
+  },
+  {
+    "code": "MUS017000",
+    "text": "MUSIC / Genres & Styles / Folk & Traditional"
+  },
+  {
+    "code": "MUS019000",
+    "text": "MUSIC / Genres & Styles / Heavy Metal"
+  },
+  {
+    "code": "MUS020000",
+    "text": "MUSIC / History & Criticism"
+  },
+  {
+    "code": "MUS022000",
+    "text": "MUSIC / Instruction & Study / General"
+  },
+  {
+    "code": "MUS023000",
+    "text": "MUSIC / Musical Instruments / General"
+  },
+  {
+    "code": "MUS023030",
+    "text": "MUSIC / Musical Instruments / Piano & Keyboard"
+  },
+  {
+    "code": "MUS023060",
+    "text": "MUSIC / Musical Instruments / Guitar"
+  },
+  {
+    "code": "MUS025000",
+    "text": "MUSIC / Genres & Styles / Jazz"
+  },
+  {
+    "code": "MUS028000",
+    "text": "MUSIC / Genres & Styles / Opera"
+  },
+  {
+    "code": "MUS029000",
+    "text": "MUSIC / Genres & Styles / Pop Vocal"
+  },
+  {
+    "code": "MUS030000",
+    "text": "MUSIC / Genres & Styles / Punk"
+  },
+  {
+    "code": "MUS031000",
+    "text": "MUSIC / Genres & Styles / Rap & Hip Hop"
+  },
+  {
+    "code": "MUS033000",
+    "text": "MUSIC / Reference"
+  },
+  {
+    "code": "MUS035000",
+    "text": "MUSIC / Genres & Styles / Rock"
+  },
+  {
+    "code": "MUS039000",
+    "text": "MUSIC / Genres & Styles / Soul & R n B"
+  },
+  {
+    "code": "MUS041000",
+    "text": "MUSIC / Instruction & Study / Theory"
+  },
+  {
+    "code": "MUS048000",
+    "text": "MUSIC / Religious / General"
+  },
+  {
+    "code": "MUS050000",
+    "text": "MUSIC / Individual Composer & Musician"
+  },
+  {
+    "code": "NAT000000",
+    "text": "NATURE / General"
+  },
+  {
+    "code": "NAT001000",
+    "text": "NATURE / Animals / General"
+  },
+  {
+    "code": "NAT004000",
+    "text": "NATURE / Birdwatching Guides"
+  },
+  {
+    "code": "NAT010000",
+    "text": "NATURE / Ecology"
+  },
+  {
+    "code": "NAT011000",
+    "text": "NATURE / Environmental Conservation & Protection"
+  },
+  {
+    "code": "NAT013000",
+    "text": "NATURE / Plants / Flowers"
+  },
+  {
+    "code": "NAT014000",
+    "text": "NATURE / Ecosystems & Habitats / Forests & Rainforests"
+  },
+  {
+    "code": "NAT015000",
+    "text": "NATURE / Fossils"
+  },
+  {
+    "code": "NAT017000",
+    "text": "NATURE / Animals / Insects & Spiders"
+  },
+  {
+    "code": "NAT019000",
+    "text": "NATURE / Animals / Mammals"
+  },
+  {
+    "code": "NAT020000",
+    "text": "NATURE / Animals / Marine Life"
+  },
+  {
+    "code": "NAT025000",
+    "text": "NATURE / Ecosystems & Habitats / Oceans & Seas"
+  },
+  {
+    "code": "NAT026000",
+    "text": "NATURE / Plants / General"
+  },
+  {
+    "code": "NAT027000",
+    "text": "NATURE / Reference"
+  },
+  {
+    "code": "NAT030000",
+    "text": "NATURE / Rocks & Minerals"
+  },
+  {
+    "code": "NAT033000",
+    "text": "NATURE / Sky Observation"
+  },
+  {
+    "code": "NAT034000",
+    "text": "NATURE / Plants / Trees"
+  },
+  {
+    "code": "NAT036000",
+    "text": "NATURE / Weather"
+  },
+  {
+    "code": "NAT037000",
+    "text": "NATURE / Animals / Wildlife"
+  },
+  {
+    "code": "NAT039000",
+    "text": "NATURE / Animal Rights"
+  },
+  {
+    "code": "NAT043000",
+    "text": "NATURE / Animals / Birds"
+  },
+  {
+    "code": "NAT045000",
+    "text": "NATURE / Ecosystems & Habitats / General"
+  },
+  {
+    "code": "NAT046000",
+    "text": "NATURE / Endangered Species & Extinct Species"
+  },
+  {
+    "code": "OCC000000",
+    "text": "BODY, MIND & SPIRIT / General"
+  },
+  {
+    "code": "OCC005000",
+    "text": "BODY, MIND & SPIRIT / Astrology / General"
+  },
+  {
+    "code": "OCC008000",
+    "text": "BODY, MIND & SPIRIT / Channeling & Mediumship"
+  },
+  {
+    "code": "OCC011000",
+    "text": "BODY, MIND & SPIRIT / Divination / General"
+  },
+  {
+    "code": "OCC011010",
+    "text": "BODY, MIND & SPIRIT / Divination / Tarot"
+  },
+  {
+    "code": "OCC012000",
+    "text": "BODY, MIND & SPIRIT / Dreams"
+  },
+  {
+    "code": "OCC014000",
+    "text": "BODY, MIND & SPIRIT / Feng Shui"
+  },
+  {
+    "code": "OCC016000",
+    "text": "BODY, MIND & SPIRIT / Healing / General"
+  },
+  {
+    "code": "OCC019000",
+    "text": "BODY, MIND & SPIRIT / Inspiration & Personal Growth"
+  },
+  {
+    "code": "OCC022000",
+    "text": "BODY, MIND & SPIRIT / Meditation"
+  },
+  {
+    "code": "OCC024000",
+    "text": "BODY, MIND & SPIRIT / Mindfulness & Meditation"
+  },
+  {
+    "code": "OCC026000",
+    "text": "BODY, MIND & SPIRIT / New Thought"
+  },
+  {
+    "code": "OCC027000",
+    "text": "BODY, MIND & SPIRIT / Numerology"
+  },
+  {
+    "code": "OCC028000",
+    "text": "BODY, MIND & SPIRIT / Parapsychology / General"
+  },
+  {
+    "code": "OCC029000",
+    "text": "BODY, MIND & SPIRIT / Psychic & ESP"
+  },
+  {
+    "code": "OCC039000",
+    "text": "BODY, MIND & SPIRIT / Spirituality"
+  },
+  {
+    "code": "OCC040000",
+    "text": "BODY, MIND & SPIRIT / Witchcraft"
+  },
+  {
+    "code": "PER000000",
+    "text": "PERFORMING ARTS / General"
+  },
+  {
+    "code": "PER001000",
+    "text": "PERFORMING ARTS / Acting & Auditioning"
+  },
+  {
+    "code": "PER003000",
+    "text": "PERFORMING ARTS / Dance / General"
+  },
+  {
+    "code": "PER004000",
+    "text": "PERFORMING ARTS / Film / General"
+  },
+  {
+    "code": "PER004010",
+    "text": "PERFORMING ARTS / Film / Direction & Production"
+  },
+  {
+    "code": "PER004020",
+    "text": "PERFORMING ARTS / Film / History & Criticism"
+  },
+  {
+    "code": "PER004030",
+    "text": "PERFORMING ARTS / Film / Screenwriting"
+  },
+  {
+    "code": "PER008000",
+    "text": "PERFORMING ARTS / Radio / General"
+  },
+  {
+    "code": "PER010000",
+    "text": "PERFORMING ARTS / Television / General"
+  },
+  {
+    "code": "PER011000",
+    "text": "PERFORMING ARTS / Theater / General"
+  },
+  {
+    "code": "PER011010",
+    "text": "PERFORMING ARTS / Theater / Direction & Production"
+  },
+  {
+    "code": "PER011020",
+    "text": "PERFORMING ARTS / Theater / History & Criticism"
+  },
+  {
+    "code": "PER015000",
+    "text": "PERFORMING ARTS / Animation"
+  },
+  {
+    "code": "PER017000",
+    "text": "PERFORMING ARTS / Storytelling"
+  },
+  {
+    "code": "PET000000",
+    "text": "PETS / General"
+  },
+  {
+    "code": "PET002000",
+    "text": "PETS / Birds"
+  },
+  {
+    "code": "PET003000",
+    "text": "PETS / Cats / General"
+  },
+  {
+    "code": "PET004000",
+    "text": "PETS / Dogs / General"
+  },
+  {
+    "code": "PET004010",
+    "text": "PETS / Dogs / Breeds"
+  },
+  {
+    "code": "PET004020",
+    "text": "PETS / Dogs / Training"
+  },
+  {
+    "code": "PET005000",
+    "text": "PETS / Fish & Aquariums"
+  },
+  {
+    "code": "PET006000",
+    "text": "PETS / Horses / General"
+  },
+  {
+    "code": "PET008000",
+    "text": "PETS / Reptiles, Amphibians & Terrariums"
+  },
+  {
+    "code": "PHI000000",
+    "text": "PHILOSOPHY / General"
+  },
+  {
+    "code": "PHI001000",
+    "text": "PHILOSOPHY / Aesthetics"
+  },
+  {
+    "code": "PHI002000",
+    "text": "PHILOSOPHY / History & Surveys / Ancient & Classical"
+  },
+  {
+    "code": "PHI004000",
+    "text": "PHILOSOPHY / Epistemology"
+  },
+  {
+    "code": "PHI005000",
+    "text": "PHILOSOPHY / Ethics & Moral Philosophy"
+  },
+  {
+    "code": "PHI006000",
+    "text": "PHILOSOPHY / Movements / Existentialism"
+  },
+  {
+    "code": "PHI007000",
+    "text": "PHILOSOPHY / Free Will & Determinism"
+  },
+  {
+    "code": "PHI008000",
+    "text": "PHILOSOPHY / Good & Evil"
+  },
+  {
+    "code": "PHI009000",
+    "text": "PHILOSOPHY / History & Surveys / General"
+  },
+  {
+    "code": "PHI010000",
+    "text": "PHILOSOPHY / Movements / Humanism"
+  },
+  {
+    "code": "PHI011000",
+    "text": "PHILOSOPHY / Logic"
+  },
+  {
+    "code": "PHI012000",
+    "text": "PHILOSOPHY / History & Surveys / Medieval"
+  },
+  {
+    "code": "PHI013000",
+    "text": "PHILOSOPHY / Metaphysics"
+  },
+  {
+    "code": "PHI015000",
+    "text": "PHILOSOPHY / Mind & Body"
+  },
+  {
+    "code": "PHI016000",
+    "text": "PHILOSOPHY / History & Surveys / Modern"
+  },
+  {
+    "code": "PHI019000",
+    "text": "PHILOSOPHY / Political"
+  },
+  {
+    "code": "PHI020000",
+    "text": "PHILOSOPHY / Movements / Pragmatism"
+  },
+  {
+    "code": "PHI021000",
+    "text": "PHILOSOPHY / Reference"
+  },
+  {
+    "code": "PHI022000",
+    "text": "PHILOSOPHY / Religious"
+  },
+  {
+    "code": "PHI034000",
+    "text": "PHILOSOPHY / Social"
+  },
+  {
+    "code": "PHI038000",
+    "text": "PHILOSOPHY / Language"
+  },
+  {
+    "code": "PHI040000",
+    "text": "PHILOSOPHY / Movements / Critical Theory"
+  },
+  {
+    "code": "PHI046000",
+    "text": "PHILOSOPHY / Individual Philosophers"
+  },
+  {
+    "code": "PHO000000",
+    "text": "PHOTOGRAPHY / General"
+  },
+  {
+    "code": "PHO003000",
+    "text": "PHOTOGRAPHY / Commercial"
+  },
+  {
+    "code": "PHO004000",
+    "text": "PHOTOGRAPHY / Collections, Catalogs, Exhibitions / General"
+  },
+  {
+    "code": "PHO011000",
+    "text": "PHOTOGRAPHY / Individual Photographers / General"
+  },
+  {
+    "code": "PHO019000",
+    "text": "PHOTOGRAPHY / Subjects & Themes / General"
+  },
+  {
+    "code": "PHO019010",
+    "text": "PHOTOGRAPHY / Subjects & Themes / Landscapes"
+  },
+  {
+    "code": "PHO019020",
+    "text": "PHOTOGRAPHY / Subjects & Themes / Portraits & Selfies"
+  },
+  {
+    "code": "PHO023000",
+    "text": "PHOTOGRAPHY / Techniques / General"
+  },
+  {
+    "code": "PHO023010",
+    "text": "PHOTOGRAPHY / Techniques / Digital"
+  },
+  {
+    "code": "PHO024000",
+    "text": "PHOTOGRAPHY / Reference"
+  },
+  {
+    "code": "POE000000",
+    "text": "POETRY / General"
+  },
+  {
+    "code": "POE001000",
+    "text": "POETRY / Anthologies (multiple authors)"
+  },
+  {
+    "code": "POE003000",
+    "text": "POETRY / Subjects & Themes / Religious"
+  },
+  {
+    "code": "POE005010",
+    "text": "POETRY / American"
+  },
+  {
+    "code": "POE005020",
+    "text": "POETRY / European / English, Irish, Scottish, Welsh"
+  },
+  {
+    "code": "POE005050",
+    "text": "POETRY / African American & Black"
+  },
+  {
+    "code": "POE008000",
+    "text": "POETRY / Ancient & Classical"
+  },
+  {
+    "code": "POE011000",
+    "text": "POETRY / Canadian"
+  },
+  {
+    "code": "POE012000",
+    "text": "POETRY / Caribbean & Latin American"
+  },
+  {
+    "code": "POE013000",
+    "text": "POETRY / Middle Eastern"
+  },
+  {
+    "code": "POE014000",
+    "text": "POETRY / Epic"
+  },
+  {
+    "code": "POE021000",
+    "text": "POETRY / LGBTQ+"
+  },
+  {
+    "code": "POE023000",
+    "text": "POETRY / Subjects & Themes / General"
+  },
+  {
+    "code": "POE023010",
+    "text": "POETRY / Subjects & Themes / Death, Grief, Loss"
+  },
+  {
+    "code": "POE023020",
+    "text": "POETRY / Subjects & Themes / Love & Erotica"
+  },
+  {
+    "code": "POE023060",
+    "text": "POETRY / Subjects & Themes / Political & Protest"
+  },
+  {
+    "code": "POE024000",
+    "text": "POETRY / Women Authors"
+  },
+  {
+    "code": "POE025000",
+    "text": "POETRY / Haiku"
+  },
+  {
+    "code": "POE031000",
+    "text": "POETRY / Spoken Word & Performance"
+  },
+  {
+    "code": "POL000000",
+    "text": "POLITICAL SCIENCE / General"
+  },
+  {
+    "code": "POL003000",
+    "text": "POLITICAL SCIENCE / Civics & Citizenship"
+  },
+  {
+    "code": "POL004000",
+    "text": "POLITICAL SCIENCE / Civil Rights"
+  },
+  {
+    "code": "POL005000",
+    "text": "POLITICAL SCIENCE / Political Ideologies / Communism, Post-Communism & Socialism"
+  },
+  {
+    "code": "POL006000",
+    "text": "POLITICAL SCIENCE / American Government / Legislative Branch"
+  },
+  {
+    "code": "POL007000",
+    "text": "POLITICAL SCIENCE / Political Ideologies / Democracy"
+  },
+  {
+    "code": "POL008000",
+    "text": "POLITICAL SCIENCE / Political Process / Campaigns & Elections"
+  },
+  {
+    "code": "POL009000",
+    "text": "POLITICAL SCIENCE / Comparative Politics"
+  },
+  {
+    "code": "POL010000",
+    "text": "POLITICAL SCIENCE / History & Theory"
+  },
+  {
+    "code": "POL011000",
+    "text": "POLITICAL SCIENCE / International Relations / General"
+  },
+  {
+    "code": "POL011010",
+    "text": "POLITICAL SCIENCE / International Relations / Diplomacy"
+  },
+  {
+    "code": "POL012000",
+    "text": "POLITICAL SCIENCE / Security (National & International)"
+  },
+  {
+    "code": "POL013000",
+    "text": "POLITICAL SCIENCE / Labor & Industrial Relations"
+  },
+  {
+    "code": "POL015000",
+    "text": "POLITICAL SCIENCE / Political Process / Political Parties"
+  },
+  {
+    "code": "POL017000",
+    "text": "POLITICAL SCIENCE / Public Affairs & Administration"
+  },
+  {
+    "code": "POL022000",
+    "text": "POLITICAL SCIENCE / Constitutions"
+  },
+  {
+    "code": "POL023000",
+    "text": "POLITICAL SCIENCE / Political Economy"
+  },
+  {
+    "code": "POL028000",
+    "text": "POLITICAL SCIENCE / Public Policy / General"
+  },
+  {
+    "code": "POL032000",
+    "text": "POLITICAL SCIENCE / Essays"
+  },
+  {
+    "code": "POL033000",
+    "text": "POLITICAL SCIENCE / Globalization"
+  },
+  {
+    "code": "POL035010",
+    "text": "POLITICAL SCIENCE / Human Rights"
+  },
+  {
+    "code": "POL036000",
+    "text": "POLITICAL SCIENCE / Intelligence & Espionage"
+  },
+  {
+    "code": "POL037000",
+    "text": "POLITICAL SCIENCE / Terrorism"
+  },
+  {
+    "code": "POL039000",
+    "text": "POLITICAL SCIENCE / Censorship"
+  },
+  {
+    "code": "POL040000",
+    "text": "POLITICAL SCIENCE / American Government / General"
+  },
+  {
+    "code": "POL040010",
+    "text": "POLITICAL SCIENCE / American Government / Executive Branch"
+  },
+  {
+    "code": "POL042000",
+    "text": "POLITICAL SCIENCE / Political Ideologies / General"
+  },
+  {
+    "code": "POL042020",
+    "text": "POLITICAL SCIENCE / Political Ideologies / Conservatism & Liberalism"
+  },
+  {
+    "code": "POL044000",
+    "text": "POLITICAL SCIENCE / Public Policy / Environmental Policy"
+  },
+  {
+    "code": "POL052000",
+    "text": "POLITICAL SCIENCE / Women in Politics"
+  },
+  {
+    "code": "POL058000",
+    "text": "POLITICAL SCIENCE / World / European"
+  },
+  {
+    "code": "POL062000",
+    "text": "POLITICAL SCIENCE / Geopolitics"
+  },
+  {
+    "code": "PSY000000",
+    "text": "PSYCHOLOGY / General"
+  },
+  {
+    "code": "PSY001000",
+    "text": "PSYCHOLOGY / Applied Psychology"
+  },
+  {
+    "code": "PSY003000",
+    "text": "PSYCHOLOGY / Clinical Psychology"
+  },
+  {
+    "code": "PSY004000",
+    "text": "PSYCHOLOGY / Cognitive Psychology & Cognition"
+  },
+  {
+    "code": "PSY007000",
+    "text": "PSYCHOLOGY / Developmental / General"
+  },
+  {
+    "code": "PSY008000",
+    "text": "PSYCHOLOGY / Developmental / Adolescent"
+  },
+  {
+    "code": "PSY009000",
+    "text": "PSYCHOLOGY / Developmental / Child"
+  },
+  {
+    "code": "PSY010000",
+    "text": "PSYCHOLOGY / Education & Training"
+  },
+  {
+    "code": "PSY013000",
+    "text": "PSYCHOLOGY / History"
+  },
+  {
+    "code": "PSY017000",
+    "text": "PSYCHOLOGY / Mental Health"
+  },
+  {
+    "code": "PSY022000",
+    "text": "PSYCHOLOGY / Neuropsychology"
+  },
+  {
+    "code": "PSY031000",
+    "text": "PSYCHOLOGY / Social Psychology"
+  },
+  {
+    "code": "PSY036000",
+    "text": "PSYCHOLOGY / Psychotherapy / General"
+  },
+  {
+    "code": "PSY045000",
+    "text": "PSYCHOLOGY / Movements / Behavioral"
+  },
+  {
+    "code": "PSY045020",
+    "text": "PSYCHOLOGY / Movements / Cognitive Behavioral Therapy (CBT)"
+  },
+  {
+    "code": "REF000000",
+    "text": "REFERENCE / General"
+  },
+  {
+    "code": "REF003000",
+    "text": "REFERENCE / Almanacs"
+  },
+  {
+    "code": "REF004000",
+    "text": "REFERENCE / Atlases, Gazetteers & Maps"
+  },
+  {
+    "code": "REF006000",
+    "text": "REFERENCE / Bibliographies & Indexes"
+  },
+  {
+    "code": "REF008000",
+    "text": "REFERENCE / Curiosities & Wonders"
+  },
+  {
+    "code": "REF010000",
+    "text": "REFERENCE / Encyclopedias"
+  },
+  {
+    "code": "REF012000",
+    "text": "REFERENCE / Etiquette"
+  },
+  {
+    "code": "REF020000",
+    "text": "REFERENCE / Quotations"
+  },
+  {
+    "code": "REF022000",
+    "text": "REFERENCE / Survival & Emergency Preparedness"
+  },
+  {
+    "code": "REF025000",
+    "text": "REFERENCE / Trivia"
+  },
+  {
+    "code": "REF028000",
+    "text": "REFERENCE / Writing Skills"
+  },
+  {
+    "code": "REL000000",
+    "text": "RELIGION / General"
+  },
+  {
+    "code": "REL004000",
+    "text": "RELIGION / Atheism"
+  },
+  {
+    "code": "REL006000",
+    "text": "RELIGION / Biblical Studies / General"
+  },
+  {
+    "code": "REL006700",
+    "text": "RELIGION / Biblical Studies / Bible Study Guides"
+  },
+  {
+    "code": "REL007000",
+    "text": "RELIGION / Buddhism / General"
+  },
+  {
+    "code": "REL010000",
+    "text": "RELIGION / Christianity / Catholic / General"
+  },
+  {
+    "code": "REL011000",
+    "text": "RELIGION / Christian Education / General"
+  },
+  {
+    "code": "REL012000",
+    "text": "RELIGION / Christian Living / General"
+  },
+  {
+    "code": "REL012020",
+    "text": "RELIGION / Christian Living / Devotional"
+  },
+  {
+    "code": "REL012030",
+    "text": "RELIGION / Christian Living / Family & Relationships"
+  },
+  {
+    "code": "REL012040",
+    "text": "RELIGION / Christian Living / Inspirational"
+  },
+  {
+    "code": "REL012050",
+    "text": "RELIGION / Christian Living / Love & Marriage"
+  },
+  {
+    "code": "REL012070",
+    "text": "RELIGION / Christian Living / Personal Growth"
+  },
+  {
+    "code": "REL012080",
+    "text": "RELIGION / Christian Living / Prayer"
+  },
+  {
+    "code": "REL012120",
+    "text": "RELIGION / Christian Living / Spiritual Growth"
+  },
+  {
+    "code": "REL015000",
+    "text": "RELIGION / Christianity / History"
+  },
+  {
+    "code": "REL017000",
+    "text": "RELIGION / Comparative Religion"
+  },
+  {
+    "code": "REL022000",
+    "text": "RELIGION / Devotional"
+  },
+  {
+    "code": "REL025000",
+    "text": "RELIGION / Ecumenism & Interfaith"
+  },
+  {
+    "code": "REL028000",
+    "text": "RELIGION / Ethics"
+  },
+  {
+    "code": "REL032000",
+    "text": "RELIGION / Hinduism / General"
+  },
+  {
+    "code": "REL033000",
+    "text": "RELIGION / History"
+  },
+  {
+    "code": "REL036000",
+    "text": "RELIGION / Inspirational"
+  },
+  {
+    "code": "REL037000",
+    "text": "RELIGION / Islam / General"
+  },
+  {
+    "code": "REL040000",
+    "text": "RELIGION / Judaism / General"
+  },
+  {
+    "code": "REL040060",
+    "text": "RELIGION / Judaism / Kabbalah & Mysticism"
+  },
+  {
+    "code": "REL042000",
+    "text": "RELIGION / Meditations"
+  },
+  {
+    "code": "REL047000",
+    "text": "RELIGION / Mysticism"
+  },
+  {
+    "code": "REL051000",
+    "text": "RELIGION / Philosophy"
+  },
+  {
+    "code": "REL054000",
+    "text": "RELIGION / Reference"
+  },
+  {
+    "code": "REL062000",
+    "text": "RELIGION / Spirituality"
+  },
+  {
+    "code": "REL067000",
+    "text": "RELIGION / Christian Theology / General"
+  },
+  {
+    "code": "REL067030",
+    "text": "RELIGION / Christian Theology / Apologetics"
+  },
+  {
+    "code": "REL070000",
+    "text": "RELIGION / Christianity / General"
+  },
+  {
+    "code": "REL084000",
+    "text": "RELIGION / Religion, Politics & State"
+  },
+  {
+    "code": "REL087000",
+    "text": "RELIGION / Prayer"
+  },
+  {
+    "code": "REL102000",
+    "text": "RELIGION / Theology"
+  },
+  {
+    "code": "REL106000",
+    "text": "RELIGION / Religion & Science"
+  },
+  {
+    "code": "SCI000000",
+    "text": "SCIENCE / General"
+  },
+  {
+    "code": "SCI001000",
+    "text": "SCIENCE / Acoustics & Sound"
+  },
+  {
+    "code": "SCI003000",
+    "text": "SCIENCE / Applied Sciences"
+  },
+  {
+    "code": "SCI004000",
+    "text": "SCIENCE / Space Science / Astronomy"
+  },
+  {
+    "code": "SCI005000",
+    "text": "SCIENCE / Physics / Astrophysics"
+  },
+  {
+    "code": "SCI008000",
+    "text": "SCIENCE / Life Sciences / Biology"
+  },
+  {
+    "code": "SCI010000",
+    "text": "SCIENCE / Biotechnology"
+  },
+  {
+    "code": "SCI011000",
+    "text": "SCIENCE / Life Sciences / Botany"
+  },
+  {
+    "code": "SCI013000",
+    "text": "SCIENCE / Chemistry / General"
+  },
+  {
+    "code": "SCI013040",
+    "text": "SCIENCE / Chemistry / Organic"
+  },
+  {
+    "code": "SCI013050",
+    "text": "SCIENCE / Chemistry / Physical & Theoretical"
+  },
+  {
+    "code": "SCI015000",
+    "text": "SCIENCE / Space Science / Cosmology"
+  },
+  {
+    "code": "SCI019000",
+    "text": "SCIENCE / Earth Sciences / General"
+  },
+  {
+    "code": "SCI020000",
+    "text": "SCIENCE / Life Sciences / Ecology"
+  },
+  {
+    "code": "SCI021000",
+    "text": "SCIENCE / Physics / Electricity"
+  },
+  {
+    "code": "SCI024000",
+    "text": "SCIENCE / Energy"
+  },
+  {
+    "code": "SCI026000",
+    "text": "SCIENCE / Environmental Science"
+  },
+  {
+    "code": "SCI027000",
+    "text": "SCIENCE / Life Sciences / Evolution"
+  },
+  {
+    "code": "SCI028000",
+    "text": "SCIENCE / Experiments & Projects"
+  },
+  {
+    "code": "SCI029000",
+    "text": "SCIENCE / Life Sciences / Genetics & Genomics"
+  },
+  {
+    "code": "SCI031000",
+    "text": "SCIENCE / Earth Sciences / Geology"
+  },
+  {
+    "code": "SCI032000",
+    "text": "SCIENCE / Physics / Geophysics"
+  },
+  {
+    "code": "SCI034000",
+    "text": "SCIENCE / History"
+  },
+  {
+    "code": "SCI036000",
+    "text": "SCIENCE / Life Sciences / Human Anatomy & Physiology"
+  },
+  {
+    "code": "SCI039000",
+    "text": "SCIENCE / Life Sciences / Marine Biology"
+  },
+  {
+    "code": "SCI042000",
+    "text": "SCIENCE / Earth Sciences / Meteorology & Climatology"
+  },
+  {
+    "code": "SCI043000",
+    "text": "SCIENCE / Research & Methodology"
+  },
+  {
+    "code": "SCI049000",
+    "text": "SCIENCE / Life Sciences / Molecular Biology"
+  },
+  {
+    "code": "SCI050000",
+    "text": "SCIENCE / Nanoscience"
+  },
+  {
+    "code": "SCI051000",
+    "text": "SCIENCE / Physics / Nuclear"
+  },
+  {
+    "code": "SCI052000",
+    "text": "SCIENCE / Earth Sciences / Oceanography"
+  },
+  {
+    "code": "SCI053000",
+    "text": "SCIENCE / Physics / Optics & Light"
+  },
+  {
+    "code": "SCI054000",
+    "text": "SCIENCE / Paleontology"
+  },
+  {
+    "code": "SCI055000",
+    "text": "SCIENCE / Physics / General"
+  },
+  {
+    "code": "SCI057000",
+    "text": "SCIENCE / Physics / Quantum Theory"
+  },
+  {
+    "code": "SCI060000",
+    "text": "SCIENCE / Reference"
+  },
+  {
+    "code": "SCI061000",
+    "text": "SCIENCE / Physics / Relativity"
+  },
+  {
+    "code": "SCI063000",
+    "text": "SCIENCE / Study & Teaching"
+  },
+  {
+    "code": "SCI070000",
+    "text": "SCIENCE / Life Sciences / Zoology / General"
+  },
+  {
+    "code": "SCI075000",
+    "text": "SCIENCE / Philosophy & Social Aspects"
+  },
+  {
+    "code": "SCI089000",
+    "text": "SCIENCE / Life Sciences / Neuroscience"
+  },
+  {
+    "code": "SCI092000",
+    "text": "SCIENCE / Global Warming & Climate Change"
+  },
+  {
+    "code": "SEL000000",
+    "text": "SELF-HELP / General"
+  },
+  {
+    "code": "SEL001000",
+    "text": "SELF-HELP / Abuse"
+  },
+  {
+    "code": "SEL004000",
+    "text": "SELF-HELP / Affirmations"
+  },
+  {
+    "code": "SEL009000",
+    "text": "SELF-HELP / Creativity"
+  },
+  {
+    "code": "SEL010000",
+    "text": "SELF-HELP / Death, Grief, Bereavement"
+  },
+  {
+    "code": "SEL011000",
+    "text": "SELF-HELP / Mood Disorders / Depression"
+  },
+  {
+    "code": "SEL012000",
+    "text": "SELF-HELP / Dreams"
+  },
+  {
+    "code": "SEL014000",
+    "text": "SELF-HELP / Eating Disorders & Body Image"
+  },
+  {
+    "code": "SEL016000",
+    "text": "SELF-HELP / Personal Growth / Happiness"
+  },
+  {
+    "code": "SEL019000",
+    "text": "SELF-HELP / Meditations"
+  },
+  {
+    "code": "SEL021000",
+    "text": "SELF-HELP / Motivational & Inspirational"
+  },
+  {
+    "code": "SEL023000",
+    "text": "SELF-HELP / Personal Growth / Self-Esteem"
+  },
+  {
+    "code": "SEL024000",
+    "text": "SELF-HELP / Self-Management / Stress Management"
+  },
+  {
+    "code": "SEL026000",
+    "text": "SELF-HELP / Substance Abuse & Addictions / General"
+  },
+  {
+    "code": "SEL027000",
+    "text": "SELF-HELP / Personal Growth / Success"
+  },
+  {
+    "code": "SEL029000",
+    "text": "SELF-HELP / Twelve-Step Programs"
+  },
+  {
+    "code": "SEL031000",
+    "text": "SELF-HELP / Personal Growth / General"
+  },
+  {
+    "code": "SEL032000",
+    "text": "SELF-HELP / Spiritual"
+  },
+  {
+    "code": "SEL035000",
+    "text": "SELF-HELP / Self-Management / Time Management"
+  },
+  {
+    "code": "SEL036000",
+    "text": "SELF-HELP / Anxiety & Phobias"
+  },
+  {
+    "code": "SEL040000",
+    "text": "SELF-HELP / Communication & Social Skills"
+  },
+  {
+    "code": "SEL042000",
+    "text": "SELF-HELP / Emotions"
+  },
+  {
+    "code": "SEL043000",
+    "text": "SELF-HELP / Post-Traumatic Stress Disorder (PTSD)"
+  },
+  {
+    "code": "SEL045000",
+    "text": "SELF-HELP / Journaling"
+  },
+  {
+    "code": "SOC000000",
+    "text": "SOCIAL SCIENCE / General"
+  },
+  {
+    "code": "SOC001000",
+    "text": "SOCIAL SCIENCE / Cultural & Ethnic Studies / African American & Black Studies"
+  },
+  {
+    "code": "SOC002000",
+    "text": "SOCIAL SCIENCE / Anthropology / General"
+  },
+  {
+    "code": "SOC003000",
+    "text": "SOCIAL SCIENCE / Archaeology"
+  },
+  {
+    "code": "SOC004000",
+    "text": "SOCIAL SCIENCE / Criminology"
+  },
+  {
+    "code": "SOC005000",
+    "text": "SOCIAL SCIENCE / Customs & Traditions"
+  },
+  {
+    "code": "SOC006000",
+    "text": "SOCIAL SCIENCE / Demography"
+  },
+  {
+    "code": "SOC007000",
+    "text": "SOCIAL SCIENCE / Immigration & Emigration"
+  },
+  {
+    "code": "SOC008000",
+    "text": "SOCIAL SCIENCE / Cultural & Ethnic Studies / General"
+  },
+  {
+    "code": "SOC010000",
+    "text": "SOCIAL SCIENCE / Feminism & Feminist Theory"
+  },
+  {
+    "code": "SOC011000",
+    "text": "SOCIAL SCIENCE / Folklore & Mythology"
+  },
+  {
+    "code": "SOC018000",
+    "text": "SOCIAL SCIENCE / Men's Studies"
+  },
+  {
+    "code": "SOC019000",
+    "text": "SOCIAL SCIENCE / Methodology"
+  },
+  {
+    "code": "SOC022000",
+    "text": "SOCIAL SCIENCE / Popular Culture"
+  },
+  {
+    "code": "SOC023000",
+    "text": "SOCIAL SCIENCE / Reference"
+  },
+  {
+    "code": "SOC026000",
+    "text": "SOCIAL SCIENCE / Sociology / General"
+  },
+  {
+    "code": "SOC026010",
+    "text": "SOCIAL SCIENCE / Sociology / Marriage & Family"
+  },
+  {
+    "code": "SOC027000",
+    "text": "SOCIAL SCIENCE / Statistics"
+  },
+  {
+    "code": "SOC028000",
+    "text": "SOCIAL SCIENCE / Women's Studies"
+  },
+  {
+    "code": "SOC029000",
+    "text": "SOCIAL SCIENCE / Disability"
+  },
+  {
+    "code": "SOC031000",
+    "text": "SOCIAL SCIENCE / Discrimination"
+  },
+  {
+    "code": "SOC032000",
+    "text": "SOCIAL SCIENCE / Gender Studies"
+  },
+  {
+    "code": "SOC036000",
+    "text": "SOCIAL SCIENCE / Death & Dying"
+  },
+  {
+    "code": "SOC045000",
+    "text": "SOCIAL SCIENCE / Poverty & Homelessness"
+  },
+  {
+    "code": "SOC047000",
+    "text": "SOCIAL SCIENCE / Children's Studies"
+  },
+  {
+    "code": "SOC051000",
+    "text": "SOCIAL SCIENCE / Violence in Society"
+  },
+  {
+    "code": "SOC052000",
+    "text": "SOCIAL SCIENCE / Media Studies"
+  },
+  {
+    "code": "SOC054000",
+    "text": "SOCIAL SCIENCE / Enslavement"
+  },
+  {
+    "code": "SOC064000",
+    "text": "SOCIAL SCIENCE / LGBTQ+ Studies / General"
+  },
+  {
+    "code": "SOC065000",
+    "text": "SOCIAL SCIENCE / Human Sexuality"
+  },
+  {
+    "code": "SOC070000",
+    "text": "SOCIAL SCIENCE / Race & Ethnic Relations"
+  },
+  {
+    "code": "SOC072000",
+    "text": "SOCIAL SCIENCE / Activism & Social Justice"
+  },
+  {
+    "code": "SPO000000",
+    "text": "SPORTS & RECREATION / General"
+  },
+  {
+    "code": "SPO003000",
+    "text": "SPORTS & RECREATION / Baseball / General"
+  },
+  {
+    "code": "SPO004000",
+    "text": "SPORTS & RECREATION / Basketball"
+  },
+  {
+    "code": "SPO009000",
+    "text": "SPORTS & RECREATION / Cycling"
+  },
+  {
+    "code": "SPO010000",
+    "text": "SPORTS & RECREATION / Equestrian"
+  },
+  {
+    "code": "SPO012000",
+    "text": "SPORTS & RECREATION / Fishing"
+  },
+  {
+    "code": "SPO014000",
+    "text": "SPORTS & RECREATION / Football"
+  },
+  {
+    "code": "SPO015000",
+    "text": "SPORTS & RECREATION / Golf"
+  },
+  {
+    "code": "SPO018000",
+    "text": "SPORTS & RECREATION / Hiking"
+  },
+  {
+    "code": "SPO019000",
+    "text": "SPORTS & RECREATION / Hockey"
+  },
+  {
+    "code": "SPO020000",
+    "text": "SPORTS & RECREATION / Hunting"
+  },
+  {
+    "code": "SPO022000",
+    "text": "SPORTS & RECREATION / Martial Arts & Self-Defense"
+  },
+  {
+    "code": "SPO024000",
+    "text": "SPORTS & RECREATION / Motor Sports"
+  },
+  {
+    "code": "SPO025000",
+    "text": "SPORTS & RECREATION / Mountaineering"
+  },
+  {
+    "code": "SPO027000",
+    "text": "SPORTS & RECREATION / Outdoor Skills"
+  },
+  {
+    "code": "SPO030000",
+    "text": "SPORTS & RECREATION / Racket Sports"
+  },
+  {
+    "code": "SPO031000",
+    "text": "SPORTS & RECREATION / Reference"
+  },
+  {
+    "code": "SPO032000",
+    "text": "SPORTS & RECREATION / Rowing"
+  },
+  {
+    "code": "SPO033000",
+    "text": "SPORTS & RECREATION / Running & Jogging"
+  },
+  {
+    "code": "SPO035000",
+    "text": "SPORTS & RECREATION / Sailing"
+  },
+  {
+    "code": "SPO036000",
+    "text": "SPORTS & RECREATION / Shooting"
+  },
+  {
+    "code": "SPO037000",
+    "text": "SPORTS & RECREATION / Soccer"
+  },
+  {
+    "code": "SPO038000",
+    "text": "SPORTS & RECREATION / Swimming & Diving"
+  },
+  {
+    "code": "SPO040000",
+    "text": "SPORTS & RECREATION / Track & Field"
+  },
+  {
+    "code": "SPO046000",
+    "text": "SPORTS & RECREATION / Winter Sports / General"
+  },
+  {
+    "code": "SPO046010",
+    "text": "SPORTS & RECREATION / Winter Sports / Skiing"
+  },
+  {
+    "code": "SPO048000",
+    "text": "SPORTS & RECREATION / Triathlon"
+  },
+  {
+    "code": "SPO049000",
+    "text": "SPORTS & RECREATION / Water Sports"
+  },
+  {
+    "code": "SPO051000",
+    "text": "SPORTS & RECREATION / Yoga"
+  },
+  {
+    "code": "SPO053000",
+    "text": "SPORTS & RECREATION / Boxing"
+  },
+  {
+    "code": "SPO058000",
+    "text": "SPORTS & RECREATION / Coaching / General"
+  },
+  {
+    "code": "SPO060000",
+    "text": "SPORTS & RECREATION / Essays"
+  },
+  {
+    "code": "STU000000",
+    "text": "STUDY AIDS / General"
+  },
+  {
+    "code": "STU004000",
+    "text": "STUDY AIDS / College Guides"
+  },
+  {
+    "code": "STU006000",
+    "text": "STUDY AIDS / Financial Aid"
+  },
+  {
+    "code": "STU016000",
+    "text": "STUDY AIDS / SAT"
+  },
+  {
+    "code": "STU019000",
+    "text": "STUDY AIDS / Tests (Other)"
+  },
+  {
+    "code": "STU026000",
+    "text": "STUDY AIDS / ACT"
+  },
+  {
+    "code": "STU028000",
+    "text": "STUDY AIDS / GRE (Graduate Record Examination)"
+  },
+  {
+    "code": "TEC000000",
+    "text": "TECHNOLOGY & ENGINEERING / General"
+  },
+  {
+    "code": "TEC002000",
+    "text": "TECHNOLOGY & ENGINEERING / Aeronautics & Astronautics"
+  },
+  {
+    "code": "TEC003000",
+    "text": "TECHNOLOGY & ENGINEERING / Agriculture / General"
+  },
+  {
+    "code": "TEC005000",
+    "text": "TECHNOLOGY & ENGINEERING / Automotive"
+  },
+  {
+    "code": "TEC006000",
+    "text": "TECHNOLOGY & ENGINEERING / Biomedical"
+  },
+  {
+    "code": "TEC009000",
+    "text": "TECHNOLOGY & ENGINEERING / Civil / General"
+  },
+  {
+    "code": "TEC010000",
+    "text": "TECHNOLOGY & ENGINEERING / Construction / General"
+  },
+  {
+    "code": "TEC015000",
+    "text": "TECHNOLOGY & ENGINEERING / Electrical"
+  },
+  {
+    "code": "TEC016000",
+    "text": "TECHNOLOGY & ENGINEERING / Electronics / General"
+  },
+  {
+    "code": "TEC018000",
+    "text": "TECHNOLOGY & ENGINEERING / Environmental / General"
+  },
+  {
+    "code": "TEC021000",
+    "text": "TECHNOLOGY & ENGINEERING / Materials Science / General"
+  },
+  {
+    "code": "TEC024000",
+    "text": "TECHNOLOGY & ENGINEERING / Mechanical"
+  },
+  {
+    "code": "TEC027000",
+    "text": "TECHNOLOGY & ENGINEERING / Nanotechnology"
+  },
+  {
+    "code": "TEC031000",
+    "text": "TECHNOLOGY & ENGINEERING / Power Resources / General"
+  },
+  {
+    "code": "TEC032000",
+    "text": "TECHNOLOGY & ENGINEERING / Quality Control"
+  },
+  {
+    "code": "TEC036000",
+    "text": "TECHNOLOGY & ENGINEERING / Robotics"
+  },
+  {
+    "code": "TEC037000",
+    "text": "TECHNOLOGY & ENGINEERING / Telecommunications"
+  },
+  {
+    "code": "TEC039000",
+    "text": "TECHNOLOGY & ENGINEERING / Reference"
+  },
+  {
+    "code": "TRA000000",
+    "text": "TRANSPORTATION / General"
+  },
+  {
+    "code": "TRA001000",
+    "text": "TRANSPORTATION / Aviation / General"
+  },
+  {
+    "code": "TRA002000",
+    "text": "TRANSPORTATION / Automotive / General"
+  },
+  {
+    "code": "TRA003000",
+    "text": "TRANSPORTATION / Railroads / General"
+  },
+  {
+    "code": "TRA006000",
+    "text": "TRANSPORTATION / Ships & Shipbuilding / General"
+  },
+  {
+    "code": "TRU000000",
+    "text": "TRUE CRIME / General"
+  },
+  {
+    "code": "TRU001000",
+    "text": "TRUE CRIME / Espionage"
+  },
+  {
+    "code": "TRU002000",
+    "text": "TRUE CRIME / Murder / General"
+  },
+  {
+    "code": "TRU002010",
+    "text": "TRUE CRIME / Murder / Serial Killers"
+  },
+  {
+    "code": "TRU003000",
+    "text": "TRUE CRIME / Organized Crime"
+  },
+  {
+    "code": "TRU004000",
+    "text": "TRUE CRIME / Con Artists, Hoaxes & Deceptions"
+  },
+  {
+    "code": "TRU005000",
+    "text": "TRUE CRIME / White Collar Crime"
+  },
+  {
+    "code": "TRU006000",
+    "text": "TRUE CRIME / Abductions, Kidnappings & Missing Persons"
+  },
+  {
+    "code": "TRU007000",
+    "text": "TRUE CRIME / Forensics"
+  },
+  {
+    "code": "TRU008000",
+    "text": "TRUE CRIME / Heists & Robberies"
+  },
+  {
+    "code": "TRU010000",
+    "text": "TRUE CRIME / Historical"
+  },
+  {
+    "code": "TRU016000",
+    "text": "TRUE CRIME / Cold Cases"
+  },
+  {
+    "code": "TRV000000",
+    "text": "TRAVEL / General"
+  },
+  {
+    "code": "TRV001000",
+    "text": "TRAVEL / Special Interest / Adventure"
+  },
+  {
+    "code": "TRV002000",
+    "text": "TRAVEL / Africa / General"
+  },
+  {
+    "code": "TRV003000",
+    "text": "TRAVEL / Asia / General"
+  },
+  {
+    "code": "TRV003020",
+    "text": "TRAVEL / Asia / East / China"
+  },
+  {
+    "code": "TRV003050",
+    "text": "TRAVEL / Asia / East / Japan"
+  },
+  {
+    "code": "TRV004000",
+    "text": "TRAVEL / Australia & Oceania"
+  },
+  {
+    "code": "TRV006000",
+    "text": "TRAVEL / Canada / General"
+  },
+  {
+    "code": "TRV007000",
+    "text": "TRAVEL / Caribbean & West Indies"
+  },
+  {
+    "code": "TRV008000",
+    "text": "TRAVEL / Central America"
+  },
+  {
+    "code": "TRV009000",
+    "text": "TRAVEL / Europe / General"
+  },
+  {
+    "code": "TRV009050",
+    "text": "TRAVEL / Europe / France"
+  },
+  {
+    "code": "TRV009060",
+    "text": "TRAVEL / Europe / Germany"
+  },
+  {
+    "code": "TRV009070",
+    "text": "TRAVEL / Europe / Great Britain"
+  },
+  {
+    "code": "TRV009080",
+    "text": "TRAVEL / Europe / Greece"
+  },
+  {
+    "code": "TRV009100",
+    "text": "TRAVEL / Europe / Ireland"
+  },
+  {
+    "code": "TRV009110",
+    "text": "TRAVEL / Europe / Italy"
+  },
+  {
+    "code": "TRV009130",
+    "text": "TRAVEL / Europe / Spain & Portugal"
+  },
+  {
+    "code": "TRV010000",
+    "text": "TRAVEL / Essays & Travelogues"
+  },
+  {
+    "code": "TRV011000",
+    "text": "TRAVEL / Special Interest / Family"
+  },
+  {
+    "code": "TRV014000",
+    "text": "TRAVEL / Mexico"
+  },
+  {
+    "code": "TRV015000",
+    "text": "TRAVEL / Middle East / General"
+  },
+  {
+    "code": "TRV016000",
+    "text": "TRAVEL / Museums, Tours, Points of Interest"
+  },
+  {
+    "code": "TRV018000",
+    "text": "TRAVEL / Parks & Campgrounds"
+  },
+  {
+    "code": "TRV024000",
+    "text": "TRAVEL / South America / General"
+  },
+  {
+    "code": "TRV025000",
+    "text": "TRAVEL / United States / General"
+  },
+  {
+    "code": "TRV025040",
+    "text": "TRAVEL / United States / Northeast / General"
+  },
+  {
+    "code": "TRV025070",
+    "text": "TRAVEL / United States / South / General"
+  },
+  {
+    "code": "TRV025110",
+    "text": "TRAVEL / United States / West / General"
+  },
+  {
+    "code": "TRV026000",
+    "text": "TRAVEL / Special Interest / General"
+  },
+  {
+    "code": "TRV026120",
+    "text": "TRAVEL / Special Interest / Culinary"
+  },
+  {
+    "code": "TRV033000",
+    "text": "TRAVEL / Special Interest / Budget"
+  },
+  {
+    "code": "TRV034000",
+    "text": "TRAVEL / Special Interest / Hikes & Walks"
+  },
+  {
+    "code": "YAF000000",
+    "text": "YOUNG ADULT FICTION / General"
+  },
+  {
+    "code": "YAF001000",
+    "text": "YOUNG ADULT FICTION / Action & Adventure / General"
+  },
+  {
+    "code": "YAF005000",
+    "text": "YOUNG ADULT FICTION / Biographical"
+  },
+  {
+    "code": "YAF009000",
+    "text": "YOUNG ADULT FICTION / Classics"
+  },
+  {
+    "code": "YAF010000",
+    "text": "YOUNG ADULT FICTION / Comics & Graphic Novels / General"
+  },
+  {
+    "code": "YAF011000",
+    "text": "YOUNG ADULT FICTION / Coming of Age"
+  },
+  {
+    "code": "YAF014000",
+    "text": "YOUNG ADULT FICTION / Diversity & Multicultural"
+  },
+  {
+    "code": "YAF015000",
+    "text": "YOUNG ADULT FICTION / Dystopian"
+  },
+  {
+    "code": "YAF017000",
+    "text": "YOUNG ADULT FICTION / Fairy Tales & Folklore / General"
+  },
+  {
+    "code": "YAF018000",
+    "text": "YOUNG ADULT FICTION / Family / General"
+  },
+  {
+    "code": "YAF019000",
+    "text": "YOUNG ADULT FICTION / Fantasy / General"
+  },
+  {
+    "code": "YAF019020",
+    "text": "YOUNG ADULT FICTION / Fantasy / Dark Fantasy"
+  },
+  {
+    "code": "YAF019030",
+    "text": "YOUNG ADULT FICTION / Fantasy / Epic"
+  },
+  {
+    "code": "YAF021000",
+    "text": "YOUNG ADULT FICTION / Ghost Stories"
+  },
+  {
+    "code": "YAF024000",
+    "text": "YOUNG ADULT FICTION / Historical / General"
+  },
+  {
+    "code": "YAF026000",
+    "text": "YOUNG ADULT FICTION / Horror"
+  },
+  {
+    "code": "YAF027000",
+    "text": "YOUNG ADULT FICTION / Humorous / General"
+  },
+  {
+    "code": "YAF031000",
+    "text": "YOUNG ADULT FICTION / LGBTQ+ / General"
+  },
+  {
+    "code": "YAF036000",
+    "text": "YOUNG ADULT FICTION / Literary"
+  },
+  {
+    "code": "YAF038000",
+    "text": "YOUNG ADULT FICTION / Magical Realism"
+  },
+  {
+    "code": "YAF042000",
+    "text": "YOUNG ADULT FICTION / Mysteries & Detective Stories"
+  },
+  {
+    "code": "YAF045000",
+    "text": "YOUNG ADULT FICTION / Paranormal, Occult & Supernatural"
+  },
+  {
+    "code": "YAF048000",
+    "text": "YOUNG ADULT FICTION / Poetry"
+  },
+  {
+    "code": "YAF052000",
+    "text": "YOUNG ADULT FICTION / Romance / General"
+  },
+  {
+    "code": "YAF052020",
+    "text": "YOUNG ADULT FICTION / Romance / Contemporary"
+  },
+  {
+    "code": "YAF054000",
+    "text": "YOUNG ADULT FICTION / School & Education / General"
+  },
+  {
+    "code": "YAF056000",
+    "text": "YOUNG ADULT FICTION / Science Fiction / General"
+  },
+  {
+    "code": "YAF058000",
+    "text": "YOUNG ADULT FICTION / Social Themes / General"
+  },
+  {
+    "code": "YAF058020",
+    "text": "YOUNG ADULT FICTION / Social Themes / Bullying"
+  },
+  {
+    "code": "YAF058050",
+    "text": "YOUNG ADULT FICTION / Social Themes / Death, Grief, Bereavement"
+  },
+  {
+    "code": "YAF058120",
+    "text": "YOUNG ADULT FICTION / Social Themes / Friendship"
+  },
+  {
+    "code": "YAF058140",
+    "text": "YOUNG ADULT FICTION / Social Themes / Mental Illness"
+  },
+  {
+    "code": "YAF058190",
+    "text": "YOUNG ADULT FICTION / Social Themes / Prejudice & Racism"
+  },
+  {
+    "code": "YAF059000",
+    "text": "YOUNG ADULT FICTION / Sports & Recreation / General"
+  },
+  {
+    "code": "YAF062000",
+    "text": "YOUNG ADULT FICTION / Thrillers & Suspense / General"
+  },
+  {
+    "code": "YAF065000",
+    "text": "YOUNG ADULT FICTION / Vampires"
+  },
+  {
+    "code": "YAF067000",
+    "text": "YOUNG ADULT FICTION / War & Military"
+  },
+  {
+    "code": "YAF068000",
+    "text": "YOUNG ADULT FICTION / Werewolves & Shifters"
+  },
+  {
+    "code": "YAF070000",
+    "text": "YOUNG ADULT FICTION / Zombies"
+  },
+  {
+    "code": "YAN000000",
+    "text": "YOUNG ADULT NONFICTION / General"
+  },
+  {
+    "code": "YAN006000",
+    "text": "YOUNG ADULT NONFICTION / Biography & Autobiography / General"
+  },
+  {
+    "code": "YAN012000",
+    "text": "YOUNG ADULT NONFICTION / Cooking & Food"
+  },
+  {
+    "code": "YAN025000",
+    "text": "YOUNG ADULT NONFICTION / Health & Daily Living / General"
+  },
+  {
+    "code": "YAN026000",
+    "text": "YOUNG ADULT NONFICTION / History / General"
+  },
+  {
+    "code": "YAN026050",
+    "text": "YOUNG ADULT NONFICTION / History / United States / General"
+  },
+  {
+    "code": "YAN031000",
+    "text": "YOUNG ADULT NONFICTION / Language Arts / General"
+  },
+  {
+    "code": "YAN039000",
+    "text": "YOUNG ADULT NONFICTION / People & Places / General"
+  },
+  {
+    "code": "YAN046000",
+    "text": "YOUNG ADULT NONFICTION / Science & Nature / General"
+  },
+  {
+    "code": "YAN050000",
+    "text": "YOUNG ADULT NONFICTION / Social Topics / General"
+  }
+]
