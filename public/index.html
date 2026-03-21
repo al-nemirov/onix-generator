@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONIX Generator</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div id="app">
+
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-logo">ONIX Generator <span>v1.0</span></div>
+        </div>
+        <div class="header-right">
+            <span class="header-stats" id="stats"></span>
+            <button class="btn btn-sm" id="btn-theme" title="Toggle dark/light theme">🌓</button>
+            <button class="btn btn-sm" id="btn-settings" title="Publisher settings">⚙️ Settings</button>
+        </div>
+    </header>
+
+    <!-- ============ TOOLBAR ============ -->
+    <div class="toolbar">
+        <div class="toolbar-group">
+            <button class="btn btn-sm btn-primary" id="btn-add">+ Add Book</button>
+            <button class="btn btn-sm" id="btn-clone" title="Clone selected books">📋 Clone</button>
+            <button class="btn btn-sm btn-danger" id="btn-delete" title="Delete selected books">🗑 Delete</button>
+        </div>
+        <div class="toolbar-separator"></div>
+        <div class="toolbar-group">
+            <button class="btn btn-sm" id="btn-bulk" title="Bulk edit selected books">✏️ Bulk Edit</button>
+            <button class="btn btn-sm" id="btn-import" title="Import XLSX/CSV">📥 Import</button>
+            <button class="btn btn-sm" id="btn-export" title="Export data">📤 Export</button>
+        </div>
+        <div class="toolbar-separator"></div>
+        <div class="toolbar-group">
+            <button class="btn btn-sm btn-primary" id="btn-generate">⬇ Generate ONIX XML</button>
+            <button class="btn btn-sm" id="btn-preview" title="Preview XML">👁 Preview</button>
+        </div>
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search books (ISBN, title, author...)">
+        </div>
+    </div>
+
+    <!-- ============ TABLE ============ -->
+    <div class="table-container" id="table-container">
+        <table class="spreadsheet" id="spreadsheet">
+            <thead>
+                <tr>
+                    <th class="col-checkbox"><input type="checkbox" id="select-all" title="Select all"></th>
+                    <th class="col-num">#</th>
+                    <th class="col-isbn" data-col="isbn">ISBN <span class="sort-arrow"></span></th>
+                    <th class="col-title" data-col="title">Title <span class="sort-arrow"></span></th>
+                    <th class="col-subtitle" data-col="subtitle">Subtitle</th>
+                    <th class="col-author" data-col="authors">Author</th>
+                    <th class="col-bisac" data-col="bisac_main">BISAC</th>
+                    <th class="col-thema" data-col="thema_main">Thema</th>
+                    <th class="col-wgs" data-col="wgs_main">WGS</th>
+                    <th class="col-lang" data-col="language_code">Lang</th>
+                    <th class="col-price" data-col="price">Price</th>
+                    <th class="col-territory" data-col="territory">Territory</th>
+                    <th class="col-status" data-col="publishing_status">Status</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
+        <!-- Empty state -->
+        <div class="table-empty" id="empty-state" style="display:none;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <p>No books yet. Add your first book or import from XLSX/CSV.</p>
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary" onclick="addBook()">+ Add Book</button>
+                <button class="btn" onclick="openImportModal()">📥 Import</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ DETAIL PANEL ============ -->
+    <div class="detail-panel" id="detail-panel">
+        <div class="detail-header">
+            <div class="detail-title" id="detail-title">Book Details</div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-sm btn-primary" id="btn-save-detail">💾 Save</button>
+                <button class="btn btn-sm btn-icon" id="btn-close-detail" title="Close">✕</button>
+            </div>
+        </div>
+        <div class="detail-tabs" id="detail-tabs">
+            <div class="detail-tab active" data-tab="basic">Basic Info</div>
+            <div class="detail-tab" data-tab="contributors">Contributors</div>
+            <div class="detail-tab" data-tab="subjects">Subjects & Keywords</div>
+            <div class="detail-tab" data-tab="description">Description</div>
+            <div class="detail-tab" data-tab="publishing">Publishing</div>
+            <div class="detail-tab" data-tab="pricing">Pricing</div>
+            <div class="detail-tab" data-tab="rights">Rights & Sales</div>
+            <div class="detail-tab" data-tab="related">Related & Resources</div>
+        </div>
+        <div class="detail-content" id="detail-content">
+            <!-- Tab: Basic Info -->
+            <div class="tab-pane active" id="tab-basic">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>ISBN-13</label>
+                        <input type="text" id="f-isbn" placeholder="9781234567890" maxlength="13">
+                    </div>
+                    <div class="form-group">
+                        <label>Internal Order #</label>
+                        <input type="text" id="f-order-number" placeholder="Optional">
+                    </div>
+                    <div class="form-group">
+                        <label>Notification Type</label>
+                        <select id="f-notification-type"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>EPUB Format</label>
+                        <select id="f-product-form-detail">
+                            <option value="E101">EPUB Reflowable</option>
+                            <option value="E101+E201">EPUB Fixed Layout</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>DRM / Copy Protection</label>
+                        <select id="f-drm"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="f-title" placeholder="Book title">
+                    </div>
+                    <div class="form-group">
+                        <label>Subtitle</label>
+                        <input type="text" id="f-subtitle" placeholder="Subtitle (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label>Series Name</label>
+                        <input type="text" id="f-series-name" placeholder="Series or collection name">
+                    </div>
+                    <div class="form-group">
+                        <label>Part Number</label>
+                        <input type="text" id="f-part-number" placeholder="Volume / part number">
+                    </div>
+                    <div class="form-group">
+                        <label>Edition Number</label>
+                        <input type="text" id="f-edition-number" placeholder="e.g. 3">
+                    </div>
+                    <div class="form-group">
+                        <label>Edition Statement</label>
+                        <input type="text" id="f-edition-statement" placeholder="e.g. 3rd edition, revised">
+                    </div>
+                    <div class="form-group">
+                        <label>Language</label>
+                        <select id="f-language"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Original Language</label>
+                        <select id="f-original-language"><option value="">— None (not a translation) —</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Page Count</label>
+                        <input type="number" id="f-page-count" placeholder="Number of pages" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Age Range: From</label>
+                        <input type="number" id="f-age-from" placeholder="e.g. 10" min="0" max="99">
+                    </div>
+                    <div class="form-group">
+                        <label>Age Range: To</label>
+                        <input type="number" id="f-age-to" placeholder="e.g. 18" min="0" max="99">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Contributors -->
+            <div class="tab-pane" id="tab-contributors">
+                <div class="dynamic-list" id="contributors-list"></div>
+                <button class="btn btn-sm btn-add" onclick="addContributor()">+ Add Contributor</button>
+            </div>
+
+            <!-- Tab: Subjects & Keywords -->
+            <div class="tab-pane" id="tab-subjects">
+                <div class="form-grid">
+                    <div class="form-group form-group-full">
+                        <label>Subject Classifications</label>
+                        <div class="dynamic-list" id="subjects-list"></div>
+                        <button class="btn btn-sm btn-add" style="margin-top:8px" onclick="addSubject()">+ Add Subject</button>
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label>Keywords (comma-separated)</label>
+                        <input type="text" id="f-keywords" placeholder="keyword1, keyword2, keyword3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Description -->
+            <div class="tab-pane" id="tab-description">
+                <div class="form-grid">
+                    <div class="form-group form-group-full">
+                        <label>Description (min. 50 characters)</label>
+                        <textarea id="f-description" rows="5" placeholder="Book description..."></textarea>
+                        <span style="font-size:11px;color:var(--text-muted);" id="desc-counter">0 characters</span>
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label>Author Biography</label>
+                        <textarea id="f-biography" rows="3" placeholder="About the author..."></textarea>
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label>Table of Contents</label>
+                        <textarea id="f-toc" rows="3" placeholder="Chapter 1\nChapter 2\n..."></textarea>
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label>Reviews</label>
+                        <div class="dynamic-list" id="reviews-list"></div>
+                        <button class="btn btn-sm btn-add" style="margin-top:8px" onclick="addReview()">+ Add Review</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Publishing -->
+            <div class="tab-pane" id="tab-publishing">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Publisher Name</label>
+                        <input type="text" id="f-publisher-name">
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" id="f-publisher-city">
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select id="f-publisher-country"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Publishing Status</label>
+                        <select id="f-publishing-status"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Publishing Date</label>
+                        <input type="date" id="f-publishing-date">
+                    </div>
+                    <div class="form-group">
+                        <label>Print Edition Date</label>
+                        <input type="date" id="f-print-pub-date">
+                    </div>
+                    <div class="form-group">
+                        <label>Announcement Date</label>
+                        <input type="date" id="f-announcement-date">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Pricing -->
+            <div class="tab-pane" id="tab-pricing">
+                <div class="dynamic-list" id="prices-list"></div>
+                <button class="btn btn-sm btn-add" style="margin-top:8px" onclick="addPrice()">+ Add Price</button>
+            </div>
+
+            <!-- Tab: Rights & Sales -->
+            <div class="tab-pane" id="tab-rights">
+                <div class="dynamic-list" id="rights-list"></div>
+                <button class="btn btn-sm btn-add" style="margin-top:8px" onclick="addSalesRight()">+ Add Sales Right</button>
+            </div>
+
+            <!-- Tab: Related & Resources -->
+            <div class="tab-pane" id="tab-related">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Cover Image Filename</label>
+                        <input type="text" id="f-cover-filename" placeholder="9781234567890.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label>Content File (EPUB)</label>
+                        <input type="text" id="f-content-filename" placeholder="9781234567890.epub">
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label>Related Products</label>
+                        <div class="dynamic-list" id="related-list"></div>
+                        <button class="btn btn-sm btn-add" style="margin-top:8px" onclick="addRelated()">+ Add Related Product</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer">
+        <div class="footer-left">
+            <span id="selection-info">No selection</span>
+        </div>
+        <div class="footer-right">
+            <span id="footer-status">Ready</span>
+        </div>
+    </footer>
+
+</div>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div class="modal-overlay" id="settings-modal">
+    <div class="modal" style="max-width:500px;">
+        <div class="modal-header">
+            <h2>⚙️ Publisher Settings</h2>
+            <button class="btn-icon" onclick="closeModal('settings-modal')">✕</button>
+        </div>
+        <div class="modal-body settings-form">
+            <div class="form-group">
+                <label>Sender Name</label>
+                <input type="text" id="s-sender-name" placeholder="Company name">
+            </div>
+            <div class="form-group">
+                <label>Contact Name</label>
+                <input type="text" id="s-contact-name" placeholder="Contact person">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="s-email" placeholder="email@example.com">
+            </div>
+            <div class="form-group">
+                <label>Publisher Name</label>
+                <input type="text" id="s-publisher-name">
+            </div>
+            <div class="form-group">
+                <label>City</label>
+                <input type="text" id="s-publisher-city">
+            </div>
+            <div class="form-group">
+                <label>Country</label>
+                <select id="s-publisher-country"></select>
+            </div>
+            <div class="form-group">
+                <label>Default Language</label>
+                <select id="s-default-language"></select>
+            </div>
+            <div class="form-group">
+                <label>Default Currency</label>
+                <select id="s-default-currency"></select>
+            </div>
+            <div class="form-group">
+                <label>Default DRM</label>
+                <select id="s-default-drm"></select>
+            </div>
+            <div class="form-group">
+                <label>Default Price Type</label>
+                <select id="s-default-price-type"></select>
+            </div>
+            <div class="form-group">
+                <label>Default Territory</label>
+                <input type="text" id="s-default-territory" placeholder="WORLD or DE AT CH">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal('settings-modal')">Cancel</button>
+            <button class="btn btn-primary" id="btn-save-settings">Save Settings</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ IMPORT MODAL ============ -->
+<div class="modal-overlay" id="import-modal">
+    <div class="modal" style="max-width:700px;">
+        <div class="modal-header">
+            <h2>📥 Import Books</h2>
+            <button class="btn-icon" onclick="closeModal('import-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="import-dropzone" id="import-dropzone">
+                <p>📄 Drag & drop XLSX or CSV file here</p>
+                <p style="font-size:11px;margin-top:8px;">or click to browse</p>
+                <input type="file" id="import-file" accept=".xlsx,.csv,.xls" style="display:none">
+            </div>
+            <div class="import-mapping" id="import-mapping" style="display:none;">
+                <h3 style="margin-bottom:8px;">Column Mapping</h3>
+                <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">
+                    Map your file columns to ONIX fields. Unmapped columns will be skipped.
+                </p>
+                <table id="mapping-table"></table>
+                <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
+                    <span id="import-info" style="font-size:12px;color:var(--text-secondary);"></span>
+                    <button class="btn btn-primary" id="btn-apply-import">Import Books</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ EXPORT MODAL ============ -->
+<div class="modal-overlay" id="export-modal">
+    <div class="modal" style="max-width:400px;">
+        <div class="modal-header">
+            <h2>📤 Export</h2>
+            <button class="btn-icon" onclick="closeModal('export-modal')">✕</button>
+        </div>
+        <div class="modal-body" style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn" onclick="exportData('xlsx')">📊 Export as XLSX (Excel)</button>
+            <button class="btn" onclick="exportData('csv')">📄 Export as CSV</button>
+            <button class="btn" onclick="exportData('json')">🔤 Export as JSON</button>
+            <hr style="border:none;border-top:1px solid var(--border);margin:4px 0;">
+            <button class="btn" onclick="window.location='/api/db/backup'">💾 Download Database Backup</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ BULK EDIT MODAL ============ -->
+<div class="modal-overlay" id="bulk-modal">
+    <div class="modal" style="max-width:500px;">
+        <div class="modal-header">
+            <h2>✏️ Bulk Edit</h2>
+            <button class="btn-icon" onclick="closeModal('bulk-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">
+                Apply changes to <strong id="bulk-count">0</strong> selected books.
+                Only filled fields will be updated.
+            </p>
+            <div class="form-group">
+                <label>Language</label>
+                <select id="b-language"><option value="">— Don't change —</option></select>
+            </div>
+            <div class="form-group">
+                <label>DRM</label>
+                <select id="b-drm"><option value="">— Don't change —</option></select>
+            </div>
+            <div class="form-group">
+                <label>Publishing Status</label>
+                <select id="b-status"><option value="">— Don't change —</option></select>
+            </div>
+            <div class="form-group">
+                <label>Set Price (amount + currency)</label>
+                <div style="display:flex;gap:8px;">
+                    <input type="number" id="b-price" placeholder="Amount" style="flex:1" step="0.01">
+                    <select id="b-currency" style="width:100px;"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Set Sales Territory</label>
+                <input type="text" id="b-territory" placeholder="WORLD or DE AT CH">
+            </div>
+            <div class="form-group">
+                <label>Add Subject Code</label>
+                <div style="display:flex;gap:8px;">
+                    <select id="b-scheme" style="width:120px;">
+                        <option value="">— Scheme —</option>
+                        <option value="10">BISAC</option>
+                        <option value="93">Thema</option>
+                        <option value="26">WGS</option>
+                    </select>
+                    <input type="text" id="b-subject-code" placeholder="Code" style="flex:1">
+                    <label style="display:flex;align-items:center;gap:4px;font-size:12px;">
+                        <input type="checkbox" id="b-main-subject"> Main
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal('bulk-modal')">Cancel</button>
+            <button class="btn btn-primary" id="btn-apply-bulk">Apply to Selected</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ XML PREVIEW ============ -->
+<div class="xml-preview" id="xml-preview">
+    <div class="xml-preview-header">
+        <span style="font-weight:600;">XML Preview <span id="preview-count" style="font-weight:400;color:var(--text-muted);"></span></span>
+        <div style="display:flex;gap:8px;">
+            <button class="btn btn-sm" id="btn-copy-xml">📋 Copy</button>
+            <button class="btn btn-sm btn-primary" id="btn-download-xml">⬇ Download</button>
+            <button class="btn-icon" onclick="toggleXmlPreview()">✕</button>
+        </div>
+    </div>
+    <pre id="xml-output"></pre>
+</div>
+
+<!-- ============ CONTEXT MENU ============ -->
+<div class="context-menu" id="context-menu">
+    <div class="context-menu-item" data-action="edit">✏️ Edit <kbd>Enter</kbd></div>
+    <div class="context-menu-item" data-action="copy-cell">📋 Copy Cell <kbd>Ctrl+C</kbd></div>
+    <div class="context-menu-item" data-action="paste-cell">📋 Paste to Selected <kbd>Ctrl+V</kbd></div>
+    <div class="context-menu-item" data-action="fill-down">⬇ Fill Down</div>
+    <div class="context-menu-separator"></div>
+    <div class="context-menu-item" data-action="clone">📋 Clone Book</div>
+    <div class="context-menu-item" data-action="preview-one">👁 Preview XML</div>
+    <div class="context-menu-separator"></div>
+    <div class="context-menu-item danger" data-action="delete">🗑 Delete <kbd>Del</kbd></div>
+</div>
+
+<!-- ============ TOAST CONTAINER ============ -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="/js/db.js"></script>
+<script src="/js/codelists.js"></script>
+<script src="/js/table.js"></script>
+<script src="/js/detail.js"></script>
+<script src="/js/onix.js"></script>
+<script src="/js/app.js"></script>
+
+</body>
+</html>

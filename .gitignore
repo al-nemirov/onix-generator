@@ -1,0 +1,13 @@
+node_modules/
+db/onix.db
+db/onix.db-wal
+db/onix.db-shm
+uploads/
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.env
+.env.*
+.claude/

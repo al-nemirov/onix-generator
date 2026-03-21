@@ -1,0 +1,19 @@
+{
+  "name": "onix-generator",
+  "version": "1.0.0",
+  "description": "ONIX 3.0 metadata generator for e-books — web-based spreadsheet UI with SQLite storage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["onix", "ebook", "metadata", "publishing", "bookwire", "isbn", "bisac", "thema"],
+  "author": "Alexander Nemirov",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1",
+    "xlsx": "^0.18.5"
+  }
+}
