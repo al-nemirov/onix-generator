@@ -10,6 +10,12 @@ const Codelists = {
     currencies: [],
     countries: [],
     onixCodes: {},
+    t(key, vars = {}) {
+        if (window.I18N && typeof window.I18N.t === 'function') {
+            return window.I18N.t(key, vars);
+        }
+        return key;
+    },
 
     async load() {
         const [bisac, thema, wgs, languages, currencies, countries, onixCodes] = await Promise.all([
@@ -65,7 +71,7 @@ const Codelists = {
         if (addEmpty) {
             const opt = document.createElement('option');
             opt.value = '';
-            opt.textContent = placeholder || '— Select —';
+            opt.textContent = placeholder || this.t('ui.select');
             selectEl.appendChild(opt);
         }
         for (const item of list) {

@@ -7,7 +7,10 @@
 // ISBN-13 validation and checksum
 function validateISBN13(isbn) {
     const clean = isbn.replace(/[- ]/g, '');
-    if (!/^\d{13}$/.test(clean)) return { valid: false, message: 'ISBN must be 13 digits' };
+    if (!/^\d{13}$/.test(clean)) {
+        const msg = window.I18N ? window.I18N.t('error.isbn13') : 'ISBN must be 13 digits';
+        return { valid: false, message: msg };
+    }
 
     let sum = 0;
     for (let i = 0; i < 12; i++) {

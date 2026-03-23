@@ -13,16 +13,23 @@ let sortCol = 'id';
 let sortOrder = 'asc';
 let clipboard = { col: null, value: null };
 let searchTimeout = null;
+const tr = (key, vars = {}) => (window.I18N ? window.I18N.t(key, vars) : key);
 
 // ============================================================
 // Init
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        settings = await API.getSettings();
+    } catch (e) {
+        alert(tr('error.api', { message: e.message }));
+        return;
+    }
+    await I18N.init(settings.ui_language || 'en');
+
     // Load codelists
     await Codelists.load();
 
-    // Load settings
-    settings = await API.getSettings();
     applyTheme(settings.theme || 'light');
 
     // Populate dropdowns
@@ -35,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     bindEvents();
 
     updateStats();
+    document.getElementById('s-api-key').value = API.getApiKey();
 });
 
 // ============================================================
@@ -57,18 +65,18 @@ function populateDropdowns() {
 
     // Detail form
     Codelists.populateSelect(document.getElementById('f-language'), Codelists.languages, {});
-    Codelists.populateSelect(document.getElementById('f-original-language'), Codelists.languages, { placeholder: '— None (not a translation) —' });
+    Codelists.populateSelect(document.getElementById('f-original-language'), Codelists.languages, { placeholder: tr('ui.noneTranslation') });
     Codelists.populateSelect(document.getElementById('f-publisher-country'), Codelists.countries, {});
     Codelists.populateOnixSelect(document.getElementById('f-notification-type'), 'notificationTypes', '03');
     Codelists.populateOnixSelect(document.getElementById('f-drm'), 'drmTypes', settings.default_drm);
     Codelists.populateOnixSelect(document.getElementById('f-publishing-status'), 'publishingStatuses', '04');
 
     // Bulk edit modal
-    Codelists.populateSelect(document.getElementById('b-language'), Codelists.languages, { placeholder: "— Don't change —" });
+    Codelists.populateSelect(document.getElementById('b-language'), Codelists.languages, { placeholder: tr('ui.noChange') });
     Codelists.populateOnixSelect(document.getElementById('b-drm'), 'drmTypes');
-    document.getElementById('b-drm').insertAdjacentHTML('afterbegin', '<option value="">— Don\'t change —</option>');
+    document.getElementById('b-drm').insertAdjacentHTML('afterbegin', `<option value="">${tr('ui.noChange')}</option>`);
     Codelists.populateOnixSelect(document.getElementById('b-status'), 'publishingStatuses');
-    document.getElementById('b-status').insertAdjacentHTML('afterbegin', '<option value="">— Don\'t change —</option>');
+    document.getElementById('b-status').insertAdjacentHTML('afterbegin', `<option value="">${tr('ui.noChange')}</option>`);
     Codelists.populateSelect(document.getElementById('b-currency'), Codelists.currencies, { addEmpty: false, selectedValue: settings.default_currency });
 
     // Fill settings form values
@@ -84,6 +92,8 @@ function populateDropdowns() {
     document.getElementById('s-supplier-name').value = settings.supplier_name || '';
     document.getElementById('s-supplier-id-value').value = settings.supplier_id_value || '';
     document.getElementById('s-onix-format').value = settings.onix_format || 'short';
+    document.getElementById('s-ui-language').value = settings.ui_language || 'en';
+    document.getElementById('s-api-key').value = API.getApiKey();
 }
 
 // ============================================================
@@ -137,9 +147,9 @@ function renderTable() {
 
 function getStatusBadge(status) {
     switch (status) {
-        case '04': return '<span class="badge badge-active">Active</span>';
-        case '02': return '<span class="badge badge-draft">Forthcoming</span>';
-        case '05': case '07': case '08': return '<span class="badge badge-deleted">Inactive</span>';
+        case '04': return `<span class="badge badge-active">${tr('status.active')}</span>`;
+        case '02': return `<span class="badge badge-draft">${tr('status.forthcoming')}</span>`;
+        case '05': case '07': case '08': return `<span class="badge badge-deleted">${tr('status.inactive')}</span>`;
         default: return `<span class="badge">${status || '—'}</span>`;
     }
 }
@@ -158,10 +168,10 @@ function updateEmptyState() {
 
 async function updateStats() {
     const stats = await API.getStats();
-    document.getElementById('stats').textContent = `${stats.books} books`;
+    document.getElementById('stats').textContent = tr('status.books', { count: stats.books });
     document.getElementById('selection-info').textContent = selectedIds.size > 0
-        ? `${selectedIds.size} selected`
-        : `${books.length} books`;
+        ? tr('status.selected', { count: selectedIds.size })
+        : tr('status.books', { count: books.length });
 }
 
 // ============================================================
@@ -180,7 +190,7 @@ function bindEvents() {
     document.getElementById('btn-import').addEventListener('click', openImportModal);
     document.getElementById('btn-export').addEventListener('click', () => openModal('export-modal'));
     document.getElementById('btn-generate').addEventListener('click', generateXml);
-    document.getElementById('btn-preview').addEventListener('click', previewXml);
+    document.getElementById('btn-preview').addEventListener('click', () => previewXml());
 
     // Search
     document.getElementById('search-input').addEventListener('input', (e) => {
@@ -332,14 +342,15 @@ function bindEvents() {
     // XML preview
     document.getElementById('btn-copy-xml').addEventListener('click', () => {
         const text = getRawXml();
-        navigator.clipboard.writeText(text).then(() => toast('XML copied to clipboard', 'success'));
+        navigator.clipboard.writeText(text).then(() => toast(tr('toast.xmlCopied'), 'success'));
     });
     document.getElementById('btn-download-xml').addEventListener('click', downloadXmlFromPreview);
+    document.getElementById('btn-backup').addEventListener('click', downloadBackup);
 
     // Description character counter
     document.getElementById('f-description').addEventListener('input', (e) => {
         const len = e.target.value.length;
-        document.getElementById('desc-counter').textContent = `${len} characters${len < 50 ? ' (min. 50 required)' : ''}`;
+        document.getElementById('desc-counter').textContent = `${tr('status.characters', { count: len })}${len < 50 ? tr('status.minChars') : ''}`;
         document.getElementById('desc-counter').style.color = len < 50 ? 'var(--danger)' : 'var(--text-muted)';
     });
 
@@ -358,7 +369,7 @@ function bindEvents() {
             if (focused) {
                 clipboard.col = focused.dataset.col;
                 clipboard.value = focused.textContent.trim();
-                toast(`Copied: ${clipboard.value}`, 'info');
+                toast(tr('toast.copiedValue', { value: clipboard.value }), 'info');
             }
         }
         // Ctrl+V — paste to selected
@@ -401,7 +412,7 @@ function startInlineEdit(td) {
             const field = fieldMap[col];
             if (field) {
                 await API.updateBook(bookId, { [field]: newValue });
-                toast('Updated', 'success');
+                toast(tr('toast.updated'), 'success');
             }
             await loadBooks(document.getElementById('search-input').value);
         }
@@ -456,7 +467,7 @@ async function handleContextAction(action) {
             if (focused) {
                 clipboard.col = focused.dataset.col;
                 clipboard.value = focused.textContent.trim();
-                toast(`Copied: ${clipboard.value}`, 'info');
+                toast(tr('toast.copiedValue', { value: clipboard.value }), 'info');
             }
             break;
         }
@@ -487,7 +498,7 @@ async function pasteToSelected() {
     const field = fieldMap[clipboard.col];
     if (field) {
         await API.bulkUpdate([...selectedIds], { [field]: clipboard.value });
-        toast(`Pasted "${clipboard.value}" to ${selectedIds.size} books`, 'success');
+        toast(tr('toast.pastedToBooks', { value: clipboard.value, count: selectedIds.size }), 'success');
         await loadBooks(document.getElementById('search-input').value);
     }
 }
@@ -511,24 +522,24 @@ function updateSortArrows() {
 // ============================================================
 async function addBook() {
     const book = await API.createBook({});
-    toast('New book added', 'success');
+    toast(tr('toast.newBookAdded'), 'success');
     await loadBooks();
     openDetailPanel(book.id);
 }
 
 async function cloneSelected() {
-    if (selectedIds.size === 0) return toast('Select books to clone', 'info');
+    if (selectedIds.size === 0) return toast(tr('toast.selectBooksToClone'), 'info');
     const result = await API.cloneBooks([...selectedIds]);
-    toast(`Cloned ${result.cloned.length} books`, 'success');
+    toast(tr('toast.clonedBooks', { count: result.cloned.length }), 'success');
     selectedIds.clear();
     await loadBooks();
 }
 
 async function deleteSelected() {
-    if (selectedIds.size === 0) return toast('Select books to delete', 'info');
-    if (!confirm(`Delete ${selectedIds.size} book(s)? This cannot be undone.`)) return;
+    if (selectedIds.size === 0) return toast(tr('toast.selectBooksToDelete'), 'info');
+    if (!confirm(tr('confirm.deleteBooks', { count: selectedIds.size }))) return;
     await API.deleteBooks([...selectedIds]);
-    toast(`Deleted ${selectedIds.size} books`, 'success');
+    toast(tr('toast.deletedBooks', { count: selectedIds.size }), 'success');
     selectedIds.clear();
     if (currentBookId && !books.find(b => b.id === currentBookId)) {
         document.getElementById('detail-panel').classList.remove('open');
@@ -544,7 +555,7 @@ async function openDetailPanel(bookId) {
     currentBookId = bookId;
     const book = await API.getBook(bookId);
     document.getElementById('detail-panel').classList.add('open');
-    document.getElementById('detail-title').innerHTML = `Book Details <span>#${book.id} — ${esc(book.title || 'Untitled')}</span>`;
+    document.getElementById('detail-title').innerHTML = `${tr('ui.bookDetails')} <span>#${book.id} — ${esc(book.title || tr('ui.untitled'))}</span>`;
     renderTable(); // highlight current row
 
     // Fill basic tab
@@ -569,7 +580,7 @@ async function openDetailPanel(bookId) {
     document.getElementById('f-description').value = book.description || '';
     document.getElementById('f-biography').value = book.biography || '';
     document.getElementById('f-toc').value = book.toc || '';
-    document.getElementById('desc-counter').textContent = `${(book.description || '').length} characters`;
+    document.getElementById('desc-counter').textContent = tr('status.characters', { count: (book.description || '').length });
 
     // Publishing tab
     document.getElementById('f-publisher-name').value = book.publisher_name || '';
@@ -646,7 +657,7 @@ async function saveDetail() {
     }
 
     await API.updateBook(currentBookId, data);
-    toast('Book saved', 'success');
+    toast(tr('toast.bookSaved'), 'success');
     await loadBooks(document.getElementById('search-input').value);
 }
 
@@ -674,9 +685,9 @@ function addContributorRow(container, c) {
     ).join('');
     div.innerHTML = `
         <select class="c-role" style="width:140px">${roles}</select>
-        <input class="c-name" placeholder="Person Name" value="${esc(c.person_name || '')}">
-        <input class="c-inverted" placeholder="Inverted (Doe, Jane)" value="${esc(c.person_name_inverted || '')}">
-        <input class="c-corporate" placeholder="Corporate Name" value="${esc(c.corporate_name || '')}" style="width:120px">
+        <input class="c-name" placeholder="${esc(tr('ui.personName'))}" value="${esc(c.person_name || '')}">
+        <input class="c-inverted" placeholder="${esc(tr('ui.invertedName'))}" value="${esc(c.person_name_inverted || '')}">
+        <input class="c-corporate" placeholder="${esc(tr('ui.corporateName'))}" value="${esc(c.corporate_name || '')}" style="width:120px">
         <span class="btn-remove" onclick="this.parentElement.remove()">✕</span>
     `;
     container.appendChild(div);
@@ -715,10 +726,10 @@ function addSubjectRow(container, s) {
             <option value="93" ${s.scheme_id === '93' ? 'selected' : ''}>Thema</option>
             <option value="26" ${s.scheme_id === '26' ? 'selected' : ''}>WGS</option>
         </select>
-        <input class="s-code" placeholder="Code" value="${esc(s.subject_code || '')}" style="width:120px">
-        <input class="s-version" placeholder="Version" value="${esc(s.scheme_version || '')}" style="width:60px">
+        <input class="s-code" placeholder="${esc(tr('ui.code'))}" value="${esc(s.subject_code || '')}" style="width:120px">
+        <input class="s-version" placeholder="${esc(tr('ui.version'))}" value="${esc(s.scheme_version || '')}" style="width:60px">
         <label style="display:flex;align-items:center;gap:4px;font-size:11px;white-space:nowrap;">
-            <input type="checkbox" class="s-main" ${s.is_main ? 'checked' : ''}> Main
+            <input type="checkbox" class="s-main" ${s.is_main ? 'checked' : ''}> ${esc(tr('ui.main'))}
         </label>
         <span class="btn-remove" onclick="this.parentElement.remove()">✕</span>
     `;
@@ -756,11 +767,11 @@ function addPriceRow(container, p) {
     ).join('');
     div.innerHTML = `
         <select class="p-type" style="width:140px">${types}</select>
-        <input class="p-amount" type="number" step="0.01" placeholder="Amount" value="${p.amount || ''}" style="width:80px">
+        <input class="p-amount" type="number" step="0.01" placeholder="${esc(tr('ui.amount'))}" value="${p.amount || ''}" style="width:80px">
         <select class="p-currency" style="width:70px">${currencies}</select>
-        <input class="p-territory" placeholder="Country codes" value="${esc(p.territory || '')}" style="width:80px">
-        <input class="p-start" type="date" placeholder="Start" value="${onixDateToInput(p.start_date)}" style="width:120px" title="Start date">
-        <input class="p-end" type="date" placeholder="End" value="${onixDateToInput(p.end_date)}" style="width:120px" title="End date">
+        <input class="p-territory" placeholder="${esc(tr('ui.countryCodes'))}" value="${esc(p.territory || '')}" style="width:80px">
+        <input class="p-start" type="date" placeholder="${esc(tr('ui.start'))}" value="${onixDateToInput(p.start_date)}" style="width:120px" title="${esc(tr('ui.startDate'))}">
+        <input class="p-end" type="date" placeholder="${esc(tr('ui.end'))}" value="${onixDateToInput(p.end_date)}" style="width:120px" title="${esc(tr('ui.endDate'))}">
         <span class="btn-remove" onclick="this.parentElement.remove()">✕</span>
     `;
     container.appendChild(div);
@@ -796,8 +807,8 @@ function addRightRow(container, r) {
     ).join('');
     div.innerHTML = `
         <select class="r-type" style="width:180px">${types}</select>
-        <input class="r-countries" placeholder="Countries (DE AT CH)" value="${esc(r.countries || '')}" style="flex:1">
-        <input class="r-regions" placeholder="Region (WORLD)" value="${esc(r.regions || '')}" style="width:80px">
+        <input class="r-countries" placeholder="${esc(tr('ui.countriesExample'))}" value="${esc(r.countries || '')}" style="flex:1">
+        <input class="r-regions" placeholder="${esc(tr('ui.regionExample'))}" value="${esc(r.regions || '')}" style="width:80px">
         <span class="btn-remove" onclick="this.parentElement.remove()">✕</span>
     `;
     container.appendChild(div);
@@ -830,7 +841,7 @@ function addRelatedRow(container, r) {
     ).join('');
     div.innerHTML = `
         <select class="rel-code" style="width:200px">${codes}</select>
-        <input class="rel-isbn" placeholder="Related ISBN" value="${esc(r.related_isbn || '')}" style="flex:1">
+        <input class="rel-isbn" placeholder="${esc(tr('ui.relatedIsbn'))}" value="${esc(r.related_isbn || '')}" style="flex:1">
         <span class="btn-remove" onclick="this.parentElement.remove()">✕</span>
     `;
     container.appendChild(div);
@@ -861,12 +872,12 @@ function addReviewRow(container, r) {
     div.style.alignItems = 'stretch';
     div.innerHTML = `
         <div style="display:flex;gap:8px;align-items:center;">
-            <input class="rv-author" placeholder="Reviewer" value="${esc(r.text_author || '')}" style="flex:1">
-            <input class="rv-source" placeholder="Source (publication)" value="${esc(r.source_title || '')}" style="flex:1">
+            <input class="rv-author" placeholder="${esc(tr('ui.reviewer'))}" value="${esc(r.text_author || '')}" style="flex:1">
+            <input class="rv-source" placeholder="${esc(tr('ui.sourcePublication'))}" value="${esc(r.source_title || '')}" style="flex:1">
             <input class="rv-date" type="date" value="${onixDateToInput(r.review_date)}" style="width:140px">
             <span class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</span>
         </div>
-        <textarea class="rv-text" rows="2" placeholder="Review text...">${esc(r.review_text || '')}</textarea>
+        <textarea class="rv-text" rows="2" placeholder="${esc(tr('ui.reviewText'))}">${esc(r.review_text || '')}</textarea>
     `;
     container.appendChild(div);
 }
@@ -902,9 +913,12 @@ async function saveSettings() {
         supplier_name: document.getElementById('s-supplier-name').value,
         supplier_id_value: document.getElementById('s-supplier-id-value').value,
         onix_format: document.getElementById('s-onix-format').value,
+        ui_language: document.getElementById('s-ui-language').value,
     };
+    API.setApiKey(document.getElementById('s-api-key').value.trim());
     settings = await API.saveSettings(data);
-    toast('Settings saved', 'success');
+    await I18N.setLanguage(settings.ui_language || 'en');
+    toast(tr('toast.settingsSaved'), 'success');
     closeModal('settings-modal');
 }
 
@@ -927,36 +941,36 @@ function openImportModal() {
 }
 
 async function handleImportFile(file) {
-    document.getElementById('footer-status').textContent = 'Importing...';
+    document.getElementById('footer-status').textContent = tr('status.importing');
     try {
         const result = await API.uploadFile(file);
         importData = result;
         renderImportMapping(result);
-        document.getElementById('footer-status').textContent = 'Ready';
+        document.getElementById('footer-status').textContent = tr('ui.ready');
     } catch (e) {
-        toast('Import failed: ' + e.message, 'error');
-        document.getElementById('footer-status').textContent = 'Ready';
+        toast(tr('toast.importFailed', { message: e.message }), 'error');
+        document.getElementById('footer-status').textContent = tr('ui.ready');
     }
 }
 
 function renderImportMapping(result) {
     document.getElementById('import-mapping').style.display = 'block';
-    document.getElementById('import-info').textContent = `${result.totalRows} rows found`;
+    document.getElementById('import-info').textContent = tr('status.rowsFound', { count: result.totalRows });
 
     const onixFields = [
-        { key: '', label: '— Skip —' },
-        { key: 'isbn', label: 'ISBN' },
-        { key: 'title', label: 'Title' },
-        { key: 'subtitle', label: 'Subtitle' },
-        { key: 'author', label: 'Author' },
-        { key: 'language', label: 'Language' },
-        { key: 'description', label: 'Description' },
-        { key: 'bisac_main', label: 'BISAC Main' },
-        { key: 'thema_main', label: 'Thema Main' },
-        { key: 'wgs', label: 'WGS' },
-        { key: 'keywords', label: 'Keywords' },
-        { key: 'price', label: 'Price' },
-        { key: 'territory', label: 'Territory' },
+        { key: '', label: tr('ui.skip') },
+        { key: 'isbn', label: tr('ui.colIsbn') },
+        { key: 'title', label: tr('ui.colTitle') },
+        { key: 'subtitle', label: tr('ui.colSubtitle') },
+        { key: 'author', label: tr('ui.colAuthor') },
+        { key: 'language', label: tr('ui.language') },
+        { key: 'description', label: tr('ui.description') },
+        { key: 'bisac_main', label: tr('ui.bisacMain') },
+        { key: 'thema_main', label: tr('ui.themaMain') },
+        { key: 'wgs', label: tr('ui.colWgs') },
+        { key: 'keywords', label: tr('ui.keywords') },
+        { key: 'price', label: tr('ui.colPrice') },
+        { key: 'territory', label: tr('ui.colTerritory') },
     ];
 
     const autoMap = {
@@ -968,7 +982,7 @@ function renderImportMapping(result) {
         'language': 'language', 'price': 'price',
     };
 
-    let html = '<tr><th>File Column</th><th>Sample Data</th><th>Map to ONIX Field</th></tr>';
+    let html = `<tr><th>${tr('ui.fileColumn')}</th><th>${tr('ui.sampleData')}</th><th>${tr('ui.mapToOnix')}</th></tr>`;
     for (const header of result.headers) {
         const sample = result.preview[0] ? (result.preview[0][header] || '').toString().substring(0, 60) : '';
         const guess = autoMap[header.toLowerCase().replace(/[^a-z0-9]/g, '')] || '';
@@ -988,24 +1002,30 @@ async function applyImport() {
     });
 
     if (!mapping.title && !mapping.isbn) {
-        return toast('Please map at least Title or ISBN', 'error');
+        return toast(tr('error.mapTitleOrIsbn'), 'error');
     }
 
-    document.getElementById('footer-status').textContent = 'Importing...';
+    document.getElementById('footer-status').textContent = tr('status.importing');
     const result = await API.applyImport(importData.data, mapping);
-    toast(`Imported ${result.imported} books`, 'success');
+    toast(tr('toast.importedBooks', { count: result.imported }), 'success');
     closeModal('import-modal');
     await loadBooks();
-    document.getElementById('footer-status').textContent = 'Ready';
+    document.getElementById('footer-status').textContent = tr('ui.ready');
 }
 
 // ============================================================
 // Export
 // ============================================================
-function exportData(format) {
-    window.location = `/api/export/${format}`;
+async function exportData(format) {
+    const blob = await API.exportData(format);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `onix_export_${new Date().toISOString().slice(0,10)}.${format}`;
+    a.click();
+    URL.revokeObjectURL(url);
     closeModal('export-modal');
-    toast(`Exporting as ${format.toUpperCase()}...`, 'info');
+    toast(tr('toast.exportingAs', { format: format.toUpperCase() }), 'info');
 }
 
 // ============================================================
@@ -1020,14 +1040,14 @@ async function generateXml() {
     a.download = `onix_${new Date().toISOString().slice(0,10)}.xml`;
     a.click();
     URL.revokeObjectURL(url);
-    toast(`ONIX XML generated (${ids ? ids.length : books.length} books)`, 'success');
+    toast(tr('toast.generatedXml', { count: ids ? ids.length : books.length }), 'success');
 }
 
 async function previewXml(bookIds) {
     const ids = bookIds || (selectedIds.size > 0 ? [...selectedIds] : null);
     const result = await API.previewXml(ids);
     setXmlPreview(result.xml);
-    document.getElementById('preview-count').textContent = `(${result.bookCount} products)`;
+    document.getElementById('preview-count').textContent = tr('status.previewProducts', { count: result.bookCount });
     document.getElementById('xml-preview').classList.add('open');
 }
 
@@ -1046,11 +1066,21 @@ function downloadXmlFromPreview() {
     URL.revokeObjectURL(url);
 }
 
+async function downloadBackup() {
+    const blob = await API.getBackup();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `onix_db_backup_${new Date().toISOString().slice(0,10)}.db`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
 // ============================================================
 // Bulk Edit
 // ============================================================
 function openBulkEdit() {
-    if (selectedIds.size === 0) return toast('Select books first', 'info');
+    if (selectedIds.size === 0) return toast(tr('toast.selectBooksFirst'), 'info');
     document.getElementById('bulk-count').textContent = selectedIds.size;
     openModal('bulk-modal');
 }
@@ -1085,7 +1115,7 @@ async function applyBulkEdit() {
     }
 
     await API.bulkUpdate([...selectedIds], fields);
-    toast(`Updated ${selectedIds.size} books`, 'success');
+    toast(tr('toast.updatedBooks', { count: selectedIds.size }), 'success');
     closeModal('bulk-modal');
     await loadBooks(document.getElementById('search-input').value);
 }

@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS settings (
     default_epub_usage_status TEXT NOT NULL DEFAULT '01', -- 01=permitted, 02=prohibited
     onix_format     TEXT NOT NULL DEFAULT 'short',      -- 'short' or 'reference'
     theme           TEXT NOT NULL DEFAULT 'light',      -- 'light' or 'dark'
+    ui_language     TEXT NOT NULL DEFAULT 'en',         -- en|es|de|ru
     created_at      TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
 );

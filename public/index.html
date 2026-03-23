@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONIX Generator</title>
+    <title data-i18n="ui.appTitle">ONIX Generator</title>
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
@@ -12,35 +12,35 @@
     <!-- ============ HEADER ============ -->
     <header class="header">
         <div class="header-left">
-            <div class="header-logo">ONIX Generator <span>v1.2</span></div>
+            <div class="header-logo" data-i18n-html="ui.headerLogoHtml">ONIX Generator <span>v1.2</span></div>
         </div>
         <div class="header-right">
             <span class="header-stats" id="stats"></span>
             <button class="btn btn-sm" id="btn-theme" title="Toggle dark/light theme">🌓</button>
-            <button class="btn btn-sm" id="btn-settings" title="Publisher settings">⚙️ Settings</button>
+            <button class="btn btn-sm" id="btn-settings" data-i18n-title="ui.settingsButton">⚙️ <span data-i18n="ui.settingsButton">Settings</span></button>
         </div>
     </header>
 
     <!-- ============ TOOLBAR ============ -->
     <div class="toolbar">
         <div class="toolbar-group">
-            <button class="btn btn-sm btn-primary" id="btn-add">+ Add Book</button>
-            <button class="btn btn-sm" id="btn-clone" title="Clone selected books">📋 Clone</button>
-            <button class="btn btn-sm btn-danger" id="btn-delete" title="Delete selected books">🗑 Delete</button>
+            <button class="btn btn-sm btn-primary" id="btn-add">+ <span data-i18n="ui.addBookLabel">Add Book</span></button>
+            <button class="btn btn-sm" id="btn-clone" data-i18n-title="ui.clone"><span>📋 </span><span data-i18n="ui.clone">Clone</span></button>
+            <button class="btn btn-sm btn-danger" id="btn-delete" data-i18n-title="ui.delete"><span>🗑 </span><span data-i18n="ui.delete">Delete</span></button>
         </div>
         <div class="toolbar-separator"></div>
         <div class="toolbar-group">
-            <button class="btn btn-sm" id="btn-bulk" title="Bulk edit selected books">✏️ Bulk Edit</button>
-            <button class="btn btn-sm" id="btn-import" title="Import XLSX/CSV">📥 Import</button>
-            <button class="btn btn-sm" id="btn-export" title="Export data">📤 Export</button>
+            <button class="btn btn-sm" id="btn-bulk" data-i18n-title="ui.bulkEdit"><span>✏️ </span><span data-i18n="ui.bulkEdit">Bulk Edit</span></button>
+            <button class="btn btn-sm" id="btn-import" data-i18n-title="ui.import"><span>📥 </span><span data-i18n="ui.import">Import</span></button>
+            <button class="btn btn-sm" id="btn-export" data-i18n-title="ui.export"><span>📤 </span><span data-i18n="ui.export">Export</span></button>
         </div>
         <div class="toolbar-separator"></div>
         <div class="toolbar-group">
-            <button class="btn btn-sm btn-primary" id="btn-generate">⬇ Generate ONIX XML</button>
-            <button class="btn btn-sm" id="btn-preview" title="Preview XML">👁 Preview</button>
+            <button class="btn btn-sm btn-primary" id="btn-generate"><span>⬇ </span><span data-i18n="ui.generateXml">Generate ONIX XML</span></button>
+            <button class="btn btn-sm" id="btn-preview" data-i18n-title="ui.preview"><span>👁 </span><span data-i18n="ui.preview">Preview</span></button>
         </div>
         <div class="search-box">
-            <input type="text" id="search-input" placeholder="Search books (ISBN, title, author...)">
+            <input type="text" id="search-input" data-i18n-placeholder="ui.search" placeholder="Search books (ISBN, title, author...)">
         </div>
     </div>
 
@@ -51,17 +51,17 @@
                 <tr>
                     <th class="col-checkbox"><input type="checkbox" id="select-all" title="Select all"></th>
                     <th class="col-num">#</th>
-                    <th class="col-isbn" data-col="isbn">ISBN <span class="sort-arrow"></span></th>
-                    <th class="col-title" data-col="title">Title <span class="sort-arrow"></span></th>
-                    <th class="col-subtitle" data-col="subtitle">Subtitle</th>
-                    <th class="col-author" data-col="authors">Author</th>
-                    <th class="col-bisac" data-col="bisac_main">BISAC</th>
-                    <th class="col-thema" data-col="thema_main">Thema</th>
-                    <th class="col-wgs" data-col="wgs_main">WGS</th>
-                    <th class="col-lang" data-col="language_code">Lang</th>
-                    <th class="col-price" data-col="price">Price</th>
-                    <th class="col-territory" data-col="territory">Territory</th>
-                    <th class="col-status" data-col="publishing_status">Status</th>
+                    <th class="col-isbn" data-col="isbn"><span data-i18n="ui.colIsbn">ISBN</span> <span class="sort-arrow"></span></th>
+                    <th class="col-title" data-col="title"><span data-i18n="ui.colTitle">Title</span> <span class="sort-arrow"></span></th>
+                    <th class="col-subtitle" data-col="subtitle" data-i18n="ui.colSubtitle">Subtitle</th>
+                    <th class="col-author" data-col="authors" data-i18n="ui.colAuthor">Author</th>
+                    <th class="col-bisac" data-col="bisac_main" data-i18n="ui.colBisac">BISAC</th>
+                    <th class="col-thema" data-col="thema_main" data-i18n="ui.colThema">Thema</th>
+                    <th class="col-wgs" data-col="wgs_main" data-i18n="ui.colWgs">WGS</th>
+                    <th class="col-lang" data-col="language_code" data-i18n="ui.colLang">Lang</th>
+                    <th class="col-price" data-col="price" data-i18n="ui.colPrice">Price</th>
+                    <th class="col-territory" data-col="territory" data-i18n="ui.colTerritory">Territory</th>
+                    <th class="col-status" data-col="publishing_status" data-i18n="ui.colStatus">Status</th>
                 </tr>
             </thead>
             <tbody id="table-body">
@@ -72,10 +72,10 @@
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
             </svg>
-            <p>No books yet. Add your first book or import from XLSX/CSV.</p>
+            <p data-i18n="ui.emptyState">No books yet. Add your first book or import from XLSX/CSV.</p>
             <div style="display:flex;gap:8px;">
-                <button class="btn btn-primary" onclick="addBook()">+ Add Book</button>
-                <button class="btn" onclick="openImportModal()">📥 Import</button>
+                <button class="btn btn-primary" onclick="addBook()">+ <span data-i18n="ui.addBookLabel">Add Book</span></button>
+                <button class="btn" onclick="openImportModal()"><span>📥 </span><span data-i18n="ui.import">Import</span></button>
             </div>
         </div>
     </div>
@@ -334,6 +334,15 @@
                 <select id="s-default-language"></select>
             </div>
             <div class="form-group">
+                <label>Interface Language</label>
+                <select id="s-ui-language">
+                    <option value="en">English</option>
+                    <option value="es">Espanol</option>
+                    <option value="de">Deutsch</option>
+                    <option value="ru">Russian</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Default Currency</label>
                 <select id="s-default-currency"></select>
             </div>
@@ -348,6 +357,12 @@
             <div class="form-group">
                 <label>Default Territory</label>
                 <input type="text" id="s-default-territory" placeholder="WORLD or DE AT CH">
+            </div>
+            <hr style="margin:12px 0;border-color:var(--border)">
+            <h3 style="font-size:14px;margin:8px 0">Security</h3>
+            <div class="form-group">
+                <label>API Key (stored locally in browser)</label>
+                <input type="password" id="s-api-key" autocomplete="off" placeholder="ogen_...">
             </div>
             <hr style="margin:12px 0;border-color:var(--border)">
             <h3 style="font-size:14px;margin:8px 0">Bookwire / Supplier</h3>
@@ -428,7 +443,7 @@
             <button class="btn" onclick="exportData('csv')">📄 Export as CSV</button>
             <button class="btn" onclick="exportData('json')">🔤 Export as JSON</button>
             <hr style="border:none;border-top:1px solid var(--border);margin:4px 0;">
-            <button class="btn" onclick="window.location='/api/db/backup'">💾 Download Database Backup</button>
+            <button class="btn" id="btn-backup">💾 Download Database Backup</button>
         </div>
     </div>
 </div>
@@ -521,6 +536,7 @@
 <div class="toast-container" id="toast-container"></div>
 
 <!-- ============ SCRIPTS ============ -->
+<script src="/js/i18n.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/codelists.js"></script>
 <script src="/js/table.js"></script>

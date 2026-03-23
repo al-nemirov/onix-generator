@@ -70,6 +70,7 @@ db.exec(schema);
         ['supplier_id_value', "TEXT NOT NULL DEFAULT ''"],
         ['default_epub_usage_type', "TEXT NOT NULL DEFAULT ''"],
         ['default_epub_usage_status', "TEXT NOT NULL DEFAULT '01'"],
+        ['ui_language', "TEXT NOT NULL DEFAULT 'en'"],
     ];
     for (const [col, def] of settingsMigrations) {
         if (!settingsCols.includes(col)) {
@@ -82,15 +83,25 @@ db.exec(schema);
     }
 })();
 
-// Prepared statements (created once, reused)
-const stmts = {};
-
 // ---------------------------------------------------------------------------
 // Middleware — Security
 // ---------------------------------------------------------------------------
 
 // Helmet: sets various HTTP headers for security
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:"],
+            connectSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"],
+            frameAncestors: ["'none'"],
+        },
+    },
+}));
 
 // Body size limits (1 MB for JSON, override per-route if needed)
 app.use(express.json({ limit: '1mb' }));
@@ -119,7 +130,7 @@ const strictLimiter = rateLimit({
 // Authentication middleware
 // ---------------------------------------------------------------------------
 function authenticate(req, res, next) {
-    const apiKey = req.headers['x-api-key'] || req.query.api_key;
+    const apiKey = req.headers['x-api-key'];
     if (!apiKey) {
         return res.status(401).json({ error: 'Authentication required. Provide X-API-Key header.' });
     }
@@ -224,7 +235,13 @@ function validateOnixCode(val, maxLen = 10) {
 
 function validateDate(val) {
     if (!val || val === '') return true;
-    return typeof val === 'string' && /^\d{4}\d{2}\d{2}$/.test(val);
+    if (typeof val !== 'string' || !/^\d{8}$/.test(val)) return false;
+    const year = Number(val.slice(0, 4));
+    const month = Number(val.slice(4, 6));
+    const day = Number(val.slice(6, 8));
+    if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+    const dt = new Date(Date.UTC(year, month - 1, day));
+    return dt.getUTCFullYear() === year && dt.getUTCMonth() === month - 1 && dt.getUTCDate() === day;
 }
 
 // Validate book fields from request body, returns error string or null
@@ -344,7 +361,7 @@ app.put('/api/settings', (req, res) => {
         'default_price_type', 'message_note',
         'supplier_role', 'supplier_name', 'supplier_id_type', 'supplier_id_value',
         'default_epub_usage_type', 'default_epub_usage_status',
-        'onix_format', 'theme'
+        'onix_format', 'theme', 'ui_language'
     ];
 
     // Validate settings input
@@ -364,6 +381,9 @@ app.put('/api/settings', (req, res) => {
     }
     if (req.body.theme && !['light', 'dark'].includes(req.body.theme)) {
         return res.status(400).json({ error: 'theme must be "light" or "dark"' });
+    }
+    if (req.body.ui_language && !['en', 'es', 'de', 'ru'].includes(req.body.ui_language)) {
+        return res.status(400).json({ error: 'ui_language must be one of: en, es, de, ru' });
     }
 
     const sets = [];
@@ -415,11 +435,13 @@ app.get('/api/books', (req, res) => {
     const params = {};
 
     if (search) {
+        // Sanitize FTS5 query: wrap in double quotes for literal matching
+        const sanitized = '"' + search.replace(/"/g, '""') + '"';
         sql += ` WHERE b.id IN (SELECT rowid FROM books_fts WHERE books_fts MATCH @search)`;
-        params.search = search;
+        params.search = sanitized;
     }
 
-    const sortCol = ['isbn', 'title', 'language_code', 'publishing_status', 'publishing_date', 'created_at', 'updated_at'].includes(sort) ? sort : 'id';
+    const sortCol = ['isbn', 'title', 'subtitle', 'language_code', 'publishing_status', 'publishing_date', 'created_at', 'updated_at'].includes(sort) ? sort : 'id';
     const sortOrder = order === 'desc' ? 'DESC' : 'ASC';
     sql += ` ORDER BY b.${sortCol} ${sortOrder}`;
 
@@ -484,7 +506,8 @@ app.post('/api/books', (req, res) => {
             'description', 'description_format', 'biography', 'toc',
             'publisher_name', 'publisher_city', 'publisher_country',
             'publishing_status', 'publishing_date', 'print_pub_date', 'announcement_date',
-            'cover_filename', 'content_filename'
+            'cover_filename', 'content_filename',
+            'product_availability'
         ];
 
         const cols = [];
@@ -541,7 +564,8 @@ app.put('/api/books/:id', (req, res) => {
             'description', 'description_format', 'biography', 'toc',
             'publisher_name', 'publisher_city', 'publisher_country',
             'publishing_status', 'publishing_date', 'print_pub_date', 'announcement_date',
-            'cover_filename', 'content_filename'
+            'cover_filename', 'content_filename',
+            'product_availability'
         ];
 
         const sets = [];
@@ -970,7 +994,7 @@ function auditLog(action, req) {
         action,
         user: req.apiUser ? req.apiUser.label : 'unknown',
         role: req.apiUser ? req.apiUser.role : 'unknown',
-        ip: req.ip || req.connection.remoteAddress,
+        ip: req.ip || req.socket?.remoteAddress || '',
         userAgent: req.headers['user-agent'] || '',
     };
     const line = JSON.stringify(entry) + '\n';
