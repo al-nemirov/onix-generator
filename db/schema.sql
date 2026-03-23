@@ -20,6 +20,15 @@ CREATE TABLE IF NOT EXISTS settings (
     default_drm     TEXT NOT NULL DEFAULT '02',         -- 00=none, 01=Adobe DRM, 02=watermark, 03=DRM
     default_territory TEXT NOT NULL DEFAULT 'WORLD',
     default_price_type TEXT NOT NULL DEFAULT '42',      -- 02=RRP, 04=fixed, 42=agency
+    message_note    TEXT NOT NULL DEFAULT '-',            -- m183 MessageNote (Bookwire: '-' by default)
+    -- Supplier / Distributor (supplydetail block)
+    supplier_role   TEXT NOT NULL DEFAULT '06',          -- j292: 01=publisher, 06=distributor
+    supplier_name   TEXT NOT NULL DEFAULT '',             -- j137: e.g. 'Bookwire' (falls back to publisher_name)
+    supplier_id_type TEXT NOT NULL DEFAULT '01',          -- j345: 01=proprietary
+    supplier_id_value TEXT NOT NULL DEFAULT '',           -- b244: e.g. 'Bookwire'
+    -- Default epub usage constraint
+    default_epub_usage_type   TEXT NOT NULL DEFAULT '',   -- e.g. '06' printing
+    default_epub_usage_status TEXT NOT NULL DEFAULT '01', -- 01=permitted, 02=prohibited
     onix_format     TEXT NOT NULL DEFAULT 'short',      -- 'short' or 'reference'
     theme           TEXT NOT NULL DEFAULT 'light',      -- 'light' or 'dark'
     created_at      TEXT NOT NULL DEFAULT (datetime('now')),
@@ -78,6 +87,8 @@ CREATE TABLE IF NOT EXISTS books (
     publishing_date     TEXT NOT NULL DEFAULT '',                -- YYYYMMDD, DateRole 01
     print_pub_date      TEXT NOT NULL DEFAULT '',                -- DateRole 19
     announcement_date   TEXT NOT NULL DEFAULT '',                -- DateRole 09
+    -- Supply
+    product_availability TEXT NOT NULL DEFAULT '20',             -- j396: 20=available, 01/30/40/46=takedown
     -- Cover & content file
     cover_filename      TEXT NOT NULL DEFAULT '',                -- e.g. 9781234567890.jpg
     content_filename    TEXT NOT NULL DEFAULT '',                -- e.g. 9781234567890.epub

@@ -78,6 +78,12 @@ function populateDropdowns() {
     document.getElementById('s-publisher-name').value = settings.publisher_name || '';
     document.getElementById('s-publisher-city').value = settings.publisher_city || '';
     document.getElementById('s-default-territory').value = settings.default_territory || 'WORLD';
+    // Bookwire / Supplier settings
+    document.getElementById('s-message-note').value = settings.message_note || '-';
+    document.getElementById('s-supplier-role').value = settings.supplier_role || '06';
+    document.getElementById('s-supplier-name').value = settings.supplier_name || '';
+    document.getElementById('s-supplier-id-value').value = settings.supplier_id_value || '';
+    document.getElementById('s-onix-format').value = settings.onix_format || 'short';
 }
 
 // ============================================================
@@ -890,6 +896,12 @@ async function saveSettings() {
         default_drm: document.getElementById('s-default-drm').value,
         default_price_type: document.getElementById('s-default-price-type').value,
         default_territory: document.getElementById('s-default-territory').value,
+        // Bookwire / Supplier
+        message_note: document.getElementById('s-message-note').value,
+        supplier_role: document.getElementById('s-supplier-role').value,
+        supplier_name: document.getElementById('s-supplier-name').value,
+        supplier_id_value: document.getElementById('s-supplier-id-value').value,
+        onix_format: document.getElementById('s-onix-format').value,
     };
     settings = await API.saveSettings(data);
     toast('Settings saved', 'success');

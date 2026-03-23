@@ -57,6 +57,31 @@ const db = new Database(DB_PATH);
 const schema = fs.readFileSync(path.join(__dirname, 'db', 'schema.sql'), 'utf8');
 db.exec(schema);
 
+// Migrations — add new columns to existing databases
+(function runMigrations() {
+    const settingsCols = db.pragma('table_info(settings)').map(c => c.name);
+    const booksCols = db.pragma('table_info(books)').map(c => c.name);
+    // v1.2.0: Bookwire compliance fields
+    const settingsMigrations = [
+        ['message_note', "TEXT NOT NULL DEFAULT '-'"],
+        ['supplier_role', "TEXT NOT NULL DEFAULT '06'"],
+        ['supplier_name', "TEXT NOT NULL DEFAULT ''"],
+        ['supplier_id_type', "TEXT NOT NULL DEFAULT '01'"],
+        ['supplier_id_value', "TEXT NOT NULL DEFAULT ''"],
+        ['default_epub_usage_type', "TEXT NOT NULL DEFAULT ''"],
+        ['default_epub_usage_status', "TEXT NOT NULL DEFAULT '01'"],
+    ];
+    for (const [col, def] of settingsMigrations) {
+        if (!settingsCols.includes(col)) {
+            db.exec(`ALTER TABLE settings ADD COLUMN ${col} ${def}`);
+        }
+    }
+    // v1.2.0: per-book product availability
+    if (!booksCols.includes('product_availability')) {
+        db.exec("ALTER TABLE books ADD COLUMN product_availability TEXT NOT NULL DEFAULT '20'");
+    }
+})();
+
 // Prepared statements (created once, reused)
 const stmts = {};
 
@@ -222,7 +247,7 @@ function validateBookBody(data) {
     // Validate ONIX code fields
     const codeFields = ['notification_type', 'product_form', 'product_form_detail', 'primary_content_type',
         'drm', 'epub_usage_type', 'epub_usage_status', 'publishing_status',
-        'audience_range_qualifier', 'series_collection_type'];
+        'product_availability', 'audience_range_qualifier', 'series_collection_type'];
     for (const f of codeFields) {
         if (data[f] !== undefined && data[f] !== '' && !validateOnixCode(data[f], 20)) {
             return `${f} must be a valid ONIX code`;
@@ -281,10 +306,17 @@ function validateBookBody(data) {
         if (data.sales_rights.length > 50) return 'Too many sales_rights (max 50)';
     }
 
-    // Validate related_products
+    // Validate related_products — Fix #5: validate relation codes
+    // 06 = alternative format (EPUB/PDF of same work), 23 = similar product
+    const validRelationCodes = ['06', '23', '01', '02', '03', '05', '13', '27'];
     if (data.related_products !== undefined) {
         if (!Array.isArray(data.related_products)) return 'related_products must be an array';
         if (data.related_products.length > 50) return 'Too many related_products (max 50)';
+        for (const rp of data.related_products) {
+            if (rp.relation_code && !validRelationCodes.includes(rp.relation_code)) {
+                return `Invalid relation_code "${rp.relation_code}". Use 06 for alternative format (EPUB/PDF), 23 for similar product`;
+            }
+        }
     }
 
     // Validate reviews
@@ -309,7 +341,10 @@ app.put('/api/settings', (req, res) => {
         'sender_name', 'contact_name', 'email', 'default_language',
         'publisher_name', 'publisher_city', 'publisher_country',
         'default_currency', 'default_drm', 'default_territory',
-        'default_price_type', 'onix_format', 'theme'
+        'default_price_type', 'message_note',
+        'supplier_role', 'supplier_name', 'supplier_id_type', 'supplier_id_value',
+        'default_epub_usage_type', 'default_epub_usage_status',
+        'onix_format', 'theme'
     ];
 
     // Validate settings input
@@ -962,23 +997,157 @@ app.get('/api/stats', (req, res) => {
 // ---------------------------------------------------------------------------
 // ONIX XML Generation Engine
 // ---------------------------------------------------------------------------
+
+// Fix #3: Resolve ProductAvailability from book fields (not hardcoded 20)
+// Bookwire takedown statuses: 01, 30, 40, 46, 51, 52
+function resolveProductAvailability(book) {
+    // If explicitly set on the book, use it
+    if (book.product_availability) return book.product_availability;
+    // Derive from notification_type / publishing_status
+    if (book.notification_type === '05') return '40'; // takedown → not available
+    const status = book.publishing_status || '04';
+    const takedownStatuses = { '07': '40', '08': '46', '10': '01', '11': '51' };
+    if (takedownStatuses[status]) return takedownStatuses[status];
+    return '20'; // default: available
+}
+
+// Fix #7: Validate Bookwire price interval rules
+// Rule: next interval start_date must be prev end_date + 1 day; last may omit end_date
+function validatePriceIntervals(prices) {
+    const warnings = [];
+    const dated = prices.filter(p => p.start_date).sort((a, b) => a.start_date.localeCompare(b.start_date));
+    for (let i = 0; i < dated.length - 1; i++) {
+        const curr = dated[i];
+        const next = dated[i + 1];
+        if (!curr.end_date) {
+            // Only last interval may omit end_date
+            warnings.push(`Price interval ${i + 1} (start=${curr.start_date}) has no end_date but is not the last interval`);
+            continue;
+        }
+        // Check next start = curr end + 1 day
+        const endDate = new Date(
+            parseInt(curr.end_date.substring(0, 4)),
+            parseInt(curr.end_date.substring(4, 6)) - 1,
+            parseInt(curr.end_date.substring(6, 8))
+        );
+        endDate.setDate(endDate.getDate() + 1);
+        const expectedNext = endDate.toISOString().slice(0, 10).replace(/-/g, '');
+        if (next.start_date !== expectedNext) {
+            warnings.push(`Price interval gap: interval ${i + 1} ends ${curr.end_date}, interval ${i + 2} starts ${next.start_date} (expected ${expectedNext})`);
+        }
+    }
+    return warnings;
+}
+// Fix #4: Short-to-reference tag name mapping for ONIX 3.0
+// When settings.onix_format === 'reference', use full tag names instead of short codes
+const SHORT_TO_REF = {
+    'x298': 'SenderName', 'x299': 'ContactName', 'j272': 'EmailAddress',
+    'm183': 'MessageNote', 'x307': 'SentDateTime', 'm184': 'DefaultLanguageOfText',
+    'a001': 'RecordReference', 'a002': 'NotificationType', 'a194': 'RecordSourceType',
+    'b221': 'ProductIDType', 'b233': 'IDTypeName', 'b244': 'IDValue',
+    'x314': 'ProductComposition', 'b012': 'ProductForm', 'b333': 'ProductFormDetail',
+    'x416': 'PrimaryContentType', 'x317': 'EpubTechnicalProtection',
+    'x318': 'EpubUsageType', 'x319': 'EpubUsageStatus',
+    'x329': 'CollectionType', 'b202': 'TitleType', 'x409': 'TitleElementLevel',
+    'x410': 'PartNumber', 'b203': 'TitleText', 'b029': 'Subtitle',
+    'b034': 'SequenceNumber', 'b035': 'ContributorRole',
+    'b036': 'PersonName', 'b037': 'PersonNameInverted',
+    'b038': 'TitlesBeforeNames', 'b039': 'NamesBeforeKey', 'b247': 'PrefixToKey',
+    'b040': 'KeyNames', 'b041': 'NamesAfterKey', 'b047': 'CorporateName',
+    'b044': 'BiographicalNote', 'b057': 'EditionNumber', 'b058': 'EditionStatement',
+    'b253': 'LanguageRole', 'b252': 'LanguageCode',
+    'b218': 'ExtentType', 'b219': 'ExtentValue', 'b220': 'ExtentUnit',
+    'x425': 'MainSubject', 'b067': 'SubjectSchemeIdentifier', 'b068': 'SubjectSchemeVersion',
+    'b069': 'SubjectCode', 'b070': 'SubjectHeadingText',
+    'b074': 'AudienceRangeQualifier', 'b075': 'AudienceRangePrecision', 'b076': 'AudienceRangeValue',
+    'x426': 'TextType', 'x427': 'ContentAudience', 'd104': 'Text',
+    'd107': 'TextAuthor', 'x428': 'SourceTitle', 'x429': 'ContentDateRole',
+    'x436': 'ResourceContentType', 'x437': 'ResourceMode', 'x441': 'ResourceForm', 'x435': 'ResourceLink',
+    'b291': 'PublishingRole', 'b081': 'PublisherName',
+    'b209': 'CityOfPublication', 'b083': 'CountryOfPublication',
+    'b394': 'PublishingStatus', 'x448': 'PublishingDateRole', 'b306': 'Date',
+    'b089': 'SalesRightsType', 'x450': 'RegionsIncluded', 'x449': 'CountriesIncluded',
+    'b381': 'SalesRestrictionType', 'x453': 'SalesRestrictionNote',
+    'b393': 'SalesOutletIDType', 'b382': 'SalesOutletName',
+    'x456': 'ROWSalesRightsType', 'x455': 'ProductRelationCode',
+    'j292': 'SupplierRole', 'j345': 'SupplierIDType', 'j137': 'SupplierName',
+    'j396': 'ProductAvailability', 'x461': 'SupplyDateRole',
+    'x462': 'PriceType', 'j151': 'PriceAmount', 'j152': 'CurrencyCode',
+    'x469': 'UnpricedItemType', 'x476': 'PriceDateRole',
+};
+
+// Composite element names (short → reference)
+const ELEM_TO_REF = {
+    'header': 'Header', 'sender': 'Sender', 'product': 'Product',
+    'productidentifier': 'ProductIdentifier', 'descriptivedetail': 'DescriptiveDetail',
+    'epubusageconstraint': 'EpubUsageConstraint', 'collection': 'Collection',
+    'titledetail': 'TitleDetail', 'titleelement': 'TitleElement',
+    'contributor': 'Contributor', 'language': 'Language', 'extent': 'Extent',
+    'subject': 'Subject', 'audiencerange': 'AudienceRange',
+    'collateraldetail': 'CollateralDetail', 'textcontent': 'TextContent',
+    'contentdate': 'ContentDate', 'supportingresource': 'SupportingResource',
+    'resourceversion': 'ResourceVersion', 'publishingdetail': 'PublishingDetail',
+    'publisher': 'Publisher', 'publishingdate': 'PublishingDate',
+    'salesrights': 'SalesRights', 'territory': 'Territory',
+    'salesrestriction': 'SalesRestriction', 'salesoutlet': 'SalesOutlet',
+    'salesoutletidentifier': 'SalesOutletIdentifier',
+    'relatedmaterial': 'RelatedMaterial', 'relatedproduct': 'RelatedProduct',
+    'productsupply': 'ProductSupply', 'supplydetail': 'SupplyDetail',
+    'supplier': 'Supplier', 'supplieridentifier': 'SupplierIdentifier',
+    'supplydate': 'SupplyDate', 'price': 'Price', 'pricedate': 'PriceDate',
+};
+
 function generateOnixXml(settings, books) {
     const lines = [];
     const ind = (level) => '    '.repeat(level);
+    const useRef = settings.onix_format === 'reference';
+
+    // Tag helpers: output short or reference format
+    // Short: <x298 refname="SenderName">value</x298>
+    // Reference: <SenderName>value</SenderName>
+    const tag = (shortCode, value) => {
+        if (useRef) {
+            const refName = SHORT_TO_REF[shortCode] || shortCode;
+            return `<${refName}>${value}</${refName}>`;
+        }
+        return `<${shortCode} refname="${SHORT_TO_REF[shortCode] || shortCode}">${value}</${shortCode}>`;
+    };
+    const selfTag = (shortCode) => {
+        if (useRef) {
+            const refName = SHORT_TO_REF[shortCode] || shortCode;
+            return `<${refName}/>`;
+        }
+        return `<${shortCode} refname="${SHORT_TO_REF[shortCode] || shortCode}"/>`;
+    };
+    const tagAttr = (shortCode, attrs, value) => {
+        if (useRef) {
+            const refName = SHORT_TO_REF[shortCode] || shortCode;
+            return `<${refName} ${attrs}>${value}</${refName}>`;
+        }
+        return `<${shortCode} refname="${SHORT_TO_REF[shortCode] || shortCode}" ${attrs}>${value}</${shortCode}>`;
+    };
+    const open = (elem) => useRef ? `<${ELEM_TO_REF[elem] || elem}>` : `<${elem}>`;
+    const close = (elem) => useRef ? `</${ELEM_TO_REF[elem] || elem}>` : `</${elem}>`;
+    const rootNs = useRef
+        ? 'http://ns.editeur.org/onix/3.0/reference'
+        : 'http://ns.editeur.org/onix/3.0/short';
+    const rootTag = useRef ? 'ONIXMessage' : 'ONIXmessage';
 
     lines.push('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>');
-    lines.push('<ONIXmessage release="3.0" xmlns="http://ns.editeur.org/onix/3.0/short">');
+    lines.push(`<${rootTag} release="3.0" xmlns="${rootNs}">`);
 
-    // Header
-    lines.push(`${ind(1)}<header>`);
-    lines.push(`${ind(2)}<sender>`);
-    if (settings.sender_name) lines.push(`${ind(3)}<x298 refname="SenderName">${esc(settings.sender_name)}</x298>`);
-    if (settings.contact_name) lines.push(`${ind(3)}<x299 refname="ContactName">${esc(settings.contact_name)}</x299>`);
-    if (settings.email) lines.push(`${ind(3)}<j272 refname="EmailAddress">${esc(settings.email)}</j272>`);
-    lines.push(`${ind(2)}</sender>`);
-    lines.push(`${ind(2)}<x307 refname="SentDateTime">${formatDate(new Date())}</x307>`);
-    if (settings.default_language) lines.push(`${ind(2)}<m184 refname="DefaultLanguageOfText">${esc(settings.default_language)}</m184>`);
-    lines.push(`${ind(1)}</header>`);
+    // Header — Fix #1: m183 MessageNote, Fix #4: reference format support
+    lines.push(`${ind(1)}${open('header')}`);
+    lines.push(`${ind(2)}${open('sender')}`);
+    if (settings.sender_name) lines.push(`${ind(3)}${tag('x298', esc(settings.sender_name))}`);
+    if (settings.contact_name) lines.push(`${ind(3)}${tag('x299', esc(settings.contact_name))}`);
+    if (settings.email) lines.push(`${ind(3)}${tag('j272', esc(settings.email))}`);
+    lines.push(`${ind(2)}${close('sender')}`);
+    const messageNote = settings.message_note || '-';
+    lines.push(`${ind(2)}${tag('m183', esc(messageNote))}`);
+    lines.push(`${ind(2)}${tag('x307', formatDate(new Date()))}`);
+    if (settings.default_language) lines.push(`${ind(2)}${tag('m184', esc(settings.default_language))}`);
+    lines.push(`${ind(1)}${close('header')}`);
 
     // Products
     for (const book of books) {
@@ -989,405 +1158,398 @@ function generateOnixXml(settings, books) {
         const related = db.prepare('SELECT * FROM related_products WHERE book_id = ?').all(book.id);
         const reviews = db.prepare('SELECT * FROM reviews WHERE book_id = ?').all(book.id);
 
-        lines.push(`${ind(1)}<product>`);
+        lines.push(`${ind(1)}${open('product')}`);
 
         // Record reference
         const ref = book.internal_ref || `${Date.now()}_${book.isbn || book.id}`;
-        lines.push(`${ind(2)}<a001 refname="RecordReference">${esc(ref)}</a001>`);
-        lines.push(`${ind(2)}<a002 refname="NotificationType">${esc(book.notification_type || '03')}</a002>`);
-        lines.push(`${ind(2)}<a194 refname="RecordSourceType">02</a194>`);
+        lines.push(`${ind(2)}${tag('a001', esc(ref))}`);
+        lines.push(`${ind(2)}${tag('a002', esc(book.notification_type || '03'))}`);
+        lines.push(`${ind(2)}${tag('a194', '02')}`);
 
         // Product identifiers
         if (book.isbn) {
-            // ISBN-13
-            lines.push(`${ind(2)}<productidentifier>`);
-            lines.push(`${ind(3)}<b221 refname="ProductIDType">15</b221>`);
-            lines.push(`${ind(3)}<b244 refname="IDValue">${esc(book.isbn)}</b244>`);
-            lines.push(`${ind(2)}</productidentifier>`);
-            // EAN (same as ISBN-13)
-            lines.push(`${ind(2)}<productidentifier>`);
-            lines.push(`${ind(3)}<b221 refname="ProductIDType">03</b221>`);
-            lines.push(`${ind(3)}<b244 refname="IDValue">${esc(book.isbn)}</b244>`);
-            lines.push(`${ind(2)}</productidentifier>`);
+            lines.push(`${ind(2)}${open('productidentifier')}`);
+            lines.push(`${ind(3)}${tag('b221', '15')}`);
+            lines.push(`${ind(3)}${tag('b244', esc(book.isbn))}`);
+            lines.push(`${ind(2)}${close('productidentifier')}`);
+            lines.push(`${ind(2)}${open('productidentifier')}`);
+            lines.push(`${ind(3)}${tag('b221', '03')}`);
+            lines.push(`${ind(3)}${tag('b244', esc(book.isbn))}`);
+            lines.push(`${ind(2)}${close('productidentifier')}`);
         }
         if (book.order_number) {
-            lines.push(`${ind(2)}<productidentifier>`);
-            lines.push(`${ind(3)}<b221 refname="ProductIDType">01</b221>`);
-            lines.push(`${ind(3)}<b233 refname="IDTypeName">Publishers Order No</b233>`);
-            lines.push(`${ind(3)}<b244 refname="IDValue">${esc(book.order_number)}</b244>`);
-            lines.push(`${ind(2)}</productidentifier>`);
+            lines.push(`${ind(2)}${open('productidentifier')}`);
+            lines.push(`${ind(3)}${tag('b221', '01')}`);
+            lines.push(`${ind(3)}${tag('b233', 'Publishers Order No')}`);
+            lines.push(`${ind(3)}${tag('b244', esc(book.order_number))}`);
+            lines.push(`${ind(2)}${close('productidentifier')}`);
         }
 
         // Descriptive detail
-        lines.push(`${ind(2)}<descriptivedetail>`);
-        lines.push(`${ind(3)}<x314 refname="ProductComposition">00</x314>`);
-        lines.push(`${ind(3)}<b012 refname="ProductForm">${esc(book.product_form || 'ED')}</b012>`);
+        lines.push(`${ind(2)}${open('descriptivedetail')}`);
+        lines.push(`${ind(3)}${tag('x314', '00')}`);
+        lines.push(`${ind(3)}${tag('b012', esc(book.product_form || 'ED'))}`);
 
-        // Product form detail (EPUB)
         const formDetails = (book.product_form_detail || 'E101').split('+').map(s => s.trim());
         for (const fd of formDetails) {
-            lines.push(`${ind(3)}<b333 refname="ProductFormDetail">${esc(fd)}</b333>`);
+            lines.push(`${ind(3)}${tag('b333', esc(fd))}`);
         }
 
-        lines.push(`${ind(3)}<x416 refname="PrimaryContentType">${esc(book.primary_content_type || '10')}</x416>`);
+        lines.push(`${ind(3)}${tag('x416', esc(book.primary_content_type || '10'))}`);
 
         // DRM
         const drm = book.drm || settings.default_drm;
-        if (drm) {
-            lines.push(`${ind(3)}<x317 refname="EpubTechnicalProtection">${esc(drm)}</x317>`);
-        }
+        if (drm) lines.push(`${ind(3)}${tag('x317', esc(drm))}`);
 
-        // Usage constraint
-        if (book.epub_usage_type) {
-            lines.push(`${ind(3)}<epubusageconstraint>`);
-            lines.push(`${ind(4)}<x318 refname="EpubUsageType">${esc(book.epub_usage_type)}</x318>`);
-            lines.push(`${ind(4)}<x319 refname="EpubUsageStatus">${esc(book.epub_usage_status || '01')}</x319>`);
-            lines.push(`${ind(3)}</epubusageconstraint>`);
+        // Usage constraint — Fix #9
+        const usageType = book.epub_usage_type || settings.default_epub_usage_type;
+        if (usageType) {
+            lines.push(`${ind(3)}${open('epubusageconstraint')}`);
+            lines.push(`${ind(4)}${tag('x318', esc(usageType))}`);
+            lines.push(`${ind(4)}${tag('x319', esc(book.epub_usage_status || settings.default_epub_usage_status || '01'))}`);
+            lines.push(`${ind(3)}${close('epubusageconstraint')}`);
         }
 
         // Series / Collection
         if (book.series_name) {
-            lines.push(`${ind(3)}<collection>`);
-            lines.push(`${ind(4)}<x329 refname="CollectionType">${esc(book.series_collection_type || '10')}</x329>`);
-            lines.push(`${ind(4)}<titledetail>`);
-            lines.push(`${ind(5)}<b202 refname="TitleType">01</b202>`);
-            lines.push(`${ind(5)}<titleelement>`);
-            lines.push(`${ind(6)}<x409 refname="TitleElementLevel">02</x409>`);
-            lines.push(`${ind(6)}<b203 refname="TitleText">${esc(book.series_name)}</b203>`);
-            lines.push(`${ind(5)}</titleelement>`);
-            lines.push(`${ind(4)}</titledetail>`);
-            lines.push(`${ind(3)}</collection>`);
+            lines.push(`${ind(3)}${open('collection')}`);
+            lines.push(`${ind(4)}${tag('x329', esc(book.series_collection_type || '10'))}`);
+            lines.push(`${ind(4)}${open('titledetail')}`);
+            lines.push(`${ind(5)}${tag('b202', '01')}`);
+            lines.push(`${ind(5)}${open('titleelement')}`);
+            lines.push(`${ind(6)}${tag('x409', '02')}`);
+            lines.push(`${ind(6)}${tag('b203', esc(book.series_name))}`);
+            lines.push(`${ind(5)}${close('titleelement')}`);
+            lines.push(`${ind(4)}${close('titledetail')}`);
+            lines.push(`${ind(3)}${close('collection')}`);
         }
 
         // Title
-        lines.push(`${ind(3)}<titledetail>`);
-        lines.push(`${ind(4)}<b202 refname="TitleType">01</b202>`);
-        lines.push(`${ind(4)}<titleelement>`);
-        lines.push(`${ind(5)}<x409 refname="TitleElementLevel">01</x409>`);
-        if (book.part_number) {
-            lines.push(`${ind(5)}<x410 refname="PartNumber">${esc(book.part_number)}</x410>`);
-        }
-        lines.push(`${ind(5)}<b203 refname="TitleText">${esc(book.title)}</b203>`);
-        if (book.subtitle) {
-            lines.push(`${ind(5)}<b029 refname="Subtitle">${esc(book.subtitle)}</b029>`);
-        }
-        lines.push(`${ind(4)}</titleelement>`);
-        lines.push(`${ind(3)}</titledetail>`);
+        lines.push(`${ind(3)}${open('titledetail')}`);
+        lines.push(`${ind(4)}${tag('b202', '01')}`);
+        lines.push(`${ind(4)}${open('titleelement')}`);
+        lines.push(`${ind(5)}${tag('x409', '01')}`);
+        if (book.part_number) lines.push(`${ind(5)}${tag('x410', esc(book.part_number))}`);
+        lines.push(`${ind(5)}${tag('b203', esc(book.title))}`);
+        if (book.subtitle) lines.push(`${ind(5)}${tag('b029', esc(book.subtitle))}`);
+        lines.push(`${ind(4)}${close('titleelement')}`);
+        lines.push(`${ind(3)}${close('titledetail')}`);
 
         // Contributors
         for (const c of contributors) {
-            lines.push(`${ind(3)}<contributor>`);
-            lines.push(`${ind(4)}<b034 refname="SequenceNumber">${c.sequence_number}</b034>`);
-            lines.push(`${ind(4)}<b035 refname="ContributorRole">${esc(c.contributor_role)}</b035>`);
+            lines.push(`${ind(3)}${open('contributor')}`);
+            lines.push(`${ind(4)}${tag('b034', String(c.sequence_number))}`);
+            lines.push(`${ind(4)}${tag('b035', esc(c.contributor_role))}`);
             if (c.corporate_name) {
-                lines.push(`${ind(4)}<b047 refname="CorporateName">${esc(c.corporate_name)}</b047>`);
+                lines.push(`${ind(4)}${tag('b047', esc(c.corporate_name))}`);
             } else {
-                if (c.person_name) lines.push(`${ind(4)}<b036 refname="PersonName">${esc(c.person_name)}</b036>`);
-                if (c.person_name_inverted) lines.push(`${ind(4)}<b037 refname="PersonNameInverted">${esc(c.person_name_inverted)}</b037>`);
-                // Complex name parts
-                if (c.titles_before) lines.push(`${ind(4)}<b038 refname="TitlesBeforeNames">${esc(c.titles_before)}</b038>`);
-                if (c.names_before_key) lines.push(`${ind(4)}<b039 refname="NamesBeforeKey">${esc(c.names_before_key)}</b039>`);
-                if (c.prefix_to_key) lines.push(`${ind(4)}<b247 refname="PrefixToKey">${esc(c.prefix_to_key)}</b247>`);
-                if (c.key_names) lines.push(`${ind(4)}<b040 refname="KeyNames">${esc(c.key_names)}</b040>`);
-                if (c.names_after_key) lines.push(`${ind(4)}<b041 refname="NamesAfterKey">${esc(c.names_after_key)}</b041>`);
+                if (c.person_name) lines.push(`${ind(4)}${tag('b036', esc(c.person_name))}`);
+                if (c.person_name_inverted) lines.push(`${ind(4)}${tag('b037', esc(c.person_name_inverted))}`);
+                if (c.titles_before) lines.push(`${ind(4)}${tag('b038', esc(c.titles_before))}`);
+                if (c.names_before_key) lines.push(`${ind(4)}${tag('b039', esc(c.names_before_key))}`);
+                if (c.prefix_to_key) lines.push(`${ind(4)}${tag('b247', esc(c.prefix_to_key))}`);
+                if (c.key_names) lines.push(`${ind(4)}${tag('b040', esc(c.key_names))}`);
+                if (c.names_after_key) lines.push(`${ind(4)}${tag('b041', esc(c.names_after_key))}`);
             }
-            if (c.biographical_note) lines.push(`${ind(4)}<b044 refname="BiographicalNote">${esc(c.biographical_note)}</b044>`);
-            lines.push(`${ind(3)}</contributor>`);
+            if (c.biographical_note) lines.push(`${ind(4)}${tag('b044', esc(c.biographical_note))}`);
+            lines.push(`${ind(3)}${close('contributor')}`);
         }
 
         // Edition
-        if (book.edition_number) lines.push(`${ind(3)}<b057 refname="EditionNumber">${esc(book.edition_number)}</b057>`);
-        if (book.edition_statement) lines.push(`${ind(3)}<b058 refname="EditionStatement">${esc(book.edition_statement)}</b058>`);
+        if (book.edition_number) lines.push(`${ind(3)}${tag('b057', esc(book.edition_number))}`);
+        if (book.edition_statement) lines.push(`${ind(3)}${tag('b058', esc(book.edition_statement))}`);
 
         // Language
         const lang = book.language_code || settings.default_language;
         if (lang) {
-            lines.push(`${ind(3)}<language>`);
-            lines.push(`${ind(4)}<b253 refname="LanguageRole">01</b253>`);
-            lines.push(`${ind(4)}<b252 refname="LanguageCode">${esc(lang)}</b252>`);
-            lines.push(`${ind(3)}</language>`);
+            lines.push(`${ind(3)}${open('language')}`);
+            lines.push(`${ind(4)}${tag('b253', '01')}`);
+            lines.push(`${ind(4)}${tag('b252', esc(lang))}`);
+            lines.push(`${ind(3)}${close('language')}`);
         }
         if (book.original_language) {
-            lines.push(`${ind(3)}<language>`);
-            lines.push(`${ind(4)}<b253 refname="LanguageRole">02</b253>`);
-            lines.push(`${ind(4)}<b252 refname="LanguageCode">${esc(book.original_language)}</b252>`);
-            lines.push(`${ind(3)}</language>`);
+            lines.push(`${ind(3)}${open('language')}`);
+            lines.push(`${ind(4)}${tag('b253', '02')}`);
+            lines.push(`${ind(4)}${tag('b252', esc(book.original_language))}`);
+            lines.push(`${ind(3)}${close('language')}`);
         }
 
         // Pages / Extent
         if (book.page_count) {
-            // Print counterpart pages
-            lines.push(`${ind(3)}<extent>`);
-            lines.push(`${ind(4)}<b218 refname="ExtentType">08</b218>`);
-            lines.push(`${ind(4)}<b219 refname="ExtentValue">${book.page_count}</b219>`);
-            lines.push(`${ind(4)}<b220 refname="ExtentUnit">03</b220>`);
-            lines.push(`${ind(3)}</extent>`);
-            // Content page count
-            lines.push(`${ind(3)}<extent>`);
-            lines.push(`${ind(4)}<b218 refname="ExtentType">11</b218>`);
-            lines.push(`${ind(4)}<b219 refname="ExtentValue">${book.page_count}</b219>`);
-            lines.push(`${ind(4)}<b220 refname="ExtentUnit">03</b220>`);
-            lines.push(`${ind(3)}</extent>`);
+            lines.push(`${ind(3)}${open('extent')}`);
+            lines.push(`${ind(4)}${tag('b218', '08')}`);
+            lines.push(`${ind(4)}${tag('b219', String(book.page_count))}`);
+            lines.push(`${ind(4)}${tag('b220', '03')}`);
+            lines.push(`${ind(3)}${close('extent')}`);
+            lines.push(`${ind(3)}${open('extent')}`);
+            lines.push(`${ind(4)}${tag('b218', '11')}`);
+            lines.push(`${ind(4)}${tag('b219', String(book.page_count))}`);
+            lines.push(`${ind(4)}${tag('b220', '03')}`);
+            lines.push(`${ind(3)}${close('extent')}`);
         }
 
         // Subjects
         for (const s of subjects) {
-            lines.push(`${ind(3)}<subject>`);
-            if (s.is_main) lines.push(`${ind(4)}<x425 refname="MainSubject"/>`);
-            lines.push(`${ind(4)}<b067 refname="SubjectSchemeIdentifier">${esc(s.scheme_id)}</b067>`);
-            if (s.scheme_version) lines.push(`${ind(4)}<b068 refname="SubjectSchemeVersion">${esc(s.scheme_version)}</b068>`);
-            if (s.subject_code) {
-                lines.push(`${ind(4)}<b069 refname="SubjectCode">${esc(s.subject_code)}</b069>`);
-            }
-            if (s.subject_text) {
-                lines.push(`${ind(4)}<b070 refname="SubjectHeadingText">${esc(s.subject_text)}</b070>`);
-            }
-            lines.push(`${ind(3)}</subject>`);
+            lines.push(`${ind(3)}${open('subject')}`);
+            if (s.is_main) lines.push(`${ind(4)}${selfTag('x425')}`);
+            lines.push(`${ind(4)}${tag('b067', esc(s.scheme_id))}`);
+            if (s.scheme_version) lines.push(`${ind(4)}${tag('b068', esc(s.scheme_version))}`);
+            if (s.subject_code) lines.push(`${ind(4)}${tag('b069', esc(s.subject_code))}`);
+            if (s.subject_text) lines.push(`${ind(4)}${tag('b070', esc(s.subject_text))}`);
+            lines.push(`${ind(3)}${close('subject')}`);
         }
 
         // Audience range
         if (book.audience_age_from != null) {
-            lines.push(`${ind(3)}<audiencerange>`);
-            lines.push(`${ind(4)}<b074 refname="AudienceRangeQualifier">${esc(book.audience_range_qualifier || '17')}</b074>`);
-            lines.push(`${ind(4)}<b075 refname="AudienceRangePrecision">03</b075>`);
-            lines.push(`${ind(4)}<b076 refname="AudienceRangeValue">${book.audience_age_from}</b076>`);
+            lines.push(`${ind(3)}${open('audiencerange')}`);
+            lines.push(`${ind(4)}${tag('b074', esc(book.audience_range_qualifier || '17'))}`);
+            lines.push(`${ind(4)}${tag('b075', '03')}`);
+            lines.push(`${ind(4)}${tag('b076', String(book.audience_age_from))}`);
             if (book.audience_age_to != null) {
-                lines.push(`${ind(4)}<b075 refname="AudienceRangePrecision">04</b075>`);
-                lines.push(`${ind(4)}<b076 refname="AudienceRangeValue">${book.audience_age_to}</b076>`);
+                lines.push(`${ind(4)}${tag('b075', '04')}`);
+                lines.push(`${ind(4)}${tag('b076', String(book.audience_age_to))}`);
             }
-            lines.push(`${ind(3)}</audiencerange>`);
+            lines.push(`${ind(3)}${close('audiencerange')}`);
         }
 
-        lines.push(`${ind(2)}</descriptivedetail>`);
+        lines.push(`${ind(2)}${close('descriptivedetail')}`);
 
         // Collateral detail
         const hasCollateral = book.description || book.biography || book.toc || reviews.length > 0 || book.cover_filename || book.content_filename;
         if (hasCollateral) {
-            lines.push(`${ind(2)}<collateraldetail>`);
+            lines.push(`${ind(2)}${open('collateraldetail')}`);
 
-            // Description
             if (book.description) {
-                lines.push(`${ind(3)}<textcontent>`);
-                lines.push(`${ind(4)}<x426 refname="TextType">03</x426>`);
-                lines.push(`${ind(4)}<x427 refname="ContentAudience">00</x427>`);
+                lines.push(`${ind(3)}${open('textcontent')}`);
+                lines.push(`${ind(4)}${tag('x426', '03')}`);
+                lines.push(`${ind(4)}${tag('x427', '00')}`);
                 if (book.description_format === 'xhtml') {
-                    lines.push(`${ind(4)}<d104 refname="Text" textformat="05">${book.description}</d104>`);
+                    lines.push(`${ind(4)}${tagAttr('d104', 'textformat="05"', book.description)}`);
                 } else {
-                    lines.push(`${ind(4)}<d104 refname="Text">${esc(book.description)}</d104>`);
+                    lines.push(`${ind(4)}${tag('d104', esc(book.description))}`);
                 }
-                lines.push(`${ind(3)}</textcontent>`);
+                lines.push(`${ind(3)}${close('textcontent')}`);
             }
 
-            // Biography
             if (book.biography) {
-                lines.push(`${ind(3)}<textcontent>`);
-                lines.push(`${ind(4)}<x426 refname="TextType">12</x426>`);
-                lines.push(`${ind(4)}<x427 refname="ContentAudience">00</x427>`);
-                lines.push(`${ind(4)}<d104 refname="Text">${esc(book.biography)}</d104>`);
-                lines.push(`${ind(3)}</textcontent>`);
+                lines.push(`${ind(3)}${open('textcontent')}`);
+                lines.push(`${ind(4)}${tag('x426', '12')}`);
+                lines.push(`${ind(4)}${tag('x427', '00')}`);
+                lines.push(`${ind(4)}${tag('d104', esc(book.biography))}`);
+                lines.push(`${ind(3)}${close('textcontent')}`);
             }
 
-            // TOC
             if (book.toc) {
-                lines.push(`${ind(3)}<textcontent>`);
-                lines.push(`${ind(4)}<x426 refname="TextType">04</x426>`);
-                lines.push(`${ind(4)}<x427 refname="ContentAudience">00</x427>`);
-                lines.push(`${ind(4)}<d104 refname="Text">${esc(book.toc)}</d104>`);
-                lines.push(`${ind(3)}</textcontent>`);
+                lines.push(`${ind(3)}${open('textcontent')}`);
+                lines.push(`${ind(4)}${tag('x426', '04')}`);
+                lines.push(`${ind(4)}${tag('x427', '00')}`);
+                lines.push(`${ind(4)}${tag('d104', esc(book.toc))}`);
+                lines.push(`${ind(3)}${close('textcontent')}`);
             }
 
-            // Reviews
+            // Reviews — Fix #10: ContentDate instead of datestamp
             for (const r of reviews) {
-                lines.push(`${ind(3)}<textcontent>`);
-                lines.push(`${ind(4)}<x426 refname="TextType">06</x426>`);
-                lines.push(`${ind(4)}<x427 refname="ContentAudience">00</x427>`);
+                lines.push(`${ind(3)}${open('textcontent')}`);
+                lines.push(`${ind(4)}${tag('x426', '06')}`);
+                lines.push(`${ind(4)}${tag('x427', '00')}`);
+                lines.push(`${ind(4)}${tag('d104', esc(r.review_text))}`);
+                if (r.text_author) lines.push(`${ind(4)}${tag('d107', esc(r.text_author))}`);
+                if (r.source_title) lines.push(`${ind(4)}${tag('x428', esc(r.source_title))}`);
                 if (r.review_date) {
-                    lines.push(`${ind(4)}<d104 refname="Text" datestamp="${esc(r.review_date)}">${esc(r.review_text)}</d104>`);
-                } else {
-                    lines.push(`${ind(4)}<d104 refname="Text">${esc(r.review_text)}</d104>`);
+                    lines.push(`${ind(4)}${open('contentdate')}`);
+                    lines.push(`${ind(5)}${tag('x429', '01')}`);
+                    lines.push(`${ind(5)}${tag('b306', esc(r.review_date))}`);
+                    lines.push(`${ind(4)}${close('contentdate')}`);
                 }
-                if (r.text_author) lines.push(`${ind(4)}<d107 refname="TextAuthor">${esc(r.text_author)}</d107>`);
-                if (r.source_title) lines.push(`${ind(4)}<x428 refname="SourceTitle">${esc(r.source_title)}</x428>`);
-                lines.push(`${ind(3)}</textcontent>`);
+                lines.push(`${ind(3)}${close('textcontent')}`);
             }
 
-            // Supporting resources
             if (book.cover_filename) {
-                lines.push(`${ind(3)}<supportingresource>`);
-                lines.push(`${ind(4)}<x436 refname="ResourceContentType">01</x436>`);
-                lines.push(`${ind(4)}<x427 refname="ContentAudience">00</x427>`);
-                lines.push(`${ind(4)}<x437 refname="ResourceMode">03</x437>`);
-                lines.push(`${ind(4)}<resourceversion>`);
-                lines.push(`${ind(5)}<x441 refname="ResourceForm">02</x441>`);
-                lines.push(`${ind(5)}<x435 refname="ResourceLink">${esc(book.cover_filename)}</x435>`);
-                lines.push(`${ind(4)}</resourceversion>`);
-                lines.push(`${ind(3)}</supportingresource>`);
+                lines.push(`${ind(3)}${open('supportingresource')}`);
+                lines.push(`${ind(4)}${tag('x436', '01')}`);
+                lines.push(`${ind(4)}${tag('x427', '00')}`);
+                lines.push(`${ind(4)}${tag('x437', '03')}`);
+                lines.push(`${ind(4)}${open('resourceversion')}`);
+                lines.push(`${ind(5)}${tag('x441', '02')}`);
+                lines.push(`${ind(5)}${tag('x435', esc(book.cover_filename))}`);
+                lines.push(`${ind(4)}${close('resourceversion')}`);
+                lines.push(`${ind(3)}${close('supportingresource')}`);
             }
             if (book.content_filename) {
-                lines.push(`${ind(3)}<supportingresource>`);
-                lines.push(`${ind(4)}<x436 refname="ResourceContentType">28</x436>`);
-                lines.push(`${ind(4)}<x427 refname="ContentAudience">00</x427>`);
-                lines.push(`${ind(4)}<x437 refname="ResourceMode">04</x437>`);
-                lines.push(`${ind(4)}<resourceversion>`);
-                lines.push(`${ind(5)}<x441 refname="ResourceForm">02</x441>`);
-                lines.push(`${ind(5)}<x435 refname="ResourceLink">${esc(book.content_filename)}</x435>`);
-                lines.push(`${ind(4)}</resourceversion>`);
-                lines.push(`${ind(3)}</supportingresource>`);
+                lines.push(`${ind(3)}${open('supportingresource')}`);
+                lines.push(`${ind(4)}${tag('x436', '28')}`);
+                lines.push(`${ind(4)}${tag('x427', '00')}`);
+                lines.push(`${ind(4)}${tag('x437', '04')}`);
+                lines.push(`${ind(4)}${open('resourceversion')}`);
+                lines.push(`${ind(5)}${tag('x441', '02')}`);
+                lines.push(`${ind(5)}${tag('x435', esc(book.content_filename))}`);
+                lines.push(`${ind(4)}${close('resourceversion')}`);
+                lines.push(`${ind(3)}${close('supportingresource')}`);
             }
 
-            lines.push(`${ind(2)}</collateraldetail>`);
+            lines.push(`${ind(2)}${close('collateraldetail')}`);
         }
 
         // Publishing detail
-        lines.push(`${ind(2)}<publishingdetail>`);
+        lines.push(`${ind(2)}${open('publishingdetail')}`);
         const pubName = book.publisher_name || settings.publisher_name;
         if (pubName) {
-            lines.push(`${ind(3)}<publisher>`);
-            lines.push(`${ind(4)}<b291 refname="PublishingRole">01</b291>`);
-            lines.push(`${ind(4)}<b081 refname="PublisherName">${esc(pubName)}</b081>`);
-            lines.push(`${ind(3)}</publisher>`);
+            lines.push(`${ind(3)}${open('publisher')}`);
+            lines.push(`${ind(4)}${tag('b291', '01')}`);
+            lines.push(`${ind(4)}${tag('b081', esc(pubName))}`);
+            lines.push(`${ind(3)}${close('publisher')}`);
         }
         const pubCity = book.publisher_city || settings.publisher_city;
-        if (pubCity) lines.push(`${ind(3)}<b209 refname="CityOfPublication">${esc(pubCity)}</b209>`);
+        if (pubCity) lines.push(`${ind(3)}${tag('b209', esc(pubCity))}`);
         const pubCountry = book.publisher_country || settings.publisher_country;
-        if (pubCountry) lines.push(`${ind(3)}<b083 refname="CountryOfPublication">${esc(pubCountry)}</b083>`);
+        if (pubCountry) lines.push(`${ind(3)}${tag('b083', esc(pubCountry))}`);
 
-        lines.push(`${ind(3)}<b394 refname="PublishingStatus">${esc(book.publishing_status || '04')}</b394>`);
+        lines.push(`${ind(3)}${tag('b394', esc(book.publishing_status || '04'))}`);
 
         if (book.publishing_date) {
-            lines.push(`${ind(3)}<publishingdate>`);
-            lines.push(`${ind(4)}<x448 refname="PublishingDateRole">01</x448>`);
-            lines.push(`${ind(4)}<b306 refname="Date">${esc(book.publishing_date)}</b306>`);
-            lines.push(`${ind(3)}</publishingdate>`);
+            lines.push(`${ind(3)}${open('publishingdate')}`);
+            lines.push(`${ind(4)}${tag('x448', '01')}`);
+            lines.push(`${ind(4)}${tag('b306', esc(book.publishing_date))}`);
+            lines.push(`${ind(3)}${close('publishingdate')}`);
         }
         if (book.print_pub_date) {
-            lines.push(`${ind(3)}<publishingdate>`);
-            lines.push(`${ind(4)}<x448 refname="PublishingDateRole">19</x448>`);
-            lines.push(`${ind(4)}<b306 refname="Date">${esc(book.print_pub_date)}</b306>`);
-            lines.push(`${ind(3)}</publishingdate>`);
+            lines.push(`${ind(3)}${open('publishingdate')}`);
+            lines.push(`${ind(4)}${tag('x448', '19')}`);
+            lines.push(`${ind(4)}${tag('b306', esc(book.print_pub_date))}`);
+            lines.push(`${ind(3)}${close('publishingdate')}`);
         }
         if (book.announcement_date) {
-            lines.push(`${ind(3)}<publishingdate>`);
-            lines.push(`${ind(4)}<x448 refname="PublishingDateRole">09</x448>`);
-            lines.push(`${ind(4)}<b306 refname="Date">${esc(book.announcement_date)}</b306>`);
-            lines.push(`${ind(3)}</publishingdate>`);
+            lines.push(`${ind(3)}${open('publishingdate')}`);
+            lines.push(`${ind(4)}${tag('x448', '09')}`);
+            lines.push(`${ind(4)}${tag('b306', esc(book.announcement_date))}`);
+            lines.push(`${ind(3)}${close('publishingdate')}`);
         }
 
-        // Sales rights
+        // Sales rights — Fix #6: ROW x456 bound to its salesrights type 03
         for (const sr of salesRights) {
-            lines.push(`${ind(3)}<salesrights>`);
-            lines.push(`${ind(4)}<b089 refname="SalesRightsType">${esc(sr.rights_type)}</b089>`);
-            lines.push(`${ind(4)}<territory>`);
-            if (sr.regions) {
-                lines.push(`${ind(5)}<x450 refname="RegionsIncluded">${esc(sr.regions)}</x450>`);
-            }
-            if (sr.countries) {
-                lines.push(`${ind(5)}<x449 refname="CountriesIncluded">${esc(sr.countries)}</x449>`);
-            }
-            lines.push(`${ind(4)}</territory>`);
+            lines.push(`${ind(3)}${open('salesrights')}`);
+            lines.push(`${ind(4)}${tag('b089', esc(sr.rights_type))}`);
+            lines.push(`${ind(4)}${open('territory')}`);
+            if (sr.regions) lines.push(`${ind(5)}${tag('x450', esc(sr.regions))}`);
+            if (sr.countries) lines.push(`${ind(5)}${tag('x449', esc(sr.countries))}`);
+            lines.push(`${ind(4)}${close('territory')}`);
 
-            // Sales restrictions
             const restrictions = db.prepare('SELECT * FROM sales_restrictions WHERE sales_right_id = ?').all(sr.id);
             for (const rest of restrictions) {
-                lines.push(`${ind(4)}<salesrestriction>`);
-                lines.push(`${ind(5)}<b381 refname="SalesRestrictionType">${esc(rest.restriction_type)}</b381>`);
-                if (rest.restriction_note) {
-                    lines.push(`${ind(5)}<x453 refname="SalesRestrictionNote">${esc(rest.restriction_note)}</x453>`);
-                }
+                lines.push(`${ind(4)}${open('salesrestriction')}`);
+                lines.push(`${ind(5)}${tag('b381', esc(rest.restriction_type))}`);
+                if (rest.restriction_note) lines.push(`${ind(5)}${tag('x453', esc(rest.restriction_note))}`);
                 if (rest.outlet_id_value) {
-                    lines.push(`${ind(5)}<salesoutlet>`);
-                    lines.push(`${ind(6)}<salesoutletidentifier>`);
-                    lines.push(`${ind(7)}<b393 refname="SalesOutletIDType">${esc(rest.outlet_id_type || '01')}</b393>`);
-                    lines.push(`${ind(7)}<b244 refname="IDValue">${esc(rest.outlet_id_value)}</b244>`);
-                    lines.push(`${ind(6)}</salesoutletidentifier>`);
-                    if (rest.outlet_name) lines.push(`${ind(6)}<b382 refname="SalesOutletName">${esc(rest.outlet_name)}</b382>`);
-                    lines.push(`${ind(5)}</salesoutlet>`);
+                    lines.push(`${ind(5)}${open('salesoutlet')}`);
+                    lines.push(`${ind(6)}${open('salesoutletidentifier')}`);
+                    lines.push(`${ind(7)}${tag('b393', esc(rest.outlet_id_type || '01'))}`);
+                    lines.push(`${ind(7)}${tag('b244', esc(rest.outlet_id_value))}`);
+                    lines.push(`${ind(6)}${close('salesoutletidentifier')}`);
+                    if (rest.outlet_name) lines.push(`${ind(6)}${tag('b382', esc(rest.outlet_name))}`);
+                    lines.push(`${ind(5)}${close('salesoutlet')}`);
                 }
-                lines.push(`${ind(4)}</salesrestriction>`);
+                lines.push(`${ind(4)}${close('salesrestriction')}`);
             }
 
-            lines.push(`${ind(3)}</salesrights>`);
-        }
-        if (salesRights.length > 0) {
-            // ROW sales rights (if any exclusion)
-            const exclusion = salesRights.find(sr => sr.row_rights_type);
-            if (exclusion) {
-                lines.push(`${ind(3)}<x456 refname="ROWSalesRightsType">${esc(exclusion.row_rights_type)}</x456>`);
+            lines.push(`${ind(3)}${close('salesrights')}`);
+
+            // Fix #6: ROW rights immediately after its salesrights type 03 block
+            if (sr.rights_type === '03' && sr.row_rights_type) {
+                lines.push(`${ind(3)}${tag('x456', esc(sr.row_rights_type))}`);
             }
         }
 
-        lines.push(`${ind(2)}</publishingdetail>`);
+        lines.push(`${ind(2)}${close('publishingdetail')}`);
 
-        // Related material
+        // Related material — Fix #5: validate relation codes at data level
         if (related.length > 0) {
-            lines.push(`${ind(2)}<relatedmaterial>`);
+            lines.push(`${ind(2)}${open('relatedmaterial')}`);
             for (const rp of related) {
-                lines.push(`${ind(3)}<relatedproduct>`);
-                lines.push(`${ind(4)}<x455 refname="ProductRelationCode">${esc(rp.relation_code)}</x455>`);
-                lines.push(`${ind(4)}<productidentifier>`);
-                lines.push(`${ind(5)}<b221 refname="ProductIDType">15</b221>`);
-                lines.push(`${ind(5)}<b244 refname="IDValue">${esc(rp.related_isbn)}</b244>`);
-                lines.push(`${ind(4)}</productidentifier>`);
-                lines.push(`${ind(3)}</relatedproduct>`);
+                lines.push(`${ind(3)}${open('relatedproduct')}`);
+                lines.push(`${ind(4)}${tag('x455', esc(rp.relation_code))}`);
+                lines.push(`${ind(4)}${open('productidentifier')}`);
+                lines.push(`${ind(5)}${tag('b221', '15')}`);
+                lines.push(`${ind(5)}${tag('b244', esc(rp.related_isbn))}`);
+                lines.push(`${ind(4)}${close('productidentifier')}`);
+                lines.push(`${ind(3)}${close('relatedproduct')}`);
             }
-            lines.push(`${ind(2)}</relatedmaterial>`);
+            lines.push(`${ind(2)}${close('relatedmaterial')}`);
         }
 
-        // Product supply
+        // Product supply — Fix #2/#3/#7/#8
         if (prices.length > 0) {
-            lines.push(`${ind(2)}<productsupply>`);
-            lines.push(`${ind(3)}<supplydetail>`);
-
-            // Supplier (publisher as distributor)
-            lines.push(`${ind(4)}<supplier>`);
-            lines.push(`${ind(5)}<j292 refname="SupplierRole">01</j292>`);
-            if (pubName) lines.push(`${ind(5)}<j137 refname="SupplierName">${esc(pubName)}</j137>`);
-            lines.push(`${ind(4)}</supplier>`);
-
-            lines.push(`${ind(4)}<j396 refname="ProductAvailability">20</j396>`);
-
-            // Supply date
-            if (book.publishing_date) {
-                lines.push(`${ind(4)}<supplydate>`);
-                lines.push(`${ind(5)}<x461 refname="SupplyDateRole">08</x461>`);
-                lines.push(`${ind(5)}<b306 refname="Date">${esc(book.publishing_date)}</b306>`);
-                lines.push(`${ind(4)}</supplydate>`);
+            const warnings = validatePriceIntervals(prices);
+            if (warnings.length > 0) {
+                for (const w of warnings) lines.push(`<!-- WARNING: ${esc(w)} -->`);
             }
 
-            // Prices
+            lines.push(`${ind(2)}${open('productsupply')}`);
+            lines.push(`${ind(3)}${open('supplydetail')}`);
+
+            // Fix #2: Supplier with role/identifier from settings
+            const supplierRole = settings.supplier_role || '01';
+            const supplierName = settings.supplier_name || pubName;
+            lines.push(`${ind(4)}${open('supplier')}`);
+            lines.push(`${ind(5)}${tag('j292', esc(supplierRole))}`);
+            if (settings.supplier_id_value) {
+                lines.push(`${ind(5)}${open('supplieridentifier')}`);
+                lines.push(`${ind(6)}${tag('j345', esc(settings.supplier_id_type || '01'))}`);
+                lines.push(`${ind(6)}${tag('b244', esc(settings.supplier_id_value))}`);
+                lines.push(`${ind(5)}${close('supplieridentifier')}`);
+            }
+            if (supplierName) lines.push(`${ind(5)}${tag('j137', esc(supplierName))}`);
+            lines.push(`${ind(4)}${close('supplier')}`);
+
+            // Fix #3: configurable availability
+            const availability = resolveProductAvailability(book);
+            lines.push(`${ind(4)}${tag('j396', esc(availability))}`);
+
+            if (book.publishing_date) {
+                lines.push(`${ind(4)}${open('supplydate')}`);
+                lines.push(`${ind(5)}${tag('x461', '08')}`);
+                lines.push(`${ind(5)}${tag('b306', esc(book.publishing_date))}`);
+                lines.push(`${ind(4)}${close('supplydate')}`);
+            }
+
+            // Fix #8: free books
             for (const p of prices) {
-                lines.push(`${ind(4)}<price>`);
-                lines.push(`${ind(5)}<x462 refname="PriceType">${esc(p.price_type)}</x462>`);
-                lines.push(`${ind(5)}<j151 refname="PriceAmount">${p.amount}</j151>`);
-                lines.push(`${ind(5)}<j152 refname="CurrencyCode">${esc(p.currency_code)}</j152>`);
+                lines.push(`${ind(4)}${open('price')}`);
+                lines.push(`${ind(5)}${tag('x462', esc(p.price_type))}`);
+                if (parseFloat(p.amount) === 0) {
+                    lines.push(`${ind(5)}${tag('j151', '0.00')}`);
+                    lines.push(`${ind(5)}${tag('x469', '01')}`);
+                } else {
+                    lines.push(`${ind(5)}${tag('j151', String(p.amount))}`);
+                }
+                lines.push(`${ind(5)}${tag('j152', esc(p.currency_code))}`);
                 if (p.territory) {
-                    lines.push(`${ind(5)}<territory>`);
-                    lines.push(`${ind(6)}<x449 refname="CountriesIncluded">${esc(p.territory)}</x449>`);
-                    lines.push(`${ind(5)}</territory>`);
+                    lines.push(`${ind(5)}${open('territory')}`);
+                    lines.push(`${ind(6)}${tag('x449', esc(p.territory))}`);
+                    lines.push(`${ind(5)}${close('territory')}`);
                 }
                 if (p.start_date) {
-                    lines.push(`${ind(5)}<pricedate>`);
-                    lines.push(`${ind(6)}<x476 refname="PriceDateRole">14</x476>`);
-                    lines.push(`${ind(6)}<b306 refname="Date">${esc(p.start_date)}</b306>`);
-                    lines.push(`${ind(5)}</pricedate>`);
+                    lines.push(`${ind(5)}${open('pricedate')}`);
+                    lines.push(`${ind(6)}${tag('x476', '14')}`);
+                    lines.push(`${ind(6)}${tag('b306', esc(p.start_date))}`);
+                    lines.push(`${ind(5)}${close('pricedate')}`);
                 }
                 if (p.end_date) {
-                    lines.push(`${ind(5)}<pricedate>`);
-                    lines.push(`${ind(6)}<x476 refname="PriceDateRole">15</x476>`);
-                    lines.push(`${ind(6)}<b306 refname="Date">${esc(p.end_date)}</b306>`);
-                    lines.push(`${ind(5)}</pricedate>`);
+                    lines.push(`${ind(5)}${open('pricedate')}`);
+                    lines.push(`${ind(6)}${tag('x476', '15')}`);
+                    lines.push(`${ind(6)}${tag('b306', esc(p.end_date))}`);
+                    lines.push(`${ind(5)}${close('pricedate')}`);
                 }
-                lines.push(`${ind(4)}</price>`);
+                lines.push(`${ind(4)}${close('price')}`);
             }
 
-            lines.push(`${ind(3)}</supplydetail>`);
-            lines.push(`${ind(2)}</productsupply>`);
+            lines.push(`${ind(3)}${close('supplydetail')}`);
+            lines.push(`${ind(2)}${close('productsupply')}`);
         }
 
-        lines.push(`${ind(1)}</product>`);
+        lines.push(`${ind(1)}${close('product')}`);
     }
 
-    lines.push('</ONIXmessage>');
+    lines.push(`</${rootTag}>`);
     return lines.join('\n');
 }
 

@@ -12,7 +12,7 @@
     <!-- ============ HEADER ============ -->
     <header class="header">
         <div class="header-left">
-            <div class="header-logo">ONIX Generator <span>v1.0</span></div>
+            <div class="header-logo">ONIX Generator <span>v1.2</span></div>
         </div>
         <div class="header-right">
             <span class="header-stats" id="stats"></span>
@@ -348,6 +348,37 @@
             <div class="form-group">
                 <label>Default Territory</label>
                 <input type="text" id="s-default-territory" placeholder="WORLD or DE AT CH">
+            </div>
+            <hr style="margin:12px 0;border-color:var(--border)">
+            <h3 style="font-size:14px;margin:8px 0">Bookwire / Supplier</h3>
+            <div class="form-group">
+                <label>Message Note (m183)</label>
+                <input type="text" id="s-message-note" placeholder="-" value="-">
+            </div>
+            <div class="form-group">
+                <label>Supplier Role</label>
+                <select id="s-supplier-role">
+                    <option value="01">01 — Publisher to retailers</option>
+                    <option value="06" selected>06 — Publisher's distributor to retailers</option>
+                    <option value="07">07 — Wholesaler to retailers</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Supplier Name</label>
+                <input type="text" id="s-supplier-name" placeholder="Bookwire">
+            </div>
+            <div class="form-group">
+                <label>Supplier ID Value</label>
+                <input type="text" id="s-supplier-id-value" placeholder="Bookwire">
+            </div>
+            <hr style="margin:12px 0;border-color:var(--border)">
+            <h3 style="font-size:14px;margin:8px 0">ONIX Format</h3>
+            <div class="form-group">
+                <label>Tag Format</label>
+                <select id="s-onix-format">
+                    <option value="short" selected>Short tags (x298, b203…)</option>
+                    <option value="reference">Reference tags (SenderName, TitleText…)</option>
+                </select>
             </div>
         </div>
         <div class="modal-footer">
