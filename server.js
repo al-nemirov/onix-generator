@@ -404,10 +404,7 @@ app.put('/api/settings', (req, res) => {
 // BOOKS API
 // ---------------------------------------------------------------------------
 
-// List all books (table view: lightweight, only main columns)
-app.get('/api/books', (req, res) => {
-    const { search, sort, order, limit, offset } = req.query;
-    let sql = `
+const BOOKS_LIST_SELECT = `
         SELECT b.id, b.isbn, b.title, b.subtitle, b.language_code,
                b.publishing_status, b.publishing_date, b.page_count,
                b.notification_type, b.product_form_detail, b.drm,
@@ -430,20 +427,77 @@ app.get('/api/books', (req, res) => {
                ) AS currency,
                (SELECT COALESCE(sr.countries, sr.regions) FROM sales_rights sr WHERE sr.book_id = b.id LIMIT 1
                ) AS territory
-        FROM books b
-    `;
-    const params = {};
+        FROM books b`;
 
+/** Shared filter (search + toolbar filters) for list / id export. */
+function buildBooksWhereClause(query) {
+    const { search, language, status, drm } = query;
+    const params = {};
+    const where = [];
     if (search) {
-        // Sanitize FTS5 query: wrap in double quotes for literal matching
         const sanitized = '"' + search.replace(/"/g, '""') + '"';
-        sql += ` WHERE b.id IN (SELECT rowid FROM books_fts WHERE books_fts MATCH @search)`;
+        where.push(`b.id IN (SELECT rowid FROM books_fts WHERE books_fts MATCH @search)`);
         params.search = sanitized;
     }
+    if (language) {
+        where.push(`b.language_code = @language`);
+        params.language = String(language);
+    }
+    if (status) {
+        where.push(`b.publishing_status = @status`);
+        params.status = String(status);
+    }
+    if (drm) {
+        where.push(`b.drm = @drm`);
+        params.drm = String(drm);
+    }
+    const whereSql = where.length > 0 ? ` WHERE ${where.join(' AND ')}` : '';
+    return { whereSql, params };
+}
 
-    const sortCol = ['isbn', 'title', 'subtitle', 'language_code', 'publishing_status', 'publishing_date', 'created_at', 'updated_at'].includes(sort) ? sort : 'id';
+const BOOKS_SORT_SQL = {
+    id: 'b.id',
+    isbn: 'b.isbn',
+    title: 'b.title',
+    subtitle: 'b.subtitle',
+    language_code: 'b.language_code',
+    publishing_status: 'b.publishing_status',
+    publishing_date: 'b.publishing_date',
+    created_at: 'b.created_at',
+    updated_at: 'b.updated_at',
+    authors: 'authors',
+    bisac_main: 'bisac_main',
+    thema_main: 'thema_main',
+    wgs_main: 'wgs_main',
+    price: 'price',
+    territory: 'territory',
+};
+
+function booksOrderByClause(sort, order) {
     const sortOrder = order === 'desc' ? 'DESC' : 'ASC';
-    sql += ` ORDER BY b.${sortCol} ${sortOrder}`;
+    const key = typeof sort === 'string' && BOOKS_SORT_SQL[sort] ? sort : 'id';
+    return ` ORDER BY ${BOOKS_SORT_SQL[key]} ${sortOrder}`;
+}
+
+const MAX_BOOK_IDS_EXPORT = 50000;
+
+// All book ids matching current filters (for "select all results")
+app.get('/api/books/ids', (req, res) => {
+    const { whereSql, params } = buildBooksWhereClause(req.query);
+    const sql = `SELECT b.id FROM books b${whereSql} ORDER BY b.id ASC LIMIT ${MAX_BOOK_IDS_EXPORT}`;
+    const rows = db.prepare(sql).all(params);
+    res.json({
+        ids: rows.map((r) => r.id),
+        capped: rows.length >= MAX_BOOK_IDS_EXPORT,
+    });
+});
+
+// List all books (table view: lightweight, only main columns)
+app.get('/api/books', (req, res) => {
+    const { sort, order, limit, offset } = req.query;
+    const { whereSql, params } = buildBooksWhereClause(req.query);
+    let sql = BOOKS_LIST_SELECT + whereSql;
+    sql += booksOrderByClause(sort, order);
 
     if (limit) {
         sql += ` LIMIT @limit`;
@@ -455,7 +509,9 @@ app.get('/api/books', (req, res) => {
     }
 
     const books = db.prepare(sql).all(params);
-    const total = db.prepare('SELECT COUNT(*) as count FROM books').get().count;
+    let totalSql = 'SELECT COUNT(*) as count FROM books b';
+    totalSql += whereSql;
+    const total = db.prepare(totalSql).get(params).count;
     res.json({ books, total });
 });
 

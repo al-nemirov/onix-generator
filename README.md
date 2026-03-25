@@ -14,6 +14,20 @@
 
 Free web-based ONIX 3.0 metadata editor for e-books. Spreadsheet-style UI for managing hundreds of books, with full Bookwire specification support.
 
+### Screenshots
+
+| Main Table | Book Details |
+|:---:|:---:|
+| ![Main Table](docs/screenshots/table-dark.png) | ![Book Details](docs/screenshots/detail-panel.png) |
+
+| Settings | Bulk Edit |
+|:---:|:---:|
+| ![Settings](docs/screenshots/settings.png) | ![Bulk Edit](docs/screenshots/bulk-edit.png) |
+
+| Import | Export |
+|:---:|:---:|
+| ![Import](docs/screenshots/import.png) | ![Export](docs/screenshots/export.png) |
+
 ### Features
 
 - **Spreadsheet table** — manage hundreds of books at once, inline editing, multi-select
@@ -94,7 +108,8 @@ onix-generator/
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/books` | List books (with search, sort, pagination) |
+| GET | `/api/books` | List books (search, filters, sort, pagination; sort includes table columns e.g. authors, price, territory) |
+| GET | `/api/books/ids` | All book ids matching current search/filters (up to 50k; for bulk selection) |
 | GET | `/api/books/:id` | Get book with all related data |
 | POST | `/api/books` | Create book |
 | PUT | `/api/books/:id` | Update book |
@@ -120,6 +135,20 @@ All API endpoints require `X-API-Key` header.
 ## Español
 
 Editor web gratuito de metadatos ONIX 3.0 para libros electrónicos. Interfaz tipo hoja de cálculo para gestionar cientos de libros, con soporte completo de la especificación Bookwire.
+
+### Capturas de pantalla
+
+| Tabla principal | Detalles del libro |
+|:---:|:---:|
+| ![Tabla](docs/screenshots/table-dark.png) | ![Detalles](docs/screenshots/detail-panel.png) |
+
+| Configuración | Edición masiva |
+|:---:|:---:|
+| ![Configuración](docs/screenshots/settings.png) | ![Edición masiva](docs/screenshots/bulk-edit.png) |
+
+| Importar | Exportar |
+|:---:|:---:|
+| ![Importar](docs/screenshots/import.png) | ![Exportar](docs/screenshots/export.png) |
 
 ### Funcionalidades
 
@@ -168,6 +197,20 @@ El XML generado sigue la **Bookwire ONIX E-Book Specification v1.0** (febrero 20
 
 Kostenloser webbasierter ONIX 3.0 Metadaten-Editor für E-Books. Tabellenkalkulationsartige Oberfläche zur Verwaltung Hunderter Bücher, mit vollständiger Bookwire-Spezifikationsunterstützung.
 
+### Bildschirmfotos
+
+| Haupttabelle | Buchdetails |
+|:---:|:---:|
+| ![Tabelle](docs/screenshots/table-dark.png) | ![Details](docs/screenshots/detail-panel.png) |
+
+| Einstellungen | Massenbearbeitung |
+|:---:|:---:|
+| ![Einstellungen](docs/screenshots/settings.png) | ![Massenbearbeitung](docs/screenshots/bulk-edit.png) |
+
+| Import | Export |
+|:---:|:---:|
+| ![Import](docs/screenshots/import.png) | ![Export](docs/screenshots/export.png) |
+
 ### Funktionen
 
 - **Tabellenkalkulations-Ansicht** — verwalten Sie Hunderte Bücher gleichzeitig, Inline-Bearbeitung, Mehrfachauswahl
@@ -214,6 +257,20 @@ Das generierte XML entspricht der **Bookwire ONIX E-Book Specification v1.0** (F
 ## Русский
 
 Бесплатный веб-редактор метаданных ONIX 3.0 для электронных книг. Интерфейс в стиле таблицы для управления сотнями книг, полная поддержка спецификации Bookwire.
+
+### Скриншоты
+
+| Главная таблица | Детали книги |
+|:---:|:---:|
+| ![Таблица](docs/screenshots/table-dark.png) | ![Детали](docs/screenshots/detail-panel.png) |
+
+| Настройки | Массовое редактирование |
+|:---:|:---:|
+| ![Настройки](docs/screenshots/settings.png) | ![Массовое](docs/screenshots/bulk-edit.png) |
+
+| Импорт | Экспорт |
+|:---:|:---:|
+| ![Импорт](docs/screenshots/import.png) | ![Экспорт](docs/screenshots/export.png) |
 
 ### Возможности
 

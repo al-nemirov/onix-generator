@@ -13,7 +13,40 @@ let sortCol = 'id';
 let sortOrder = 'asc';
 let clipboard = { col: null, value: null };
 let searchTimeout = null;
+let activeCell = null;
+let totalCount = 0;
+let currentPage = 1;
+let pageSize = 100;
+let currentSearch = '';
+let currentFilters = { language: '', status: '', drm: '' };
+let cachedStats = { books: 0 };
+let lastClickedBookId = null;
+const MAX_SELECT_ALL_IDS = 50000;
 const tr = (key, vars = {}) => (window.I18N ? window.I18N.t(key, vars) : key);
+const TABLE_FIELD_MAP = {
+    isbn: 'isbn',
+    title: 'title',
+    subtitle: 'subtitle',
+    language_code: 'language_code',
+};
+
+/** Column order must match table body cells with data-col (left → right). */
+const TABLE_PASTE_COLS = ['isbn', 'title', 'subtitle', 'authors', 'bisac_main', 'thema_main', 'wgs_main', 'language_code', 'price', 'territory', 'publishing_status'];
+
+const BOOK_SCALAR_KEYS = [
+    'isbn', 'internal_ref', 'order_number', 'notification_type',
+    'product_form', 'product_form_detail', 'primary_content_type', 'drm',
+    'epub_usage_type', 'epub_usage_status',
+    'title', 'subtitle', 'series_name', 'series_collection_type', 'part_number',
+    'edition_number', 'edition_statement',
+    'language_code', 'original_language', 'page_count',
+    'audience_range_qualifier', 'audience_age_from', 'audience_age_to',
+    'description', 'description_format', 'biography', 'toc',
+    'publisher_name', 'publisher_city', 'publisher_country',
+    'publishing_status', 'publishing_date', 'print_pub_date', 'announcement_date',
+    'cover_filename', 'content_filename',
+    'product_availability',
+];
 
 // ============================================================
 // Init
@@ -34,6 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Populate dropdowns
     populateDropdowns();
+    populateFilterDropdowns();
 
     // Load books
     await loadBooks();
@@ -41,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Bind events
     bindEvents();
 
-    updateStats();
+    updateSortArrows();
     document.getElementById('s-api-key').value = API.getApiKey();
 });
 
@@ -100,13 +134,29 @@ function populateDropdowns() {
 // Load books from API
 // ============================================================
 async function loadBooks(search = '') {
-    const params = { sort: sortCol, order: sortOrder };
+    currentSearch = search;
+    const params = {
+        sort: sortCol,
+        order: sortOrder,
+        limit: pageSize,
+        offset: (currentPage - 1) * pageSize,
+    };
     if (search) params.search = search;
-    const result = await API.getBooks(params);
-    books = result.books || [];
+    if (currentFilters.language) params.language = currentFilters.language;
+    if (currentFilters.status) params.status = currentFilters.status;
+    if (currentFilters.drm) params.drm = currentFilters.drm;
+    try {
+        const result = await API.getBooks(params);
+        books = result.books || [];
+        totalCount = result.total || 0;
+    } catch (e) {
+        toast(tr('error.api', { message: e.message }), 'error');
+        return;
+    }
     renderTable();
     updateEmptyState();
     updateStats();
+    updatePagination();
 }
 
 // ============================================================
@@ -127,7 +177,7 @@ function renderTable() {
 
         tr.innerHTML = `
             <td class="col-checkbox"><input type="checkbox" ${selectedIds.has(b.id) ? 'checked' : ''} data-id="${b.id}"></td>
-            <td class="col-num">${i + 1}</td>
+            <td class="col-num">${((currentPage - 1) * pageSize) + i + 1}</td>
             <td class="col-isbn" data-col="isbn">${esc(b.isbn)}</td>
             <td class="col-title" data-col="title" title="${esc(b.title)}">${esc(b.title)}</td>
             <td class="col-subtitle" data-col="subtitle" title="${esc(b.subtitle)}">${esc(b.subtitle || '')}</td>
@@ -143,6 +193,8 @@ function renderTable() {
 
         tbody.appendChild(tr);
     }
+    syncSelectAll();
+    clearActiveCell();
 }
 
 function getStatusBadge(status) {
@@ -168,10 +220,11 @@ function updateEmptyState() {
 
 async function updateStats() {
     const stats = await API.getStats();
-    document.getElementById('stats').textContent = tr('status.books', { count: stats.books });
+    cachedStats = stats;
+    document.getElementById('stats').textContent = `${tr('status.books', { count: totalCount })} / ${stats.books}`;
     document.getElementById('selection-info').textContent = selectedIds.size > 0
         ? tr('status.selected', { count: selectedIds.size })
-        : tr('status.books', { count: books.length });
+        : tr('status.books', { count: totalCount });
 }
 
 // ============================================================
@@ -186,6 +239,7 @@ function bindEvents() {
     document.getElementById('btn-add').addEventListener('click', addBook);
     document.getElementById('btn-clone').addEventListener('click', cloneSelected);
     document.getElementById('btn-delete').addEventListener('click', deleteSelected);
+    document.getElementById('btn-select-all-filter').addEventListener('click', selectAllMatchingFilter);
     document.getElementById('btn-bulk').addEventListener('click', openBulkEdit);
     document.getElementById('btn-import').addEventListener('click', openImportModal);
     document.getElementById('btn-export').addEventListener('click', () => openModal('export-modal'));
@@ -195,7 +249,35 @@ function bindEvents() {
     // Search
     document.getElementById('search-input').addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => loadBooks(e.target.value), 300);
+        searchTimeout = setTimeout(() => {
+            currentPage = 1;
+            loadBooks(e.target.value);
+        }, 220);
+    });
+    document.getElementById('filter-language').addEventListener('change', (e) => {
+        currentFilters.language = e.target.value;
+        currentPage = 1;
+        loadBooks(currentSearch);
+    });
+    document.getElementById('filter-status').addEventListener('change', (e) => {
+        currentFilters.status = e.target.value;
+        currentPage = 1;
+        loadBooks(currentSearch);
+    });
+    document.getElementById('filter-drm').addEventListener('change', (e) => {
+        currentFilters.drm = e.target.value;
+        currentPage = 1;
+        loadBooks(currentSearch);
+    });
+    document.getElementById('btn-reset-filters').addEventListener('click', () => {
+        currentFilters = { language: '', status: '', drm: '' };
+        document.getElementById('filter-language').value = '';
+        document.getElementById('filter-status').value = '';
+        document.getElementById('filter-drm').value = '';
+        document.getElementById('search-input').value = '';
+        currentSearch = '';
+        currentPage = 1;
+        loadBooks('');
     });
 
     // Select all checkbox
@@ -214,27 +296,33 @@ function bindEvents() {
         const tr = e.target.closest('tr');
         if (!tr) return;
         const id = parseInt(tr.dataset.id);
+        const clickedCell = e.target.closest('td[data-col]');
+        setActiveCell(clickedCell || null);
 
         // Checkbox click
         if (e.target.type === 'checkbox') {
             if (e.target.checked) selectedIds.add(id);
             else selectedIds.delete(id);
             tr.classList.toggle('selected', selectedIds.has(id));
+            lastClickedBookId = id;
             updateStats();
+            syncSelectAll();
             return;
         }
 
-        // Shift+click for range select
-        if (e.shiftKey && selectedIds.size > 0) {
+        // Shift+click for range select (anchor = last clicked row on this page)
+        if (e.shiftKey && lastClickedBookId != null) {
             const allIds = books.map(b => b.id);
-            const lastSelected = [...selectedIds].pop();
-            const fromIdx = allIds.indexOf(lastSelected);
+            const fromIdx = allIds.indexOf(lastClickedBookId);
             const toIdx = allIds.indexOf(id);
-            const [start, end] = fromIdx < toIdx ? [fromIdx, toIdx] : [toIdx, fromIdx];
-            for (let i = start; i <= end; i++) selectedIds.add(allIds[i]);
-            renderTable();
-            updateStats();
-            return;
+            if (fromIdx >= 0 && toIdx >= 0) {
+                const [start, end] = fromIdx < toIdx ? [fromIdx, toIdx] : [toIdx, fromIdx];
+                for (let i = start; i <= end; i++) selectedIds.add(allIds[i]);
+                renderTable();
+                updateStats();
+                syncSelectAll();
+                return;
+            }
         }
 
         // Ctrl+click for toggle select
@@ -242,11 +330,14 @@ function bindEvents() {
             if (selectedIds.has(id)) selectedIds.delete(id);
             else selectedIds.add(id);
             tr.classList.toggle('selected', selectedIds.has(id));
+            lastClickedBookId = id;
             updateStats();
+            syncSelectAll();
             return;
         }
 
         // Normal click — open detail panel
+        lastClickedBookId = id;
         openDetailPanel(id);
     });
 
@@ -263,6 +354,8 @@ function bindEvents() {
         const tr = e.target.closest('tr');
         if (!tr) return;
         const id = parseInt(tr.dataset.id);
+        const td = e.target.closest('td[data-col]');
+        if (td) setActiveCell(td);
         if (!selectedIds.has(id)) {
             selectedIds.clear();
             selectedIds.add(id);
@@ -282,6 +375,8 @@ function bindEvents() {
     // Close context menu on click elsewhere
     document.addEventListener('click', hideContextMenu);
 
+    document.addEventListener('paste', handleDocumentPaste, true);
+
     // Column sort
     document.querySelectorAll('.spreadsheet th[data-col]').forEach(th => {
         th.addEventListener('click', () => {
@@ -293,8 +388,25 @@ function bindEvents() {
                 sortOrder = 'asc';
             }
             updateSortArrows();
+            currentPage = 1;
             loadBooks(document.getElementById('search-input').value);
         });
+    });
+    document.getElementById('page-size').addEventListener('change', (e) => {
+        pageSize = parseInt(e.target.value) || 100;
+        currentPage = 1;
+        loadBooks(currentSearch);
+    });
+    document.getElementById('btn-prev-page').addEventListener('click', () => {
+        if (currentPage <= 1) return;
+        currentPage -= 1;
+        loadBooks(currentSearch);
+    });
+    document.getElementById('btn-next-page').addEventListener('click', () => {
+        const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+        if (currentPage >= totalPages) return;
+        currentPage += 1;
+        loadBooks(currentSearch);
     });
 
     // Detail panel tabs
@@ -365,16 +477,11 @@ function bindEvents() {
         }
         // Ctrl+C — copy cell
         if ((e.ctrlKey || e.metaKey) && e.key === 'c' && !isEditing()) {
-            const focused = document.querySelector('.spreadsheet tr.selected td[data-col]');
-            if (focused) {
-                clipboard.col = focused.dataset.col;
-                clipboard.value = focused.textContent.trim();
+            if (activeCell) {
+                clipboard.col = activeCell.dataset.col;
+                clipboard.value = activeCell.textContent.trim();
                 toast(tr('toast.copiedValue', { value: clipboard.value }), 'info');
             }
-        }
-        // Ctrl+V — paste to selected
-        if ((e.ctrlKey || e.metaKey) && e.key === 'v' && !isEditing() && clipboard.value) {
-            pasteToSelected();
         }
     });
 }
@@ -385,6 +492,11 @@ function bindEvents() {
 function startInlineEdit(td) {
     if (td.classList.contains('editing')) return;
     const col = td.dataset.col;
+    const field = TABLE_FIELD_MAP[col];
+    if (!field) {
+        toast(tr('toast.editInDetailPanel'), 'info');
+        return;
+    }
     const tr = td.closest('tr');
     const bookId = parseInt(tr.dataset.id);
     const oldValue = td.textContent.trim();
@@ -404,17 +516,9 @@ function startInlineEdit(td) {
         td.textContent = newValue;
 
         if (save && newValue !== oldValue) {
-            // Map table column to API field
-            const fieldMap = {
-                isbn: 'isbn', title: 'title', subtitle: 'subtitle',
-                language_code: 'language_code',
-            };
-            const field = fieldMap[col];
-            if (field) {
-                await API.updateBook(bookId, { [field]: newValue });
-                toast(tr('toast.updated'), 'success');
-            }
-            await loadBooks(document.getElementById('search-input').value);
+            await API.updateBook(bookId, { [field]: newValue });
+            toast(tr('toast.updated'), 'success');
+            await loadBooks(currentSearch);
         }
     };
 
@@ -450,6 +554,18 @@ function showContextMenu(x, y, bookId) {
     menu.style.top = `${y}px`;
     menu.classList.add('open');
     menu.dataset.bookId = bookId;
+    requestAnimationFrame(() => {
+        const r = menu.getBoundingClientRect();
+        let nx = r.left;
+        let ny = r.top;
+        const pad = 6;
+        if (r.right > window.innerWidth - pad) nx = window.innerWidth - r.width - pad;
+        if (r.bottom > window.innerHeight - pad) ny = window.innerHeight - r.height - pad;
+        if (nx < pad) nx = pad;
+        if (ny < pad) ny = pad;
+        menu.style.left = `${nx}px`;
+        menu.style.top = `${ny}px`;
+    });
 }
 
 function hideContextMenu() {
@@ -463,16 +579,28 @@ async function handleContextAction(action) {
             if (ids.length > 0) openDetailPanel(ids[0]);
             break;
         case 'copy-cell': {
-            const focused = document.querySelector('.spreadsheet tr.selected td[data-col]');
-            if (focused) {
-                clipboard.col = focused.dataset.col;
-                clipboard.value = focused.textContent.trim();
+            if (activeCell) {
+                clipboard.col = activeCell.dataset.col;
+                clipboard.value = activeCell.textContent.trim();
                 toast(tr('toast.copiedValue', { value: clipboard.value }), 'info');
             }
             break;
         }
         case 'paste-cell':
             if (clipboard.value) pasteToSelected();
+            break;
+        case 'paste-excel':
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                navigator.clipboard.readText().then((t) => {
+                    if (!activeCell) {
+                        toast(tr('toast.pasteSelectCell'), 'info');
+                        return;
+                    }
+                    processPastedPlainText(t);
+                }).catch(() => toast(tr('toast.clipboardReadDenied'), 'info'));
+            } else {
+                toast(tr('toast.clipboardReadDenied'), 'info');
+            }
             break;
         case 'fill-down':
             if (clipboard.value) pasteToSelected();
@@ -491,16 +619,331 @@ async function handleContextAction(action) {
 
 async function pasteToSelected() {
     if (!clipboard.col || !clipboard.value || selectedIds.size === 0) return;
-    const fieldMap = {
-        isbn: 'isbn', title: 'title', subtitle: 'subtitle',
-        language_code: 'language_code',
-    };
-    const field = fieldMap[clipboard.col];
+    const field = TABLE_FIELD_MAP[clipboard.col];
     if (field) {
         await API.bulkUpdate([...selectedIds], { [field]: clipboard.value });
         toast(tr('toast.pastedToBooks', { value: clipboard.value, count: selectedIds.size }), 'success');
-        await loadBooks(document.getElementById('search-input').value);
+        await loadBooks(currentSearch);
+        return;
     }
+    if (TABLE_PASTE_COLS.includes(clipboard.col)) {
+        await pasteValueToBookIds([...selectedIds], clipboard.col, clipboard.value);
+    }
+}
+
+function shouldHandleSpreadsheetPaste() {
+    if (!activeCell) return false;
+    if (isEditing()) return false;
+    const ae = document.activeElement;
+    if (ae && ae !== document.body) {
+        if (ae.closest('.modal-overlay.open')) return false;
+        if (ae.closest('#detail-panel.open')) return false;
+        if (ae.matches('#search-input, #filter-language, #filter-status, #filter-drm, #page-size')) return false;
+        if (ae.closest('.footer') && ae.matches('select, input, button')) return false;
+        if (ae.closest('#settings-modal') && ae.matches('input, textarea, select')) return false;
+    }
+    return true;
+}
+
+function handleDocumentPaste(e) {
+    const text = e.clipboardData?.getData('text/plain');
+    if (text == null) return;
+    if (!shouldHandleSpreadsheetPaste()) return;
+    e.preventDefault();
+    e.stopPropagation();
+    processPastedPlainText(text).catch((err) => {
+        toast(tr('toast.pasteFailed', { message: err.message || String(err) }), 'error');
+    });
+}
+
+async function processPastedPlainText(text) {
+    const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    const isGrid = normalized.includes('\t') || normalized.includes('\n');
+    if (isGrid) {
+        await pasteExcelGrid(normalized);
+    } else {
+        await pasteExcelSingleValue(normalized);
+    }
+}
+
+function bookToUpdatePayload(book) {
+    const out = {};
+    for (const k of BOOK_SCALAR_KEYS) {
+        const v = book[k];
+        out[k] = v === undefined || v === null ? '' : v;
+    }
+    out.contributors = book.contributors || [];
+    out.subjects = book.subjects || [];
+    out.prices = (book.prices || []).map((p) => ({
+        ...p,
+        amount: p.amount != null ? Number(p.amount) : 0,
+    }));
+    out.sales_rights = (book.sales_rights || []).map((sr) => ({
+        ...sr,
+        restrictions: sr.restrictions || [],
+    }));
+    out.related_products = book.related_products || [];
+    out.reviews = book.reviews || [];
+    return out;
+}
+
+function parsePriceCell(s, defaultCurrency) {
+    const t = String(s).trim().replace(/\u00a0/g, ' ');
+    if (!t) return null;
+    let amount = null;
+    let currency = (defaultCurrency || 'EUR').toUpperCase();
+    const numMatch = t.match(/(\d+(?:[.,]\d+)?)/);
+    if (numMatch) amount = parseFloat(numMatch[1].replace(',', '.'));
+    const curMatch = t.match(/\b([A-Za-z]{3})\b/);
+    if (curMatch) currency = curMatch[1].toUpperCase();
+    if (amount == null || Number.isNaN(amount)) return null;
+    return { amount, currency };
+}
+
+function normalizePublishingStatus(v) {
+    const t = String(v).trim();
+    if (!t) return null;
+    if (/^\d{2}$/.test(t)) return t;
+    const lower = t.toLowerCase();
+    const map = {
+        active: '04',
+        forthcoming: '02',
+        inactive: '05',
+        cancelled: '05',
+        canceled: '05',
+        deleted: '05',
+    };
+    if (map[lower]) return map[lower];
+    if (lower === tr('status.active').toLowerCase()) return '04';
+    if (lower === tr('status.forthcoming').toLowerCase()) return '02';
+    if (lower === tr('status.inactive').toLowerCase()) return '05';
+    return null;
+}
+
+function setMainSubject(book, schemeId, version, code) {
+    const v = String(code).trim();
+    const subs = book.subjects || [];
+    if (!v) {
+        book.subjects = subs.filter((s) => !(String(s.scheme_id) === schemeId && Number(s.is_main) === 1));
+        return;
+    }
+    const others = subs.filter((s) => !(String(s.scheme_id) === schemeId && Number(s.is_main) === 1));
+    book.subjects = [
+        ...others,
+        {
+            scheme_id: schemeId,
+            scheme_version: version,
+            subject_code: v,
+            subject_text: '',
+            is_main: 1,
+        },
+    ];
+}
+
+function setAuthorA01(book, v) {
+    const rest = (book.contributors || []).filter((c) => c.contributor_role !== 'A01');
+    if (!v) {
+        book.contributors = rest.map((c, i) => ({ ...c, sequence_number: i + 1 }));
+        return;
+    }
+    const a01 = {
+        sequence_number: 1,
+        contributor_role: 'A01',
+        person_name: v,
+        person_name_inverted: '',
+        titles_before: '',
+        names_before_key: '',
+        prefix_to_key: '',
+        key_names: '',
+        names_after_key: '',
+        corporate_name: '',
+        biographical_note: '',
+    };
+    book.contributors = [a01, ...rest.map((c, i) => ({ ...c, sequence_number: i + 2 }))];
+}
+
+function setDefaultPrice(book, amount, currency) {
+    const list = book.prices || [];
+    const def = list.find((p) => (!p.start_date || p.start_date === '') && (!p.end_date || p.end_date === ''));
+    const rest = list.filter((p) => p !== def);
+    const row = def
+        ? { ...def, amount: Number(amount), currency_code: currency }
+        : {
+              price_type: settings.default_price_type || '42',
+              amount: Number(amount),
+              currency_code: currency,
+              territory: '',
+              start_date: '',
+              end_date: '',
+          };
+    book.prices = [row, ...rest];
+}
+
+function setPrimaryTerritory(book, v) {
+    const raw = String(v).trim();
+    const srs = book.sales_rights || [];
+    if (srs.length === 0) {
+        book.sales_rights = [{ rights_type: '02', countries: '', regions: raw, row_rights_type: '', restrictions: [] }];
+        return;
+    }
+    const sr0 = { ...srs[0], restrictions: srs[0].restrictions || [] };
+    const compact = raw.replace(/\s+/g, ' ').trim();
+    if (/^([A-Z]{2})(\s+[A-Z]{2})*$/i.test(compact)) {
+        sr0.countries = compact.toUpperCase();
+        sr0.regions = '';
+    } else {
+        sr0.regions = raw;
+        sr0.countries = '';
+    }
+    book.sales_rights = [sr0, ...srs.slice(1)];
+}
+
+function applyPastedCellToBook(book, col, raw) {
+    if (raw === undefined || raw === null) return;
+    const v = String(raw).trim();
+    switch (col) {
+        case 'isbn':
+            book.isbn = v.replace(/[\s-]/g, '');
+            break;
+        case 'title':
+            book.title = v;
+            break;
+        case 'subtitle':
+            book.subtitle = v;
+            break;
+        case 'language_code': {
+            if (!v) {
+                book.language_code = '';
+                break;
+            }
+            const lc = v.toLowerCase();
+            if (/^[a-z]{3}$/.test(lc)) book.language_code = lc;
+            break;
+        }
+        case 'publishing_status': {
+            if (!v) break;
+            const code = normalizePublishingStatus(v);
+            if (code) book.publishing_status = code;
+            break;
+        }
+        case 'authors':
+            setAuthorA01(book, v);
+            break;
+        case 'bisac_main':
+            setMainSubject(book, '10', '2017', v);
+            break;
+        case 'thema_main':
+            setMainSubject(book, '93', '', v);
+            break;
+        case 'wgs_main':
+            setMainSubject(book, '26', '', v);
+            break;
+        case 'price': {
+            if (!v) break;
+            const parsed = parsePriceCell(v, settings.default_currency || 'EUR');
+            if (parsed) setDefaultPrice(book, parsed.amount, parsed.currency);
+            break;
+        }
+        case 'territory':
+            setPrimaryTerritory(book, v);
+            break;
+        default:
+            break;
+    }
+}
+
+async function pasteValueToBookIds(ids, col, value) {
+    const CONC = 6;
+    let ok = 0;
+    let errors = 0;
+    for (let i = 0; i < ids.length; i += CONC) {
+        const chunk = ids.slice(i, i + CONC);
+        const results = await Promise.all(
+            chunk.map(async (id) => {
+                try {
+                    const full = await API.getBook(id);
+                    applyPastedCellToBook(full, col, value);
+                    await API.updateBook(full.id, bookToUpdatePayload(full));
+                    return true;
+                } catch (e) {
+                    console.error(e);
+                    return false;
+                }
+            }),
+        );
+        results.forEach((success) => (success ? ok++ : errors++));
+    }
+    await loadBooks(currentSearch);
+    if (errors > 0) toast(tr('toast.pastedGridWithErrors', { ok, errors }), 'info');
+    else toast(tr('toast.pastedGridOk', { ok }), 'success');
+}
+
+async function pasteExcelSingleValue(text) {
+    const v = String(text).trim();
+    const col = activeCell.dataset.col;
+    if (!TABLE_PASTE_COLS.includes(col)) {
+        toast(tr('toast.editInDetailPanel'), 'info');
+        return;
+    }
+    const rowId = parseInt(activeCell.closest('tr').dataset.id, 10);
+    const targets = selectedIds.size > 0 ? [...selectedIds] : [rowId];
+    await pasteValueToBookIds(targets, col, v);
+}
+
+async function pasteExcelGrid(text) {
+    let rows = text.split('\n');
+    while (rows.length && rows[rows.length - 1] === '') rows.pop();
+    const grid = rows.map((line) => line.split('\t'));
+    const startCol = TABLE_PASTE_COLS.indexOf(activeCell.dataset.col);
+    if (startCol < 0) return;
+    const trEl = activeCell.closest('tr');
+    const startRow = books.findIndex((b) => b.id === parseInt(trEl.dataset.id, 10));
+    if (startRow < 0) return;
+
+    const CONC = 6;
+    let ok = 0;
+    let errors = 0;
+    let skippedRows = 0;
+    const jobs = [];
+
+    for (let r = 0; r < grid.length; r++) {
+        const line = grid[r];
+        if (line.every((c) => String(c).trim() === '')) continue;
+        const bookIdx = startRow + r;
+        if (bookIdx >= books.length) {
+            skippedRows += 1;
+            continue;
+        }
+        const bookId = books[bookIdx].id;
+        jobs.push(async () => {
+            try {
+                const full = await API.getBook(bookId);
+                for (let c = 0; c < line.length; c++) {
+                    const colIdx = startCol + c;
+                    if (colIdx >= TABLE_PASTE_COLS.length) break;
+                    applyPastedCellToBook(full, TABLE_PASTE_COLS[colIdx], line[c]);
+                }
+                await API.updateBook(full.id, bookToUpdatePayload(full));
+                return true;
+            } catch (e) {
+                console.error(e);
+                return false;
+            }
+        });
+    }
+
+    if (jobs.length === 0) return;
+
+    for (let i = 0; i < jobs.length; i += CONC) {
+        const chunk = jobs.slice(i, i + CONC);
+        const results = await Promise.all(chunk.map((j) => j()));
+        results.forEach((success) => (success ? ok++ : errors++));
+    }
+
+    await loadBooks(currentSearch);
+    if (errors > 0) toast(tr('toast.pastedGridWithErrors', { ok, errors }), 'info');
+    else toast(tr('toast.pastedGridOk', { ok }), 'success');
+    if (skippedRows > 0) toast(tr('toast.pasteSkippedBeyondPage', { count: skippedRows }), 'info');
 }
 
 // ============================================================
@@ -509,6 +952,7 @@ async function pasteToSelected() {
 function updateSortArrows() {
     document.querySelectorAll('.spreadsheet th[data-col]').forEach(th => {
         const arrow = th.querySelector('.sort-arrow');
+        if (!arrow) return;
         if (th.dataset.col === sortCol) {
             arrow.textContent = sortOrder === 'asc' ? '▲' : '▼';
         } else {
@@ -523,7 +967,7 @@ function updateSortArrows() {
 async function addBook() {
     const book = await API.createBook({});
     toast(tr('toast.newBookAdded'), 'success');
-    await loadBooks();
+    await loadBooks(currentSearch);
     openDetailPanel(book.id);
 }
 
@@ -532,7 +976,7 @@ async function cloneSelected() {
     const result = await API.cloneBooks([...selectedIds]);
     toast(tr('toast.clonedBooks', { count: result.cloned.length }), 'success');
     selectedIds.clear();
-    await loadBooks();
+    await loadBooks(currentSearch);
 }
 
 async function deleteSelected() {
@@ -545,7 +989,7 @@ async function deleteSelected() {
         document.getElementById('detail-panel').classList.remove('open');
         currentBookId = null;
     }
-    await loadBooks();
+    await loadBooks(currentSearch);
 }
 
 // ============================================================
@@ -658,7 +1102,7 @@ async function saveDetail() {
 
     await API.updateBook(currentBookId, data);
     toast(tr('toast.bookSaved'), 'success');
-    await loadBooks(document.getElementById('search-input').value);
+    await loadBooks(currentSearch);
 }
 
 // ============================================================
@@ -684,10 +1128,10 @@ function addContributorRow(container, c) {
         `<option value="${r.code}" ${r.code === c.contributor_role ? 'selected' : ''}>${r.code} — ${r.text}</option>`
     ).join('');
     div.innerHTML = `
-        <select class="c-role" style="width:140px">${roles}</select>
+        <select class="c-role">${roles}</select>
         <input class="c-name" placeholder="${esc(tr('ui.personName'))}" value="${esc(c.person_name || '')}">
         <input class="c-inverted" placeholder="${esc(tr('ui.invertedName'))}" value="${esc(c.person_name_inverted || '')}">
-        <input class="c-corporate" placeholder="${esc(tr('ui.corporateName'))}" value="${esc(c.corporate_name || '')}" style="width:120px">
+        <input class="c-corporate" placeholder="${esc(tr('ui.corporateName'))}" value="${esc(c.corporate_name || '')}">
         <span class="btn-remove" onclick="this.parentElement.remove()">✕</span>
     `;
     container.appendChild(div);
@@ -721,13 +1165,13 @@ function addSubjectRow(container, s) {
     const div = document.createElement('div');
     div.className = 'dynamic-list-item';
     div.innerHTML = `
-        <select class="s-scheme" style="width:100px">
+        <select class="s-scheme">
             <option value="10" ${s.scheme_id === '10' ? 'selected' : ''}>BISAC</option>
             <option value="93" ${s.scheme_id === '93' ? 'selected' : ''}>Thema</option>
             <option value="26" ${s.scheme_id === '26' ? 'selected' : ''}>WGS</option>
         </select>
-        <input class="s-code" placeholder="${esc(tr('ui.code'))}" value="${esc(s.subject_code || '')}" style="width:120px">
-        <input class="s-version" placeholder="${esc(tr('ui.version'))}" value="${esc(s.scheme_version || '')}" style="width:60px">
+        <input class="s-code" placeholder="${esc(tr('ui.code'))}" value="${esc(s.subject_code || '')}">
+        <input class="s-version" placeholder="${esc(tr('ui.version'))}" value="${esc(s.scheme_version || '')}">
         <label style="display:flex;align-items:center;gap:4px;font-size:11px;white-space:nowrap;">
             <input type="checkbox" class="s-main" ${s.is_main ? 'checked' : ''}> ${esc(tr('ui.main'))}
         </label>
@@ -766,12 +1210,12 @@ function addPriceRow(container, p) {
         `<option value="${c.code}" ${c.code === p.currency_code ? 'selected' : ''}>${c.code}</option>`
     ).join('');
     div.innerHTML = `
-        <select class="p-type" style="width:140px">${types}</select>
-        <input class="p-amount" type="number" step="0.01" placeholder="${esc(tr('ui.amount'))}" value="${p.amount || ''}" style="width:80px">
-        <select class="p-currency" style="width:70px">${currencies}</select>
-        <input class="p-territory" placeholder="${esc(tr('ui.countryCodes'))}" value="${esc(p.territory || '')}" style="width:80px">
-        <input class="p-start" type="date" placeholder="${esc(tr('ui.start'))}" value="${onixDateToInput(p.start_date)}" style="width:120px" title="${esc(tr('ui.startDate'))}">
-        <input class="p-end" type="date" placeholder="${esc(tr('ui.end'))}" value="${onixDateToInput(p.end_date)}" style="width:120px" title="${esc(tr('ui.endDate'))}">
+        <select class="p-type">${types}</select>
+        <input class="p-amount" type="number" step="0.01" placeholder="${esc(tr('ui.amount'))}" value="${p.amount || ''}">
+        <select class="p-currency">${currencies}</select>
+        <input class="p-territory" placeholder="${esc(tr('ui.countryCodes'))}" value="${esc(p.territory || '')}">
+        <input class="p-start" type="date" placeholder="${esc(tr('ui.start'))}" value="${onixDateToInput(p.start_date)}" title="${esc(tr('ui.startDate'))}">
+        <input class="p-end" type="date" placeholder="${esc(tr('ui.end'))}" value="${onixDateToInput(p.end_date)}" title="${esc(tr('ui.endDate'))}">
         <span class="btn-remove" onclick="this.parentElement.remove()">✕</span>
     `;
     container.appendChild(div);
@@ -806,9 +1250,9 @@ function addRightRow(container, r) {
         `<option value="${t.code}" ${t.code === r.rights_type ? 'selected' : ''}>${t.code} — ${t.text}</option>`
     ).join('');
     div.innerHTML = `
-        <select class="r-type" style="width:180px">${types}</select>
+        <select class="r-type">${types}</select>
         <input class="r-countries" placeholder="${esc(tr('ui.countriesExample'))}" value="${esc(r.countries || '')}" style="flex:1">
-        <input class="r-regions" placeholder="${esc(tr('ui.regionExample'))}" value="${esc(r.regions || '')}" style="width:80px">
+        <input class="r-regions" placeholder="${esc(tr('ui.regionExample'))}" value="${esc(r.regions || '')}">
         <span class="btn-remove" onclick="this.parentElement.remove()">✕</span>
     `;
     container.appendChild(div);
@@ -840,7 +1284,7 @@ function addRelatedRow(container, r) {
         `<option value="${c.code}" ${c.code === r.relation_code ? 'selected' : ''}>${c.code} — ${c.text}</option>`
     ).join('');
     div.innerHTML = `
-        <select class="rel-code" style="width:200px">${codes}</select>
+        <select class="rel-code">${codes}</select>
         <input class="rel-isbn" placeholder="${esc(tr('ui.relatedIsbn'))}" value="${esc(r.related_isbn || '')}" style="flex:1">
         <span class="btn-remove" onclick="this.parentElement.remove()">✕</span>
     `;
@@ -874,7 +1318,7 @@ function addReviewRow(container, r) {
         <div style="display:flex;gap:8px;align-items:center;">
             <input class="rv-author" placeholder="${esc(tr('ui.reviewer'))}" value="${esc(r.text_author || '')}" style="flex:1">
             <input class="rv-source" placeholder="${esc(tr('ui.sourcePublication'))}" value="${esc(r.source_title || '')}" style="flex:1">
-            <input class="rv-date" type="date" value="${onixDateToInput(r.review_date)}" style="width:140px">
+            <input class="rv-date" type="date" value="${onixDateToInput(r.review_date)}">
             <span class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</span>
         </div>
         <textarea class="rv-text" rows="2" placeholder="${esc(tr('ui.reviewText'))}">${esc(r.review_text || '')}</textarea>
@@ -918,6 +1362,12 @@ async function saveSettings() {
     API.setApiKey(document.getElementById('s-api-key').value.trim());
     settings = await API.saveSettings(data);
     await I18N.setLanguage(settings.ui_language || 'en');
+    populateFilterDropdowns();
+    document.getElementById('filter-language').value = currentFilters.language;
+    document.getElementById('filter-status').value = currentFilters.status;
+    document.getElementById('filter-drm').value = currentFilters.drm;
+    updatePagination();
+    updateSortArrows();
     toast(tr('toast.settingsSaved'), 'success');
     closeModal('settings-modal');
 }
@@ -1009,7 +1459,7 @@ async function applyImport() {
     const result = await API.applyImport(importData.data, mapping);
     toast(tr('toast.importedBooks', { count: result.imported }), 'success');
     closeModal('import-modal');
-    await loadBooks();
+    await loadBooks(currentSearch);
     document.getElementById('footer-status').textContent = tr('ui.ready');
 }
 
@@ -1033,14 +1483,19 @@ async function exportData(format) {
 // ============================================================
 async function generateXml() {
     const ids = selectedIds.size > 0 ? [...selectedIds] : null;
-    const blob = await API.generateXml(ids);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `onix_${new Date().toISOString().slice(0,10)}.xml`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast(tr('toast.generatedXml', { count: ids ? ids.length : books.length }), 'success');
+    try {
+        const blob = await API.generateXml(ids);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `onix_${new Date().toISOString().slice(0,10)}.xml`;
+        a.click();
+        URL.revokeObjectURL(url);
+        const count = ids ? ids.length : (cachedStats.books || 0);
+        toast(tr('toast.generatedXml', { count }), 'success');
+    } catch (e) {
+        toast(tr('error.api', { message: e.message }), 'error');
+    }
 }
 
 async function previewXml(bookIds) {
@@ -1117,7 +1572,7 @@ async function applyBulkEdit() {
     await API.bulkUpdate([...selectedIds], fields);
     toast(tr('toast.updatedBooks', { count: selectedIds.size }), 'success');
     closeModal('bulk-modal');
-    await loadBooks(document.getElementById('search-input').value);
+    await loadBooks(currentSearch);
 }
 
 // ============================================================
@@ -1129,6 +1584,79 @@ function openModal(id) {
 
 function closeModal(id) {
     document.getElementById(id).classList.remove('open');
+}
+
+function syncSelectAll() {
+    const selectAll = document.getElementById('select-all');
+    if (!selectAll) return;
+    if (books.length === 0) {
+        selectAll.checked = false;
+        selectAll.indeterminate = false;
+        return;
+    }
+    const selectedCount = books.reduce((count, b) => count + (selectedIds.has(b.id) ? 1 : 0), 0);
+    selectAll.checked = selectedCount === books.length;
+    selectAll.indeterminate = selectedCount > 0 && selectedCount < books.length;
+}
+
+function updatePagination() {
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    if (currentPage > totalPages) currentPage = totalPages;
+    document.getElementById('page-info').textContent = tr('ui.pageOf', { current: currentPage, total: totalPages });
+    document.getElementById('btn-prev-page').disabled = currentPage <= 1;
+    document.getElementById('btn-next-page').disabled = currentPage >= totalPages;
+}
+
+function populateFilterDropdowns() {
+    const langEl = document.getElementById('filter-language');
+    const statusEl = document.getElementById('filter-status');
+    const drmEl = document.getElementById('filter-drm');
+    if (!langEl || !statusEl || !drmEl) return;
+
+    const langVal = langEl.value;
+    const statusVal = statusEl.value;
+    const drmVal = drmEl.value;
+
+    Codelists.populateSelect(langEl, Codelists.languages, { placeholder: tr('ui.filterAllLanguages') });
+    Codelists.populateOnixSelect(statusEl, 'publishingStatuses');
+    statusEl.insertAdjacentHTML('afterbegin', `<option value="">${esc(tr('ui.filterAllStatuses'))}</option>`);
+    Codelists.populateOnixSelect(drmEl, 'drmTypes');
+    drmEl.insertAdjacentHTML('afterbegin', `<option value="">${esc(tr('ui.filterAllDrm'))}</option>`);
+
+    if (langVal) langEl.value = langVal;
+    if (statusVal) statusEl.value = statusVal;
+    if (drmVal) drmEl.value = drmVal;
+}
+
+async function selectAllMatchingFilter() {
+    const params = {};
+    if (currentSearch) params.search = currentSearch;
+    if (currentFilters.language) params.language = currentFilters.language;
+    if (currentFilters.status) params.status = currentFilters.status;
+    if (currentFilters.drm) params.drm = currentFilters.drm;
+    try {
+        const { ids, capped } = await API.getBookIds(params);
+        selectedIds = new Set(ids);
+        renderTable();
+        await updateStats();
+        syncSelectAll();
+        if (capped) toast(tr('toast.selectAllCapped', { max: MAX_SELECT_ALL_IDS }), 'info');
+        else toast(tr('toast.selectAllDone', { count: ids.length }), 'success');
+    } catch (e) {
+        toast(tr('error.api', { message: e.message }), 'error');
+    }
+}
+
+function clearActiveCell() {
+    if (activeCell) activeCell.classList.remove('cell-active');
+    activeCell = null;
+}
+
+function setActiveCell(td) {
+    if (activeCell === td) return;
+    if (activeCell) activeCell.classList.remove('cell-active');
+    activeCell = td;
+    if (activeCell) activeCell.classList.add('cell-active');
 }
 
 // ============================================================

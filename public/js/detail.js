@@ -18,7 +18,10 @@ function validateISBN13(isbn) {
     }
     const checkDigit = (10 - (sum % 10)) % 10;
     if (checkDigit !== parseInt(clean[12])) {
-        return { valid: false, message: `Invalid check digit. Expected ${checkDigit}, got ${clean[12]}` };
+        const msg = window.I18N
+            ? window.I18N.t('error.isbnCheckDigit', { expected: checkDigit, got: clean[12] })
+            : `Invalid check digit. Expected ${checkDigit}, got ${clean[12]}`;
+        return { valid: false, message: msg };
     }
     return { valid: true };
 }

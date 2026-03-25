@@ -62,6 +62,10 @@ const API = {
         const qs = new URLSearchParams(params).toString();
         return this.json(`/api/books?${qs}`);
     },
+    async getBookIds(params = {}) {
+        const qs = new URLSearchParams(params).toString();
+        return this.json(`/api/books/ids?${qs}`);
+    },
     async getBook(id) {
         return this.json(`/api/books/${id}`);
     },

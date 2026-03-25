@@ -27,6 +27,7 @@
             <button class="btn btn-sm btn-primary" id="btn-add">+ <span data-i18n="ui.addBookLabel">Add Book</span></button>
             <button class="btn btn-sm" id="btn-clone" data-i18n-title="ui.clone"><span>📋 </span><span data-i18n="ui.clone">Clone</span></button>
             <button class="btn btn-sm btn-danger" id="btn-delete" data-i18n-title="ui.delete"><span>🗑 </span><span data-i18n="ui.delete">Delete</span></button>
+            <button class="btn btn-sm" id="btn-select-all-filter" data-i18n-title="ui.selectAllMatchingTitle">☑ <span data-i18n="ui.selectAllMatching">All results</span></button>
         </div>
         <div class="toolbar-separator"></div>
         <div class="toolbar-group">
@@ -42,6 +43,18 @@
         <div class="search-box">
             <input type="text" id="search-input" data-i18n-placeholder="ui.search" placeholder="Search books (ISBN, title, author...)">
         </div>
+        <div class="toolbar-group toolbar-large-tools">
+            <select id="filter-language" data-i18n-title="ui.filterLanguageTitle">
+                <option value="" data-i18n="ui.filterAllLanguages">All languages</option>
+            </select>
+            <select id="filter-status" data-i18n-title="ui.filterStatusTitle">
+                <option value="" data-i18n="ui.filterAllStatuses">All statuses</option>
+            </select>
+            <select id="filter-drm" data-i18n-title="ui.filterDrmTitle">
+                <option value="" data-i18n="ui.filterAllDrm">All DRM</option>
+            </select>
+            <button class="btn btn-sm" id="btn-reset-filters" type="button" data-i18n="ui.resetFilters">Reset filters</button>
+        </div>
     </div>
 
     <!-- ============ TABLE ============ -->
@@ -49,19 +62,19 @@
         <table class="spreadsheet" id="spreadsheet">
             <thead>
                 <tr>
-                    <th class="col-checkbox"><input type="checkbox" id="select-all" title="Select all"></th>
+                    <th class="col-checkbox"><input type="checkbox" id="select-all" data-i18n-title="ui.selectPageTitle"></th>
                     <th class="col-num">#</th>
                     <th class="col-isbn" data-col="isbn"><span data-i18n="ui.colIsbn">ISBN</span> <span class="sort-arrow"></span></th>
                     <th class="col-title" data-col="title"><span data-i18n="ui.colTitle">Title</span> <span class="sort-arrow"></span></th>
-                    <th class="col-subtitle" data-col="subtitle" data-i18n="ui.colSubtitle">Subtitle</th>
-                    <th class="col-author" data-col="authors" data-i18n="ui.colAuthor">Author</th>
-                    <th class="col-bisac" data-col="bisac_main" data-i18n="ui.colBisac">BISAC</th>
-                    <th class="col-thema" data-col="thema_main" data-i18n="ui.colThema">Thema</th>
-                    <th class="col-wgs" data-col="wgs_main" data-i18n="ui.colWgs">WGS</th>
-                    <th class="col-lang" data-col="language_code" data-i18n="ui.colLang">Lang</th>
-                    <th class="col-price" data-col="price" data-i18n="ui.colPrice">Price</th>
-                    <th class="col-territory" data-col="territory" data-i18n="ui.colTerritory">Territory</th>
-                    <th class="col-status" data-col="publishing_status" data-i18n="ui.colStatus">Status</th>
+                    <th class="col-subtitle" data-col="subtitle"><span data-i18n="ui.colSubtitle">Subtitle</span> <span class="sort-arrow"></span></th>
+                    <th class="col-author" data-col="authors"><span data-i18n="ui.colAuthor">Author</span> <span class="sort-arrow"></span></th>
+                    <th class="col-bisac" data-col="bisac_main"><span data-i18n="ui.colBisac">BISAC</span> <span class="sort-arrow"></span></th>
+                    <th class="col-thema" data-col="thema_main"><span data-i18n="ui.colThema">Thema</span> <span class="sort-arrow"></span></th>
+                    <th class="col-wgs" data-col="wgs_main"><span data-i18n="ui.colWgs">WGS</span> <span class="sort-arrow"></span></th>
+                    <th class="col-lang" data-col="language_code"><span data-i18n="ui.colLang">Lang</span> <span class="sort-arrow"></span></th>
+                    <th class="col-price" data-col="price"><span data-i18n="ui.colPrice">Price</span> <span class="sort-arrow"></span></th>
+                    <th class="col-territory" data-col="territory"><span data-i18n="ui.colTerritory">Territory</span> <span class="sort-arrow"></span></th>
+                    <th class="col-status" data-col="publishing_status"><span data-i18n="ui.colStatus">Status</span> <span class="sort-arrow"></span></th>
                 </tr>
             </thead>
             <tbody id="table-body">
@@ -291,6 +304,16 @@
             <span id="selection-info">No selection</span>
         </div>
         <div class="footer-right">
+            <label for="page-size" data-i18n="ui.rowsPerPage">Rows</label>
+            <select id="page-size" data-i18n-title="ui.rowsPerPageTitle">
+                <option value="50">50</option>
+                <option value="100" selected>100</option>
+                <option value="250">250</option>
+                <option value="500">500</option>
+            </select>
+            <button class="btn btn-sm" id="btn-prev-page" data-i18n="ui.prevPage">◀ Prev</button>
+            <span id="page-info">1 / 1</span>
+            <button class="btn btn-sm" id="btn-next-page" data-i18n="ui.nextPage">Next ▶</button>
             <span id="footer-status">Ready</span>
         </div>
     </footer>
@@ -523,7 +546,8 @@
 <div class="context-menu" id="context-menu">
     <div class="context-menu-item" data-action="edit">✏️ Edit <kbd>Enter</kbd></div>
     <div class="context-menu-item" data-action="copy-cell">📋 Copy Cell <kbd>Ctrl+C</kbd></div>
-    <div class="context-menu-item" data-action="paste-cell">📋 Paste to Selected <kbd>Ctrl+V</kbd></div>
+    <div class="context-menu-item" data-action="paste-excel">📋 Paste from Excel <kbd>Ctrl+V</kbd></div>
+    <div class="context-menu-item" data-action="paste-cell">📋 Paste to Selected</div>
     <div class="context-menu-item" data-action="fill-down">⬇ Fill Down</div>
     <div class="context-menu-separator"></div>
     <div class="context-menu-item" data-action="clone">📋 Clone Book</div>
