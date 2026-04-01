@@ -16,17 +16,8 @@ Free web-based ONIX 3.0 metadata editor for e-books. Spreadsheet-style UI for ma
 
 ### Screenshots
 
-| Main Table | Book Details |
-|:---:|:---:|
-| ![Main Table](docs/screenshots/table-dark.png) | ![Book Details](docs/screenshots/detail-panel.png) |
-
-| Settings | Bulk Edit |
-|:---:|:---:|
-| ![Settings](docs/screenshots/settings.png) | ![Bulk Edit](docs/screenshots/bulk-edit.png) |
-
-| Import | Export |
-|:---:|:---:|
-| ![Import](docs/screenshots/import.png) | ![Export](docs/screenshots/export.png) |
+Screenshots are temporarily unavailable in this repository (the `docs/screenshots/` directory is currently empty).
+If needed, run the app locally and capture the main views: `Main Table`, `Book Details`, `Settings`, `Bulk Edit`, `Import`, `Export`.
 
 ### Features
 
@@ -138,17 +129,8 @@ Editor web gratuito de metadatos ONIX 3.0 para libros electrónicos. Interfaz ti
 
 ### Capturas de pantalla
 
-| Tabla principal | Detalles del libro |
-|:---:|:---:|
-| ![Tabla](docs/screenshots/table-dark.png) | ![Detalles](docs/screenshots/detail-panel.png) |
-
-| Configuración | Edición masiva |
-|:---:|:---:|
-| ![Configuración](docs/screenshots/settings.png) | ![Edición masiva](docs/screenshots/bulk-edit.png) |
-
-| Importar | Exportar |
-|:---:|:---:|
-| ![Importar](docs/screenshots/import.png) | ![Exportar](docs/screenshots/export.png) |
+Las capturas de pantalla no están disponibles temporalmente en este repositorio (el directorio `docs/screenshots/` está vacío).
+Si hace falta, ejecute la app localmente y capture estas vistas: `Main Table`, `Book Details`, `Settings`, `Bulk Edit`, `Import`, `Export`.
 
 ### Funcionalidades
 
@@ -199,17 +181,8 @@ Kostenloser webbasierter ONIX 3.0 Metadaten-Editor für E-Books. Tabellenkalkula
 
 ### Bildschirmfotos
 
-| Haupttabelle | Buchdetails |
-|:---:|:---:|
-| ![Tabelle](docs/screenshots/table-dark.png) | ![Details](docs/screenshots/detail-panel.png) |
-
-| Einstellungen | Massenbearbeitung |
-|:---:|:---:|
-| ![Einstellungen](docs/screenshots/settings.png) | ![Massenbearbeitung](docs/screenshots/bulk-edit.png) |
-
-| Import | Export |
-|:---:|:---:|
-| ![Import](docs/screenshots/import.png) | ![Export](docs/screenshots/export.png) |
+Screenshots sind in diesem Repository derzeit nicht verfugbar (das Verzeichnis `docs/screenshots/` ist leer).
+Falls notig, starten Sie die App lokal und erstellen Sie Aufnahmen dieser Ansichten: `Main Table`, `Book Details`, `Settings`, `Bulk Edit`, `Import`, `Export`.
 
 ### Funktionen
 
@@ -260,17 +233,8 @@ Das generierte XML entspricht der **Bookwire ONIX E-Book Specification v1.0** (F
 
 ### Скриншоты
 
-| Главная таблица | Детали книги |
-|:---:|:---:|
-| ![Таблица](docs/screenshots/table-dark.png) | ![Детали](docs/screenshots/detail-panel.png) |
-
-| Настройки | Массовое редактирование |
-|:---:|:---:|
-| ![Настройки](docs/screenshots/settings.png) | ![Массовое](docs/screenshots/bulk-edit.png) |
-
-| Импорт | Экспорт |
-|:---:|:---:|
-| ![Импорт](docs/screenshots/import.png) | ![Экспорт](docs/screenshots/export.png) |
+Скриншоты временно отсутствуют в этом репозитории (каталог `docs/screenshots/` сейчас пустой).
+При необходимости запустите приложение локально и сделайте снимки экранов для: `Main Table`, `Book Details`, `Settings`, `Bulk Edit`, `Import`, `Export`.
 
 ### Возможности
 
