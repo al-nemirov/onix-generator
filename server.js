@@ -859,20 +859,51 @@ app.post('/api/preview', (req, res) => {
 // ---------------------------------------------------------------------------
 // Import XLSX/CSV
 // ---------------------------------------------------------------------------
-app.post('/api/import', strictLimiter, upload.single('file'), (req, res) => {
+app.post('/api/import', strictLimiter, upload.single('file'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
     try {
-        const XLSX = require('xlsx');
-        const workbook = XLSX.readFile(req.file.path);
-        const sheetName = workbook.SheetNames[0];
-        const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        const ExcelJS = require('exceljs');
+        const workbook = new ExcelJS.Workbook();
+        
+        // Read file based on extension
+        const ext = path.extname(req.file.originalname || '').toLowerCase();
+        if (ext === '.csv') {
+            await workbook.csv.readFile(req.file.path);
+        } else {
+            await workbook.xlsx.readFile(req.file.path);
+        }
+        
+        const worksheet = workbook.getWorksheet(1);
+        if (!worksheet) {
+            throw new Error('No worksheet found in file');
+        }
+        
+        // Convert to JSON
+        const data = [];
+        const headers = [];
+        
+        worksheet.eachRow((row, rowNumber) => {
+            if (rowNumber === 1) {
+                // First row - headers
+                row.eachCell((cell) => {
+                    headers.push(cell.value ? String(cell.value).trim() : '');
+                });
+            } else {
+                // Data rows
+                const rowData = {};
+                row.eachCell((cell, colNumber) => {
+                    const header = headers[colNumber - 1] || `Column${colNumber}`;
+                    rowData[header] = cell.value;
+                });
+                data.push(rowData);
+            }
+        });
 
         // Clean up temp file
         fs.unlinkSync(req.file.path);
 
         // Return parsed data for column mapping on frontend
-        const headers = data.length > 0 ? Object.keys(data[0]) : [];
         const preview = data.slice(0, 5);
         res.json({ headers, preview, totalRows: data.length, data });
     } catch (err) {
@@ -968,7 +999,7 @@ app.post('/api/import/apply', strictLimiter, (req, res) => {
 // ---------------------------------------------------------------------------
 // Export (XLSX, CSV, JSON)
 // ---------------------------------------------------------------------------
-app.get('/api/export/:format', (req, res) => {
+app.get('/api/export/:format', async (req, res) => {
     const format = req.params.format;
     if (!['json', 'csv', 'xlsx'].includes(format)) {
         return res.status(400).json({ error: 'Supported formats: json, csv, xlsx' });
@@ -1000,39 +1031,63 @@ app.get('/api/export/:format', (req, res) => {
     if (format === 'json') {
         res.json(books);
     } else if (format === 'csv' || format === 'xlsx') {
-        const XLSX = require('xlsx');
-        const rows = books.map(b => ({
-            ISBN: b.isbn,
-            Title: b.title,
-            Subtitle: b.subtitle,
-            Authors: b.authors,
-            Language: b.language_code,
-            Pages: b.page_count,
-            'BISAC Codes': b.bisac_codes,
-            'Thema Codes': b.thema_codes,
-            'WGS Codes': b.wgs_codes,
-            Keywords: b.keywords,
-            Price: b.price,
-            Currency: b.currency,
-            Status: b.publishing_status,
-            'Pub Date': b.publishing_date,
-            Publisher: b.publisher_name,
-            Description: b.description,
-        }));
-        const ws = XLSX.utils.json_to_sheet(rows);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Books');
+        const ExcelJS = require('exceljs');
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Books');
+        
+        // Define columns
+        const columns = [
+            { header: 'ISBN', key: 'isbn' },
+            { header: 'Title', key: 'title' },
+            { header: 'Subtitle', key: 'subtitle' },
+            { header: 'Authors', key: 'authors' },
+            { header: 'Language', key: 'language_code' },
+            { header: 'Pages', key: 'page_count' },
+            { header: 'BISAC Codes', key: 'bisac_codes' },
+            { header: 'Thema Codes', key: 'thema_codes' },
+            { header: 'WGS Codes', key: 'wgs_codes' },
+            { header: 'Keywords', key: 'keywords' },
+            { header: 'Price', key: 'price' },
+            { header: 'Currency', key: 'currency' },
+            { header: 'Status', key: 'publishing_status' },
+            { header: 'Pub Date', key: 'publishing_date' },
+            { header: 'Publisher', key: 'publisher_name' },
+            { header: 'Description', key: 'description' },
+        ];
+        worksheet.columns = columns;
+        
+        // Add rows
+        for (const book of books) {
+            worksheet.addRow({
+                isbn: book.isbn,
+                title: book.title,
+                subtitle: book.subtitle,
+                authors: book.authors,
+                language_code: book.language_code,
+                page_count: book.page_count,
+                bisac_codes: book.bisac_codes,
+                thema_codes: book.thema_codes,
+                wgs_codes: book.wgs_codes,
+                keywords: book.keywords,
+                price: book.price,
+                currency: book.currency,
+                publishing_status: book.publishing_status,
+                publishing_date: book.publishing_date,
+                publisher_name: book.publisher_name,
+                description: book.description,
+            });
+        }
 
         if (format === 'xlsx') {
-            const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+            const buf = await workbook.xlsx.writeBuffer();
             res.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.set('Content-Disposition', 'attachment; filename="onix_books.xlsx"');
             res.send(buf);
         } else {
-            const csv = XLSX.utils.sheet_to_csv(ws);
+            const buf = await workbook.csv.writeBuffer();
             res.set('Content-Type', 'text/csv');
             res.set('Content-Disposition', 'attachment; filename="onix_books.csv"');
-            res.send(csv);
+            res.send(buf);
         }
     } else {
         res.status(400).json({ error: 'Supported formats: json, csv, xlsx' });
