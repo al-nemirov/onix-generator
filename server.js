@@ -134,7 +134,17 @@ function authenticate(req, res, next) {
     if (!apiKey) {
         return res.status(401).json({ error: 'Authentication required. Provide X-API-Key header.' });
     }
-    const keyEntry = apiKeys.find(k => k.key === apiKey);
+    // Timing-safe comparison to prevent side-channel leakage of valid keys.
+    let keyEntry = null;
+    const providedBuf = Buffer.from(String(apiKey));
+    for (const k of apiKeys) {
+        const storedBuf = Buffer.from(k.key);
+        if (storedBuf.length === providedBuf.length &&
+            crypto.timingSafeEqual(storedBuf, providedBuf)) {
+            keyEntry = k;
+            break;
+        }
+    }
     if (!keyEntry) {
         return res.status(403).json({ error: 'Invalid API key.' });
     }
@@ -1120,6 +1130,59 @@ app.get('/api/db/backup', strictLimiter, requireAdmin, (req, res) => {
     res.send(backup);
 });
 
+// Pre-export validation: reports books missing ONIX-required fields.
+// Helps catch issues before submitting to Bookwire / other distributors.
+app.get('/api/validate', (req, res) => {
+    const settings = db.prepare('SELECT * FROM settings WHERE id = 1').get() || {};
+    const books = db.prepare('SELECT * FROM books').all();
+    const issues = [];
+    const isbn13 = /^(?:97[89])\d{10}$/;
+
+    for (const book of books) {
+        const errors = [];
+        const warnings = [];
+
+        if (!book.isbn || !String(book.isbn).trim()) {
+            errors.push('Missing ISBN');
+        } else if (!isbn13.test(String(book.isbn).replace(/[-\s]/g, ''))) {
+            warnings.push('ISBN is not a valid ISBN-13');
+        }
+        if (!book.title || !String(book.title).trim()) errors.push('Missing title');
+        if (!book.language_code && !settings.default_language) errors.push('Missing language');
+
+        const contribCount = db.prepare('SELECT COUNT(*) as c FROM contributors WHERE book_id = ?').get(book.id).c;
+        if (contribCount === 0) errors.push('No contributors (at least one author/editor required)');
+
+        const publisher = book.publisher_name || settings.publisher_name;
+        if (!publisher) errors.push('Missing publisher name');
+
+        const priceCount = db.prepare('SELECT COUNT(*) as c FROM prices WHERE book_id = ?').get(book.id).c;
+        if (priceCount === 0) warnings.push('No prices set (will export as unpriced item)');
+
+        const subjectCount = db.prepare('SELECT COUNT(*) as c FROM subjects WHERE book_id = ?').get(book.id).c;
+        if (subjectCount === 0) warnings.push('No subjects/categories assigned');
+
+        if (errors.length || warnings.length) {
+            issues.push({
+                id: book.id,
+                isbn: book.isbn || null,
+                title: book.title || null,
+                errors,
+                warnings,
+            });
+        }
+    }
+
+    res.json({
+        totalBooks: books.length,
+        booksWithIssues: issues.length,
+        errorCount: issues.reduce((n, b) => n + b.errors.length, 0),
+        warningCount: issues.reduce((n, b) => n + b.warnings.length, 0),
+        valid: issues.every(i => i.errors.length === 0),
+        issues,
+    });
+});
+
 // Stats
 app.get('/api/stats', (req, res) => {
     const books = db.prepare('SELECT COUNT(*) as count FROM books').get().count;
@@ -1741,8 +1804,11 @@ function insertRelatedData(bookId, data) {
 }
 
 function esc(str) {
-    if (!str) return '';
+    if (str === null || str === undefined || str === '') return '';
     return String(str)
+        // Strip characters that are illegal in XML 1.0 (control chars except \t, \n, \r).
+        // Defends against corrupted Excel cells that break downstream validators.
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')

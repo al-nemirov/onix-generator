@@ -1,6 +1,6 @@
 {
   "name": "onix-generator",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "description": "ONIX 3.0 metadata generator for e-books — web-based spreadsheet UI with SQLite storage",
   "main": "server.js",
   "scripts": {
